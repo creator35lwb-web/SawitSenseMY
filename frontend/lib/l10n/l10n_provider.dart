@@ -1,4 +1,4 @@
-/// Localization provider for BM/EN toggle.
+// Localization provider for BM/EN toggle.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_en.dart';
 import 'app_ms.dart';
@@ -21,11 +21,11 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, AppLocale>(
   (ref) => LocaleNotifier(),
 );
 
-/// Get a translated string by key.
-final trProvider = Provider.family<String, String>((ref, key) {
+// Returns a translation function: tr('key') -> localized string.
+final trProvider = Provider<String Function(String)>((ref) {
   final locale = ref.watch(localeProvider);
   final strings = locale == AppLocale.en ? enStrings : msStrings;
-  return strings[key] ?? key;
+  return (String key) => strings[key] ?? key;
 });
 
 /// Helper to get region name in current locale.

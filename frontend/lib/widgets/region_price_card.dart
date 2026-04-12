@@ -1,4 +1,4 @@
-/// Regional FFB price card widget.
+// Regional FFB price card widget.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
@@ -31,7 +31,7 @@ class RegionPriceCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
     final regionName = localizedRegion(regionalPrice.region, locale);
 
     return Card(

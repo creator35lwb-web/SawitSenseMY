@@ -1,8 +1,8 @@
-/// Data models for SawitSense price data.
-///
-/// Maps directly to the JSON schema written by backend/writer/firestore_writer.py:
-///   - sawitsense_latest/current -> PriceSnapshot
-///   - sawitsense_prices/{date}  -> PriceSnapshot (historical)
+// Data models for SawitSense price data.
+//
+// Maps directly to the JSON schema written by backend/writer/firestore_writer.py:
+//   - sawitsense_latest/current -> PriceSnapshot
+//   - sawitsense_prices/{date}  -> PriceSnapshot (historical)
 
 class RegionalPrice {
   final String region;
@@ -139,9 +139,9 @@ class FairPriceResult {
 
     if (paidPrice != null && fairPrice > 0) {
       gapRm = double.parse((paidPrice - fairPrice).toStringAsFixed(2));
-      gapPct = double.parse(((gapRm! / fairPrice) * 100).toStringAsFixed(2));
+      gapPct = double.parse(((gapRm / fairPrice) * 100).toStringAsFixed(2));
 
-      if (gapPct! >= -5) {
+      if (gapPct >= -5) {
         verdict = 'GREEN';
       } else if (gapPct >= -15) {
         verdict = 'AMBER';

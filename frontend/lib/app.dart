@@ -1,7 +1,7 @@
-/// SawitSense MY — App Router & Theme Configuration
-///
-/// Navigation: Dashboard / Calculator / History (bottom nav bar)
-/// Theme: Palm green + white, Material 3, mobile-first responsive
+// SawitSense MY — App Router & Theme Configuration
+//
+// Navigation: Dashboard / Calculator / History (bottom nav bar)
+// Theme: Palm green + white, Material 3, mobile-first responsive
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +46,7 @@ class SawitSenseApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
 
     return MaterialApp.router(
       title: tr('app_title'),
@@ -61,7 +61,7 @@ class SawitSenseApp extends ConsumerWidget {
           foregroundColor: Colors.white,
           elevation: 0,
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 1,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -88,8 +88,6 @@ class _AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
-
     return Scaffold(
       body: child,
       bottomNavigationBar: _BottomNav(),
@@ -100,7 +98,7 @@ class _AppShell extends ConsumerWidget {
 class _BottomNav extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
     final location = GoRouterState.of(context).uri.toString();
 
     int currentIndex = 0;

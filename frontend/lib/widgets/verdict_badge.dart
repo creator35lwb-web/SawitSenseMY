@@ -1,4 +1,4 @@
-/// Verdict badge: GREEN / AMBER / RED.
+// Verdict badge: GREEN / AMBER / RED.
 import 'package:flutter/material.dart';
 
 class VerdictBadge extends StatelessWidget {

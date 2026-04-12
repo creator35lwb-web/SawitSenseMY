@@ -1,4 +1,4 @@
-/// English strings for SawitSense.
+// English strings for SawitSense.
 const Map<String, String> enStrings = {
   // App
   'app_title': 'SawitSense MY',

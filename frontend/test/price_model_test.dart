@@ -1,6 +1,6 @@
-/// Unit tests for SawitSense price models and calculations.
-///
-/// Mirrors backend/tests/test_mpob_scraper.py verification logic.
+// Unit tests for SawitSense price models and calculations.
+//
+// Mirrors backend/tests/test_mpob_scraper.py verification logic.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sawitsense_my/models/price_data.dart';

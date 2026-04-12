@@ -1,7 +1,7 @@
-/// M1: Daily Price Dashboard
-///
-/// Shows: CPO spot price + FFB Reference Prices (6 regions)
-/// Zero auth, public read-only, smallholder-first design.
+// M1: Daily Price Dashboard
+//
+// Shows: CPO spot price + FFB Reference Prices (6 regions)
+// Zero auth, public read-only, smallholder-first design.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +18,7 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final priceAsync = ref.watch(latestPriceProvider);
     final isDemoAsync = ref.watch(isDemoProvider);
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +156,7 @@ class _CpoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
     final cpo = snapshot.cpo;
 
     return Card(

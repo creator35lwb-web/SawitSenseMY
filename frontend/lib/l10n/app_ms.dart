@@ -1,4 +1,4 @@
-/// Bahasa Malaysia strings for SawitSense.
+// Bahasa Malaysia strings for SawitSense.
 const Map<String, String> msStrings = {
   // App
   'app_title': 'SawitSense MY',

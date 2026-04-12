@@ -1,4 +1,4 @@
-/// Riverpod providers for SawitSense price data.
+// Riverpod providers for SawitSense price data.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
 import '../services/price_service.dart';

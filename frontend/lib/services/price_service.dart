@@ -1,12 +1,12 @@
-/// Price data service for SawitSense.
-///
-/// Fetches data from:
-///   1. GitHub Pages JSON fallback (primary for prototype)
-///   2. Firestore (when configured, future)
-///
-/// For the prototype, we read from the backend/data/ JSON files
-/// served via GitHub Pages at:
-///   https://creator35lwb-web.github.io/SawitSenseMY/data/latest.json
+// Price data service for SawitSense.
+//
+// Fetches data from:
+//   1. GitHub Pages JSON fallback (primary for prototype)
+//   2. Firestore (when configured, future)
+//
+// For the prototype, we read from the backend/data/ JSON files
+// served via GitHub Pages at:
+//   https://creator35lwb-web.github.io/SawitSenseMY/data/latest.json
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -74,15 +74,15 @@ class PriceService {
   /// Generate demo data for when real data is unavailable.
   /// Shows realistic MPOB-like prices so users can experience the UI.
   static PriceSnapshot demoSnapshot() {
-    return PriceSnapshot(
-      cpo: const CpoPrice(
+    return const PriceSnapshot(
+      cpo: CpoPrice(
         date: '2025-01-10',
         priceMyrPerTonne: 4650.00,
         source: 'Demo Data',
       ),
       ffb: FfbPriceData(
         date: '2025-01-10',
-        regions: const [
+        regions: [
           RegionalPrice(region: 'North', date: '2025-01-10', price1PctOer: 42.77, source: 'Demo'),
           RegionalPrice(region: 'South', date: '2025-01-10', price1PctOer: 43.12, source: 'Demo'),
           RegionalPrice(region: 'Central', date: '2025-01-10', price1PctOer: 42.95, source: 'Demo'),
@@ -102,7 +102,7 @@ class PriceService {
   /// Generate demo historical data for chart.
   static List<HistoricalPrice> demoHistory() {
     final history = <HistoricalPrice>[];
-    final base = 4500.0;
+    const base = 4500.0;
     final now = DateTime.now();
 
     for (int i = 29; i >= 0; i--) {

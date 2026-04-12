@@ -1,4 +1,4 @@
-/// Feedback button with 3 preset options.
+// Feedback button with 3 preset options.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/l10n_provider.dart';
@@ -8,7 +8,7 @@ class FeedbackButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
 
     return OutlinedButton.icon(
       onPressed: () => _showFeedbackDialog(context, ref),

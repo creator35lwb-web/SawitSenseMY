@@ -1,6 +1,6 @@
-/// M4: Price History Chart
-///
-/// 30-day CPO spot price line chart using fl_chart.
+// M4: Price History Chart
+//
+// 30-day CPO spot price line chart using fl_chart.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,7 @@ class HistoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyAsync = ref.watch(historyProvider);
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -175,7 +175,7 @@ class _PriceLineChart extends StatelessWidget {
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: Colors.green.shade100.withOpacity(0.4),
+              color: Colors.green.shade100.withValues(alpha: 0.4),
             ),
           ),
         ],

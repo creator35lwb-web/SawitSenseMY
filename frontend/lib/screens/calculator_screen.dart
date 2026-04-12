@@ -1,7 +1,7 @@
-/// M2: Fair Price Calculator
-///
-/// 3-input model: Region (auto-fills Price_1%), OER%, optional Paid Price.
-/// Shows: Fair Price + Verdict (GREEN/AMBER/RED).
+// M2: Fair Price Calculator
+//
+// 3-input model: Region (auto-fills Price_1%), OER%, optional Paid Price.
+// Shows: Fair Price + Verdict (GREEN/AMBER/RED).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,7 +67,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     final priceAsync = ref.watch(latestPriceProvider);
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
     final locale = ref.watch(localeProvider);
 
     return Scaffold(
@@ -104,6 +104,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                 data: (snapshot) {
                   final regions = snapshot.ffb?.regions ?? [];
                   return DropdownButtonFormField<String>(
+                    // ignore: deprecated_member_use
                     value: _selectedRegion,
                     decoration: InputDecoration(
                       labelText: tr('calc_region'),
@@ -209,7 +210,7 @@ class _ResultCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tr = ref.read(trProvider);
+    final tr = ref.watch(trProvider);
 
     return Card(
       elevation: 4,
