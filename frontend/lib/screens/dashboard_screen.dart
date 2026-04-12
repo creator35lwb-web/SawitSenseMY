@@ -10,6 +10,7 @@ import '../l10n/l10n_provider.dart';
 import '../widgets/region_price_card.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/feedback_button.dart';
+import '../widgets/app_footer.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -141,10 +142,12 @@ class DashboardScreen extends ConsumerWidget {
                     textAlign: TextAlign.center,
                   ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // Feedback
+                // Feedback + Footer
                 const Center(child: FeedbackButton()),
+                const SizedBox(height: 8),
+                const AppFooter(),
               ],
             ),
           );

@@ -12,6 +12,7 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'
+      - 'backend/data/**'
   workflow_dispatch:
 
 permissions:

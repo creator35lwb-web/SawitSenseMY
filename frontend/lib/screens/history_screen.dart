@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/language_toggle.dart';
+import '../widgets/app_footer.dart';
 
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -60,6 +61,9 @@ class HistoryScreen extends ConsumerWidget {
 
                 // Price table below chart
                 _PriceTable(prices: prices),
+
+                const SizedBox(height: 16),
+                const AppFooter(),
               ],
             ),
           );

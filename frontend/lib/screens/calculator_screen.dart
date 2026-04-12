@@ -10,6 +10,7 @@ import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/language_toggle.dart';
+import '../widgets/app_footer.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
   const CalculatorScreen({super.key});
@@ -196,6 +197,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
 
               // Result
               if (_result != null) _ResultCard(result: _result!),
+
+              const SizedBox(height: 16),
+              const AppFooter(),
             ],
           ),
         ),
