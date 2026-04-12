@@ -1,0 +1,74 @@
+# Flutter Web Build & Deploy to GitHub Pages
+#
+# Builds the Flutter Web app and deploys to GitHub Pages.
+# Triggered on push to main (frontend/ changes) or manual dispatch.
+#
+# Author: QQ (Qoder CSO)
+
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          channel: 'stable'
+
+      - name: Get dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Run tests
+        working-directory: frontend
+        run: flutter test
+
+      - name: Build for web
+        working-directory: frontend
+        run: flutter build web --release --base-href "/SawitSenseMY/"
+
+      - name: Copy backend data for static fallback
+        run: |
+          mkdir -p frontend/build/web/data
+          if [ -d "backend/data" ]; then
+            cp -r backend/data/* frontend/build/web/data/ 2>/dev/null || true
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/build/web
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,11 @@
+{
+  "name": "SawitSense MY",
+  "short_name": "SawitSense",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1B5E20",
+  "theme_color": "#2E7D32",
+  "description": "Sawit Kita, Harga Kita. CPO Price Tracker & OER Signal.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}
