@@ -1,0 +1,35 @@
+{
+  "macp_version": "2.2",
+  "project": "SawitSenseMY",
+  "handoffs": [
+    {
+      "id": "handoff-001",
+      "timestamp": "2026-04-12T22:00:00+08:00",
+      "from_agent": "SS",
+      "to_agent": "QQ",
+      "phase": "Phase 0 Complete -> Phase 1 Execution",
+      "summary": "Genesis brainstorming complete. Product vision defined. 5 modules scoped. Tech stack confirmed. Two real FFB receipts analyzed — confirmed MPOB formula (Price/mt = Price_1% x Graded_OER%), rejected friend formula (CPO x 0.25 x 0.796). OER grading identified as the real information asymmetry. Trinity validated: 8.4/10 for prototype-first strategy. Master Prompt at v1.2.",
+      "decisions_locked": [
+        "Name: SawitSense (Sawit Kita, Harga Kita)",
+        "Primary user: Malaysian oil palm smallholder",
+        "Data backbone: MPOB BEPI scraper, 2x daily",
+        "Stack: Flutter + Riverpod + Firestore + Python + GitHub Actions",
+        "Prototype first: public, read-only, zero auth, GitHub Pages",
+        "Prototype scope: Dashboard + Calculator + 30-day chart + BM/EN toggle",
+        "Feedback button on prototype (3 preset options)",
+        "Module 5 (Dealer Map): deferred to last phase",
+        "Sales Journal: local storage default, cloud opt-in",
+        "Scraper health monitor + fallback from Day 1",
+        "Rejected formula: CPO x 0.25 x 0.796 permanently excluded",
+        "OER grading is the real problem, not CPO price"
+      ],
+      "next_steps": [
+        "Create GitHub repo SawitSenseMY",
+        "Build Phase 1: MPOB BEPI scraper in Python",
+        "Set up GitHub Actions cron (8:30am + 4:30pm MYT)",
+        "Build Phase 2: Flutter Web prototype"
+      ],
+      "context": "Two real receipts analyzed: PV-85935 (17 Mar, OER 18%, RM 770) and VMF-8951 (10 Apr, OER 18.25%, RM 860). Different dealers, significant price variance confirms need for transparency tool."
+    }
+  ]
+}

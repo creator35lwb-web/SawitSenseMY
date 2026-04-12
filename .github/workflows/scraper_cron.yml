@@ -1,0 +1,46 @@
+name: SawitSense MPOB Scraper
+
+on:
+  schedule:
+    # 8:30am MYT (00:30 UTC) and 4:30pm MYT (08:30 UTC), Mon-Fri
+    - cron: '30 0 * * 1-5'
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Run scraper
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SA_KEY }}
+          COMMODITIES_API_KEY: ${{ secrets.COMMODITIES_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          cd backend
+          python run_scraper.py
+
+      - name: Commit data files (JSON fallback)
+        if: always()
+        run: |
+          git config user.name 'SawitSense Bot'
+          git config user.email 'bot@sawitsense.dev'
+          git add backend/data/ || true
+          git diff --staged --quiet || git commit -m "data: update prices $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push || true
