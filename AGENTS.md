@@ -34,7 +34,7 @@ flutter test
 Price/mt = MPOB_Price_1% x Graded_OER%
 ```
 
-Do NOT use: `CPO x 0.25 x 0.796` (rejected — unverifiable constants)
+Do NOT use: `CPO x 0.2? x 0.7?` (rejected — unverifiable constants from unofficial dealer shorthand)
 
 ## Architecture Decisions
 

@@ -13,7 +13,7 @@
 
 - MPOB FFB Reference Price is the ONLY authoritative benchmark
 - OER grading assigned by dealers must always be shown alongside MPOB benchmark for comparison
-- The rejected formula (CPO x 0.25 x 0.796) must NEVER be implemented
+- The rejected unofficial dealer formula (CPO x 0.2? x 0.7?) must NEVER be implemented
 - Community-contributed data (Module 5) must use median, not mean, to resist manipulation
 - All dealer names in community layer must be hashed, never stored in plaintext
 - Data freshness must always be visible: GREEN (<6h), AMBER (6-12h), RED (>12h)

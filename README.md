@@ -37,7 +37,7 @@ Price/mt = MPOB Price_1% x Graded_OER%
 Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 `RM 42.77 x 18 = RM 769.86/tonne`
 
-> **Rejected Formula:** `CPO x 0.25 x 0.796` — This uses unverifiable constants (0.796 origin unknown, 0.25 is a rough estimate). Permanently excluded from SawitSense to protect data integrity.
+> **Rejected Formula:** `CPO x 0.2? x 0.7?` — An unofficial shorthand circulating among dealers using unverifiable constants of unknown origin. Permanently excluded from SawitSense to protect data integrity.
 
 ---
 
@@ -132,7 +132,7 @@ SawitSenseMY/
 
 | Agent | Role | Platform |
 |-------|------|----------|
-| **Alton** | Human Orchestrator, Founder, Smallholder (50 acres) | Human |
+| **Alton** | Human Orchestrator, Founder, Smallholder (~5 acres) | Human |
 | **SS** | CTO, Intelligence Tracker | Claude.ai |
 | **QQ** | CSO, Execution Lead | Qoder |
 

@@ -8,7 +8,7 @@
       "from_agent": "SS",
       "to_agent": "QQ",
       "phase": "Phase 0 Complete -> Phase 1 Execution",
-      "summary": "Genesis brainstorming complete. Product vision defined. 5 modules scoped. Tech stack confirmed. Two real FFB receipts analyzed — confirmed MPOB formula (Price/mt = Price_1% x Graded_OER%), rejected friend formula (CPO x 0.25 x 0.796). OER grading identified as the real information asymmetry. Trinity validated: 8.4/10 for prototype-first strategy. Master Prompt at v1.2.",
+      "summary": "Genesis brainstorming complete. Product vision defined. 5 modules scoped. Tech stack confirmed. Two real FFB receipts analyzed — confirmed MPOB formula (Price/mt = Price_1% x Graded_OER%), rejected unofficial dealer formula (CPO x 0.2? x 0.7?). OER grading identified as the real information asymmetry. Trinity validated: 8.4/10 for prototype-first strategy. Master Prompt at v1.2.",
       "decisions_locked": [
         "Name: SawitSense (Sawit Kita, Harga Kita)",
         "Primary user: Malaysian oil palm smallholder",
@@ -20,7 +20,7 @@
         "Module 5 (Dealer Map): deferred to last phase",
         "Sales Journal: local storage default, cloud opt-in",
         "Scraper health monitor + fallback from Day 1",
-        "Rejected formula: CPO x 0.25 x 0.796 permanently excluded",
+        "Rejected formula: CPO x 0.2? x 0.7? permanently excluded",
         "OER grading is the real problem, not CPO price"
       ],
       "next_steps": [
