@@ -1,6 +1,12 @@
 # SawitSense MY
 
-**Sawit Kita, Harga Kita** | Open-Source CPO Price Tracker & OER Signal
+<p align="center">
+  <img src="docs/logo.png" alt="SawitSense MY Logo" width="200">
+</p>
+
+<p align="center">
+  <strong>Sawit Kita, Harga Kita</strong> | Open-Source CPO Price Tracker & OER Signal
+</p>
 
 ---
 
