@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 dist/
-build/
 .venv/
 venv/
 
@@ -26,10 +25,16 @@ service-account*.json
 .DS_Store
 Thumbs.db
 
-# Flutter
-.dart_tool/
-.packages
-build/
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+!frontend/pubspec.lock
 
 # Data (keep gitkeep, ignore actual data except latest)
 !backend/data/.gitkeep
