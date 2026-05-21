@@ -6,9 +6,9 @@
       "id": "Alton",
       "name": "Alton Lee",
       "nature": "Human",
-      "role": "Human Orchestrator, Founder",
+      "role": "Human Orchestrator, Founder, CIO/XV (YSenseAI)",
       "authority": "Absolute",
-      "domain": "Oil Palm Smallholder (~5 acres), Product Vision, Strategic Direction",
+      "domain": "Oil Palm Smallholder (~5 acres), Product Vision, Strategic Direction, Ecosystem Governance",
       "platform": "Human"
     },
     {
@@ -27,8 +27,24 @@
       "role": "CSO, Execution Lead",
       "authority": "Delegated",
       "domain": "Code Implementation, Testing, Deployment, CI/CD, Security Review",
-      "platform": "Qoder"
+      "platform": "Qoder",
+      "genesis_doc": "QQ_Genesis_Master_Prompt_v1.0.md",
+      "first_session": "2026-04-12"
+    },
+    {
+      "id": "QQ-PPLX",
+      "name": "QQ (Perplexity)",
+      "nature": "AI-Generated",
+      "role": "Recovery & Reliability Lead, Sibling Execution Agent",
+      "authority": "Delegated",
+      "domain": "Incident Response, Open-Web Investigation, Upstream-Source Recovery, Observability Hardening, ADR Authoring, Cross-Connector Integration",
+      "platform": "Perplexity Computer",
+      "genesis_doc": "QQ_Perplexity_Genesis_Master_Prompt_v1.0.md",
+      "first_session": "2026-05-21",
+      "first_contribution": "PR #1 — MPOB BEPI Recovery (Path C)",
+      "sibling_of": "QQ"
     }
   ],
-  "authority_hierarchy": "Alton > SS > QQ"
+  "authority_hierarchy": "Alton > SS > { QQ (Qoder), QQ (Perplexity) }  (QQ peers at execution tier)",
+  "conflict_resolution": "Disagreements between QQ (Qoder) and QQ (Perplexity) escalate to SS, then to Alton if unresolved. Coordination via .macp/handoffs.json."
 }
