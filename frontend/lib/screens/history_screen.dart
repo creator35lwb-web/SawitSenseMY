@@ -41,7 +41,11 @@ class HistoryScreen extends ConsumerWidget {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            // Bottom padding accounts for the persistent NavigationBar so
+            // the chart + history list never hide behind it; see live-audit
+            // 21 May 2026.
+            padding: EdgeInsets.fromLTRB(
+                16, 16, 16, MediaQuery.viewPaddingOf(context).bottom + 96),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

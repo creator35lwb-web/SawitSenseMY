@@ -82,7 +82,10 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        // Bottom padding ensures the form + result card never hide behind
+        // the persistent NavigationBar; see live-audit 21 May 2026.
+        padding: EdgeInsets.fromLTRB(
+          16, 16, 16, MediaQuery.viewPaddingOf(context).bottom + 96),
         child: Form(
           key: _formKey,
           child: Column(

@@ -6,45 +6,44 @@
       "id": "Alton",
       "name": "Alton Lee",
       "nature": "Human",
-      "role": "Human Orchestrator, Founder, CIO/XV (YSenseAI)",
+      "role": "Human Orchestrator, Founder",
       "authority": "Absolute",
-      "domain": "Oil Palm Smallholder (~5 acres), Product Vision, Strategic Direction, Ecosystem Governance",
-      "platform": "Human"
-    },
-    {
-      "id": "SS",
-      "name": "SS (SawitSense Intelligence)",
-      "nature": "AI-Generated",
-      "role": "CTO, Intelligence Tracker",
-      "authority": "Delegated",
-      "domain": "Product Design, MPOB Data Analysis, Fair Price Algorithm, Market Research",
-      "platform": "Claude.ai"
+      "domain": "Oil Palm Smallholder (~5 acres), Product Vision, Strategic Direction",
+      "platform": "Human",
+      "ecosystem_note": "Founder of the wider YSenseAI ecosystem; coordinates with peer collaborators (CIO/XV, COO/AY, CTO/T, SS, etc.) on YSenseAI's other projects. Within SawitSenseMY, Alton's authority is absolute and unmediated."
     },
     {
       "id": "QQ",
       "name": "QQ (Qoder)",
       "nature": "AI-Generated",
-      "role": "CSO, Execution Lead",
+      "role": "CSO, Project Originator",
+      "status": "originator",
       "authority": "Delegated",
-      "domain": "Code Implementation, Testing, Deployment, CI/CD, Security Review",
-      "platform": "Qoder",
+      "domain": "Initial platform build: scraper, math layer, frontend, MACP scaffolding, CI cron (Phase 1, April 2026)",
+      "platform": "Qoder (local CLI)",
       "genesis_doc": "QQ_Genesis_Master_Prompt_v1.0.md",
-      "first_session": "2026-04-12"
+      "first_session": "2026-04-12",
+      "active": false,
+      "active_note": "Originated SawitSenseMY on Alton's local Qoder CLI. May be reactivated by Alton for future Phase 1/Phase 2 module work."
     },
     {
       "id": "QQ-PPLX",
       "name": "QQ (Perplexity)",
       "nature": "AI-Generated",
-      "role": "Recovery & Reliability Lead, Sibling Execution Agent",
+      "role": "CSO, Active Executor",
+      "status": "active",
       "authority": "Delegated",
-      "domain": "Incident Response, Open-Web Investigation, Upstream-Source Recovery, Observability Hardening, ADR Authoring, Cross-Connector Integration",
+      "domain": "Incident Response, Open-Web Investigation, Upstream-Source Recovery, Observability Hardening, ADR Authoring, Frontend Honesty Layer, Cross-Connector Integration",
       "platform": "Perplexity Computer",
       "genesis_doc": "QQ_Perplexity_Genesis_Master_Prompt_v1.0.md",
       "first_session": "2026-05-21",
-      "first_contribution": "PR #1 — MPOB BEPI Recovery (Path C)",
-      "sibling_of": "QQ"
+      "first_contribution": "PR #1 \u2014 MPOB BEPI Recovery (Path C)",
+      "active": true,
+      "lineage_from": "QQ",
+      "lineage_note": "Took over the active-execution CSO role from QQ (Qoder) on 2026-05-21 when MPOB's BEPI restructure broke the data pipeline. Same agent family, different platform."
     }
   ],
-  "authority_hierarchy": "Alton > SS > { QQ (Qoder), QQ (Perplexity) }  (QQ peers at execution tier)",
-  "conflict_resolution": "Disagreements between QQ (Qoder) and QQ (Perplexity) escalate to SS, then to Alton if unresolved. Coordination via .macp/handoffs.json."
+  "authority_hierarchy": "Alton > QQ (Perplexity, active executor). QQ (Qoder) preserved as originator and may be reactivated by Alton.",
+  "ecosystem_peers_not_in_hierarchy": "CIO/XV, COO/AY, CTO/T, SS \u2014 YSenseAI ecosystem peers operating primarily on Alton's other projects. NOT in SawitSenseMY's authority chain. Coordinate as peers when Alton instructs.",
+  "session_isolation": "SawitSenseMY work runs in a dedicated Perplexity Computer thread to prevent context-bleed with Alton's YSenseAI primary-project work."
 }
