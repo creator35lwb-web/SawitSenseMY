@@ -46,9 +46,37 @@ class RegionPriceCard extends ConsumerWidget {
             size: 22,
           ),
         ),
-        title: Text(
-          regionName,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+        title: Row(
+          children: [
+            Flexible(
+              child: Text(
+                regionName,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (regionalPrice.isIndicative) ...[
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.deepOrange.shade50,
+                  border: Border.all(
+                      color: Colors.deepOrange.shade300, width: 0.8),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  tr('indicative_chip'),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.deepOrange.shade800,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         subtitle: Text(
           '${tr('source')}: ${regionalPrice.source}',

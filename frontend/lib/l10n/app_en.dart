@@ -20,6 +20,17 @@ const Map<String, String> enStrings = {
   'source': 'Source',
   'no_data': 'No price data available',
   'demo_banner': 'Showing demo data — live data loads from MPOB BEPI',
+
+  // Indicative-mode banner (Path C — see ADR-001)
+  'indicative_banner_headline':
+      'Indicative prices — not official MPOB FFB Reference Price',
+  'indicative_banner_body':
+      'MPOB has moved the Daily FFB Reference Price behind a licensee login. '
+      'Until restored, regional prices shown are derived from MPOC daily CPO '
+      'settlement and MPOB monthly OER. Use as guidance, not as a legal benchmark.',
+  'indicative_banner_learn_more': 'Learn more (ADR-001)',
+  'indicative_banner_link_copied': 'ADR-001 link copied to clipboard',
+  'indicative_chip': 'Indicative',
   'region_north': 'North',
   'region_south': 'South',
   'region_central': 'Central',

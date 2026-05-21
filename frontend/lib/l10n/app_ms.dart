@@ -20,6 +20,18 @@ const Map<String, String> msStrings = {
   'source': 'Sumber',
   'no_data': 'Tiada data harga tersedia',
   'demo_banner': 'Data demo — data langsung dari MPOB BEPI',
+
+  // Sepanduk mod indikatif (Laluan C — lihat ADR-001)
+  'indicative_banner_headline':
+      'Harga indikatif — bukan Harga Rujukan BTS rasmi MPOB',
+  'indicative_banner_body':
+      'MPOB telah mengalihkan Harga Rujukan BTS Harian ke laluan log masuk pelesen. '
+      'Sementara dipulihkan, harga wilayah yang dipaparkan diterbitkan daripada harga '
+      'penyelesaian CPO harian MPOC dan OER bulanan MPOB. Gunakan sebagai panduan, '
+      'bukan penanda aras sah.',
+  'indicative_banner_learn_more': 'Ketahui lebih lanjut (ADR-001)',
+  'indicative_banner_link_copied': 'Pautan ADR-001 disalin ke papan keratan',
+  'indicative_chip': 'Indikatif',
   'region_north': 'Utara',
   'region_south': 'Selatan',
   'region_central': 'Tengah',

@@ -9,12 +9,22 @@ class RegionalPrice {
   final String date;
   final double price1PctOer;
   final String source;
+  /// True when this regional value is derived (Path C indicative pipeline),
+  /// not the authoritative MPOB FFB Reference Price. See ADR-001.
+  final bool isIndicative;
+  /// Optional MPOB monthly OER % used in the indicative derivation.
+  final double? indicativeOerPct;
+  /// Indicative fair price per tonne when paired with the indicative OER.
+  final double? indicativeFairPricePerTonne;
 
   const RegionalPrice({
     required this.region,
     required this.date,
     required this.price1PctOer,
     this.source = 'MPOB BEPI',
+    this.isIndicative = false,
+    this.indicativeOerPct,
+    this.indicativeFairPricePerTonne,
   });
 
   factory RegionalPrice.fromJson(Map<String, dynamic> json) {
@@ -23,6 +33,10 @@ class RegionalPrice {
       date: json['date'] as String? ?? '',
       price1PctOer: (json['price_1pct_oer'] as num?)?.toDouble() ?? 0.0,
       source: json['source'] as String? ?? 'MPOB BEPI',
+      isIndicative: json['is_indicative'] as bool? ?? false,
+      indicativeOerPct: (json['indicative_oer_pct'] as num?)?.toDouble(),
+      indicativeFairPricePerTonne:
+          (json['indicative_fair_price_per_tonne'] as num?)?.toDouble(),
     );
   }
 }
@@ -52,12 +66,15 @@ class FfbPriceData {
   final List<RegionalPrice> regions;
   final double? cpoPrice;
   final String source;
+  /// True when the whole FFB block is derived (Path C). See ADR-001.
+  final bool isIndicative;
 
   const FfbPriceData({
     required this.date,
     required this.regions,
     this.cpoPrice,
     this.source = 'MPOB BEPI',
+    this.isIndicative = false,
   });
 
   factory FfbPriceData.fromJson(Map<String, dynamic> json) {
@@ -70,16 +87,30 @@ class FfbPriceData {
       regions: regionsList,
       cpoPrice: (json['cpo_price'] as num?)?.toDouble(),
       source: json['source'] as String? ?? 'MPOB BEPI',
+      isIndicative: json['is_indicative'] as bool? ?? false,
     );
   }
 }
 
+/// Snapshot-level metadata describing the *honesty posture* of the payload.
+/// When `isIndicative` is true, the UI must surface the [IndicativeBanner] so
+/// smallholders are told the values are guidance, not the authoritative MPOB
+/// FFB Reference Price (see ADR-001).
 class PriceSnapshot {
   final CpoPrice? cpo;
   final FfbPriceData? ffb;
   final String scrapedAt;
   final String updatedAt;
   final bool success;
+  /// True when the backend ran in Path C (indicative) mode.
+  final bool isIndicative;
+  /// Optional human-readable explanation of why the data is indicative.
+  /// Populated by backend `run_scraper.py` when isIndicative is true.
+  final String? indicativeNotice;
+  /// Data-source version emitted by the backend orchestrator.
+  final String? dataSourceVersion;
+  /// Backend formula status: 'AUTHORITATIVE' or 'INDICATIVE'.
+  final String? formulaStatus;
 
   const PriceSnapshot({
     this.cpo,
@@ -87,6 +118,10 @@ class PriceSnapshot {
     required this.scrapedAt,
     required this.updatedAt,
     required this.success,
+    this.isIndicative = false,
+    this.indicativeNotice,
+    this.dataSourceVersion,
+    this.formulaStatus,
   });
 
   factory PriceSnapshot.fromJson(Map<String, dynamic> json) {
@@ -100,6 +135,10 @@ class PriceSnapshot {
       scrapedAt: json['scraped_at'] as String? ?? '',
       updatedAt: json['updated_at'] as String? ?? '',
       success: json['success'] as bool? ?? false,
+      isIndicative: json['is_indicative'] as bool? ?? false,
+      indicativeNotice: json['indicative_notice'] as String?,
+      dataSourceVersion: json['data_source_version'] as String?,
+      formulaStatus: json['formula_status'] as String?,
     );
   }
 }
