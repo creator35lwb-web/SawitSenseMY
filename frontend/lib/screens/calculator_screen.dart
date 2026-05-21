@@ -11,6 +11,7 @@ import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/indicative_banner.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
   const CalculatorScreen({super.key});
@@ -96,7 +97,21 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+
+              // Indicative-mode compact banner (Path C — ADR-001).
+              // Shown when the loaded snapshot is in indicative mode, because
+              // the auto-filled Price_1% comes from the SawitSense-derived
+              // value, not the authoritative MPOB FFB Reference Price.
+              priceAsync.maybeWhen(
+                data: (snapshot) => snapshot.isIndicative
+                    ? const Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: IndicativeBanner(compact: true),
+                      )
+                    : const SizedBox.shrink(),
+                orElse: () => const SizedBox.shrink(),
+              ),
 
               // Region selector
               priceAsync.when(

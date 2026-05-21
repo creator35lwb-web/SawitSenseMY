@@ -11,6 +11,7 @@ import '../widgets/region_price_card.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/feedback_button.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/indicative_banner.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -74,6 +75,12 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   ),
                 if (isDemo) const SizedBox(height: 16),
+
+                // Indicative-mode banner (Path C — ADR-001)
+                if (snapshot.isIndicative) ...[
+                  const IndicativeBanner(),
+                  const SizedBox(height: 16),
+                ],
 
                 // CPO Spot Price card
                 _CpoCard(snapshot: snapshot),
