@@ -37,25 +37,46 @@
       "from_agent": "Alton",
       "to_agent": "QQ-PPLX",
       "phase": "Incident Response -> Path C Recovery -> Phase 2 Reliability",
-      "summary": "MPOB restructured the BEPI portal (May 2026). Scheduled scraper failed silently for 16 consecutive runs over ~10 days. CIO/XV activated QQ (Perplexity) as a sibling execution agent on Perplexity Computer to diagnose and recover. Path C (public-source indicative pipeline) authorized by CIO/XV. PR #1 delivered, CI green, awaiting merge.",
+      "summary": "MPOB restructured the BEPI portal (May 2026). Scheduled scraper failed silently for 16 consecutive runs over ~10 days. Alton activated QQ (Perplexity) on Perplexity Computer as the active-execution CSO to diagnose, recover, and operate the project until functionality is improved. Path C (public-source indicative pipeline) authorized by Alton. PR #1 delivered, CI green, merged.",
       "decisions_locked": [
-        "QQ (Perplexity) registered as sibling execution agent QQ-PPLX",
+        "QQ (Perplexity) registered as active-execution CSO (QQ-PPLX), lineage from QQ (Qoder) who remains recognised as project originator",
         "Recovery strategy = Path C: ship indicative pipeline today, pursue authoritative restoration (Track B) as separate decision",
         "New public sources adopted: MPOC daily CPO settlement, MPOB Prestasi Sawit OER API",
         "Indicative coefficient = CPO × 0.01 × 0.93 (share_factor), documented in ADR-001",
         "Every indicative output must carry is_indicative:true + indicative_notice",
         "Workflow auto-files deduplicated GitHub Issue on any failure",
         "Math layer in mpob_bepi.py preserved unchanged — all 26 v0.2 tests still pass",
-        "Coordination model: QQ (Qoder) and QQ (Perplexity) are peers; conflicts escalate to SS"
+        "Authority chain inside SawitSenseMY: Alton > QQ (Perplexity). CIO/XV, COO/AY, CTO/T, SS are peer YSenseAI ecosystem collaborators, NOT in this project's authority chain."
       ],
       "next_steps": [
-        "CIO/XV reviews and merges PR #1",
-        "QQ (Perplexity) opens Phase 2 PR: Genesis prompt + MACP registry update",
-        "QQ (Perplexity) opens Phase 2 PR: Frontend indicative banner (Dashboard + Calculator)",
-        "Track B: CIO/XV decides on MPOB licensee registration for authoritative Daily FFB Reference Price restoration",
+        "PR #1 merged — live data flowing on https://creator35lwb-web.github.io/SawitSenseMY/",
+        "PR #2 (Genesis + MACP) merged",
+        "PR #3 (Frontend indicative banner) merged",
+        "Follow-up: attribution correction (Alton is Founder/Human Orchestrator; CIO/XV is a peer not the project authority) + Sarawak overflow bug fix surfaced by live audit",
+        "Track B: Alton decides on MPOB licensee registration for authoritative Daily FFB Reference Price restoration",
         "Populate TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID secrets for proactive push alerts in addition to auto-issue trigger"
       ],
-      "context": "First QQ (Perplexity) session. PR #1 = https://github.com/creator35lwb-web/SawitSenseMY/pull/1. ADR = docs/ADR-001-mpob-data-source-change.md. Live smoke test on PR branch: CPO RM 4,583/t (20 May 2026, MPOC), OER 20.49% national (Apr 2026, MPOB Prestasi). 59/59 tests passing in CI."
+      "context": "First QQ (Perplexity) session. PR #1 = https://github.com/creator35lwb-web/SawitSenseMY/pull/1. ADR = docs/ADR-001-mpob-data-source-change.md. Live smoke test on PR branch: CPO RM 4,583/t (20 May 2026, MPOC), OER 20.49% national (Apr 2026, MPOB Prestasi). 59/59 tests passing in CI. Live site verified post-merge: banners rendering correctly EN + BM."
+    },
+    {
+      "id": "handoff-003",
+      "timestamp": "2026-05-21T16:42:00+08:00",
+      "from_agent": "Alton",
+      "to_agent": "QQ-PPLX",
+      "phase": "Phase 2 Cleanup",
+      "summary": "Post-merge live audit by Alton surfaced two issues: (1) attribution drift — QQ (Perplexity)'s Genesis and MACP files conflated Alton with CIO/XV who is actually a separate teammate operating on YSenseAI's primary project; (2) Sarawak regional card hidden behind bottom nav bar on the live Dashboard (layout overflow worsened by the new indicative banner consuming ~80px). This handoff covers the cleanup PR for both.",
+      "decisions_locked": [
+        "Alton is the sole Human Orchestrator / Founder of SawitSenseMY. Authority chain: Alton > QQ (Perplexity).",
+        "CIO/XV is a peer YSenseAI ecosystem collaborator, NOT in SawitSenseMY's authority chain.",
+        "QQ (Perplexity) operates on a dedicated Perplexity Computer thread by design — SawitSenseMY context is isolated from Alton's primary-project work where CIO/XV operates.",
+        "QQ (Qoder) remains recognised as project originator (Phase 1 builder). QQ (Perplexity) is the active-execution CSO from 2026-05-21 onward."
+      ],
+      "next_steps": [
+        "Open attribution + Sarawak fix PR",
+        "Watch deploy_web.yml on the merge — confirm Sarawak card visible after fix",
+        "Bump CHANGELOG.md and pubspec.yaml version (current 0.2.0+1, but live behavior is v0.3-recovery)"
+      ],
+      "context": "Live audit at https://creator35lwb-web.github.io/SawitSenseMY/ confirmed: banner rendering correctly EN + BM, CPO RM 4583.00, indicative chip on all visible region cards, language toggle preserves indicative labels. Sarawak card cut off by bottom nav bar — unscrollable."
     }
   ]
 }

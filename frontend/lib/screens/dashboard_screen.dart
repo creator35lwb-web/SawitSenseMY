@@ -42,8 +42,14 @@ class DashboardScreen extends ConsumerWidget {
         ),
         data: (snapshot) {
           final isDemo = isDemoAsync.valueOrNull ?? true;
+          // Bottom padding accounts for the persistent NavigationBar (~80px)
+          // plus the platform safe-area inset, so the last region card
+          // (Sarawak) is never hidden behind the bottom nav. See live-audit
+          // 21 May 2026.
+          final bottomInset =
+              MediaQuery.viewPaddingOf(context).bottom + 96;
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.fromLTRB(16, 16, 16, bottomInset),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
