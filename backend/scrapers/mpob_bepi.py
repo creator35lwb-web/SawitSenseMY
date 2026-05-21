@@ -216,8 +216,8 @@ class MPOBScraper:
 
             return CPOPrice(date=date_text, price_myr_per_tonne=price)
 
-        except requests.RequestException as e:
-            logger.error(f"Failed to scrape CPO price: {e}")
+        except requests.RequestException:
+            logger.exception("Failed to scrape CPO price")
             return None
 
     def scrape_ffb_prices(self) -> Optional[FFBPriceData]:
@@ -279,8 +279,8 @@ class MPOBScraper:
 
             return ffb_data
 
-        except requests.RequestException as e:
-            logger.error(f"Failed to scrape FFB prices: {e}")
+        except requests.RequestException:
+            logger.exception("Failed to scrape FFB prices")
             return None
 
     def scrape_all(self) -> dict:

@@ -7,7 +7,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from run_scraper import build_payload, indicative_price_1pct, DEFAULT_INDICATIVE_SHARE_FACTOR
+import pytest
+
+from run_scraper import build_payload, indicative_price_1pct  # noqa: E402
 from scrapers.mpoc_cpo import MPOCDailyCPO
 from scrapers.mpob_oer import OERSnapshot, StateOER
 
@@ -20,10 +22,10 @@ class TestIndicativePrice1Pct:
         assert abs(p1 - 24.40) < 0.05
 
     def test_zero_cpo(self):
-        assert indicative_price_1pct(0) == 0.0
+        assert indicative_price_1pct(0) == pytest.approx(0.0)
 
     def test_negative_cpo_rejected(self):
-        assert indicative_price_1pct(-100) == 0.0
+        assert indicative_price_1pct(-100) == pytest.approx(0.0)
 
 
 class TestBuildPayload:
@@ -51,8 +53,8 @@ class TestBuildPayload:
         assert payload["success"] is True
         assert payload["is_indicative"] is True
         assert payload["formula_status"] == "INDICATIVE"
-        assert payload["cpo"]["price_myr_per_tonne"] == 4583.0
-        assert payload["oer"]["oer_malaysia"] == 20.49
+        assert payload["cpo"]["price_myr_per_tonne"] == pytest.approx(4583.0)
+        assert payload["oer"]["oer_malaysia"] == pytest.approx(20.49)
         assert payload["ffb"] is not None
         regions = {r["region"]: r for r in payload["ffb"]["regions"]}
         assert set(regions.keys()) == {"North", "South", "Central", "East Coast", "Sabah", "Sarawak"}
@@ -84,4 +86,4 @@ class TestBuildPayload:
         payload = build_payload(None, None, False, fb)
         assert payload["success"] is True
         assert payload["fallback_used"] is True
-        assert payload["cpo"]["price_myr_per_tonne"] == 4500.0
+        assert payload["cpo"]["price_myr_per_tonne"] == pytest.approx(4500.0)

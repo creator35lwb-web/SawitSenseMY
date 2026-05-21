@@ -46,10 +46,10 @@ class TestParseMpocDate:
 
 class TestParsePriceNumber:
     def test_plain(self):
-        assert parse_price_number("4541") == 4541.0
+        assert parse_price_number("4541") == pytest.approx(4541.0)
 
     def test_comma_thousands(self):
-        assert parse_price_number("4,541") == 4541.0
+        assert parse_price_number("4,541") == pytest.approx(4541.0)
 
     def test_nt(self):
         assert parse_price_number("NT") is None
@@ -107,7 +107,7 @@ class TestScraperFlow:
         assert series is not None
         assert len(series.observations) == 3
         assert series.latest.date_iso == "2026-05-20"
-        assert series.latest.price_myr_per_tonne == 4583.0
+        assert series.latest.price_myr_per_tonne == pytest.approx(4583.0)
 
     def test_no_table_returns_none(self):
         scraper = MPOCDailyCPOScraper()

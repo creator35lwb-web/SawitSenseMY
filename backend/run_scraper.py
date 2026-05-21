@@ -23,6 +23,7 @@ import logging
 import sys
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from monitor.health_check import report_failure, report_success
 from scrapers.commodities_fallback import fetch_cpo_fallback
@@ -63,23 +64,29 @@ def indicative_price_1pct(cpo_price: float, share_factor: float = DEFAULT_INDICA
     return round(cpo_price * 0.01 * share_factor, 2)
 
 
-def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs):
-    """Compose the SawitSense data payload (matches frontend price_provider)."""
+INDICATIVE_NOTICE = (
+    "MPOB's daily FFB Reference Price tables moved behind a licensee "
+    "login (May 2026). Until restored, regional Price_1%OER values "
+    "shown are INDICATIVE \u2014 derived from MPOC daily CPO settlement "
+    "and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a "
+    "legal benchmark. Track restoration: ADR-001."
+)
+
+DERIVED_SOURCE_LABEL = "Derived (MPOC CPO \u00d7 MPOB OER)"
+DERIVED_FFB_SOURCE = "SawitSense derived (Path C)"
+
+
+def _empty_payload() -> dict:
+    """Initial payload skeleton with all Path C flags set."""
     now_iso = datetime.now(MYT).isoformat()
-    payload = {
+    return {
         "scraped_at": now_iso,
         "updated_at": now_iso,
         "success": False,
         "data_source_version": "0.3-recovery",
         "formula_status": "INDICATIVE",
         "is_indicative": True,
-        "indicative_notice": (
-            "MPOB's daily FFB Reference Price tables moved behind a licensee "
-            "login (May 2026). Until restored, regional Price_1%OER values "
-            "shown are INDICATIVE \u2014 derived from MPOC daily CPO settlement "
-            "and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a "
-            "legal benchmark. Track restoration: ADR-001."
-        ),
+        "indicative_notice": INDICATIVE_NOTICE,
         "cpo": None,
         "ffb": None,
         "oer": None,
@@ -88,74 +95,110 @@ def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs):
         "legacy_bepi_success": False,
     }
 
-    # --- CPO leg ---
+
+def _cpo_dict(cpo_obs) -> dict:
+    """Serialize an MPOCDailyCPO observation to the payload's cpo block."""
+    return {
+        "date": cpo_obs.date_iso,
+        "date_raw": cpo_obs.date_raw,
+        "price_myr_per_tonne": cpo_obs.price_myr_per_tonne,
+        "source": cpo_obs.source,
+        "source_url": cpo_obs.source_url,
+        "scraped_at": cpo_obs.scraped_at,
+    }
+
+
+def _oer_dict(oer_snap) -> dict:
+    """Serialize an OERSnapshot to the payload's oer block."""
+    return {
+        "year": oer_snap.year,
+        "month": oer_snap.month,
+        "oer_malaysia": oer_snap.oer_malaysia,
+        "oer_peninsular": oer_snap.oer_peninsular,
+        "oer_sabah": oer_snap.oer_sabah,
+        "oer_sarawak": oer_snap.oer_sarawak,
+        "mill_count": oer_snap.mill_count,
+        "region_avg": oer_snap.region_avg,
+        "states": [asdict(s) for s in oer_snap.states],
+        "source": oer_snap.source,
+        "source_url": oer_snap.source_url,
+        "scraped_at": oer_snap.scraped_at,
+    }
+
+
+def _resolve_region_oer(region: str, region_avg: dict, oer_block: dict) -> Optional[float]:
+    """Pick the OER % to use for a SawitSense region.
+
+    Preference order: region-specific weighted average -> national fallback
+    (Sabah/Sarawak get their own national OERs; all other regions fall back
+    to Peninsular).
+    """
+    explicit = region_avg.get(region)
+    if explicit is not None:
+        return explicit
+    if region == "Sabah":
+        return oer_block.get("oer_sabah")
+    if region == "Sarawak":
+        return oer_block.get("oer_sarawak")
+    return oer_block.get("oer_peninsular")
+
+
+def _derive_ffb_block(payload: dict) -> Optional[dict]:
+    """Build the indicative FFB regional block from the payload's cpo + oer."""
+    cpo_block = payload.get("cpo") or {}
+    cpo_price = cpo_block.get("price_myr_per_tonne")
+    if not cpo_price:
+        return None
+
+    p1 = indicative_price_1pct(cpo_price)
+    oer_block = payload.get("oer") or {}
+    region_avg = oer_block.get("region_avg") or {}
+
+    regions_out = []
+    for region in REGIONS:
+        oer_pct = _resolve_region_oer(region, region_avg, oer_block)
+        fair_price = round(p1 * float(oer_pct), 2) if oer_pct else None
+        regions_out.append({
+            "region": region,
+            "price_1pct_oer": p1,
+            "indicative_oer_pct": oer_pct,
+            "indicative_fair_price_per_tonne": fair_price,
+            "source": DERIVED_SOURCE_LABEL,
+            "is_indicative": True,
+        })
+
+    return {
+        "date": cpo_block.get("date"),
+        "regions": regions_out,
+        "cpo_price": cpo_price,
+        "is_indicative": True,
+        "source": DERIVED_FFB_SOURCE,
+    }
+
+
+def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs):
+    """Compose the SawitSense data payload (matches frontend price_provider).
+
+    Behavior is identical to v0.3-recovery initial. Refactored into helpers
+    for cognitive-complexity compliance — see SonarCloud python:S3776.
+    """
+    payload = _empty_payload()
+
+    # --- CPO leg (primary or fallback) ---
     if cpo_obs is not None:
-        payload["cpo"] = {
-            "date": cpo_obs.date_iso,
-            "date_raw": cpo_obs.date_raw,
-            "price_myr_per_tonne": cpo_obs.price_myr_per_tonne,
-            "source": cpo_obs.source,
-            "source_url": cpo_obs.source_url,
-            "scraped_at": cpo_obs.scraped_at,
-        }
+        payload["cpo"] = _cpo_dict(cpo_obs)
     elif fallback_obs is not None:
         payload["cpo"] = fallback_obs
         payload["fallback_used"] = True
 
     # --- OER leg ---
     if oer_snap is not None:
-        payload["oer"] = {
-            "year": oer_snap.year,
-            "month": oer_snap.month,
-            "oer_malaysia": oer_snap.oer_malaysia,
-            "oer_peninsular": oer_snap.oer_peninsular,
-            "oer_sabah": oer_snap.oer_sabah,
-            "oer_sarawak": oer_snap.oer_sarawak,
-            "mill_count": oer_snap.mill_count,
-            "region_avg": oer_snap.region_avg,
-            "states": [asdict(s) for s in oer_snap.states],
-            "source": oer_snap.source,
-            "source_url": oer_snap.source_url,
-            "scraped_at": oer_snap.scraped_at,
-        }
+        payload["oer"] = _oer_dict(oer_snap)
 
     # --- Derived FFB regional indicative benchmark ---
-    cpo_price = (payload.get("cpo") or {}).get("price_myr_per_tonne")
-    if cpo_price:
-        p1 = indicative_price_1pct(cpo_price)
-        regions_out = []
-        # Prefer region-specific OER when available; otherwise fall back to
-        # Peninsular/Sabah/Sarawak nationals.
-        region_avg = (payload.get("oer") or {}).get("region_avg") or {}
-        nat_pen = (payload.get("oer") or {}).get("oer_peninsular")
-        nat_sab = (payload.get("oer") or {}).get("oer_sabah")
-        nat_sar = (payload.get("oer") or {}).get("oer_sarawak")
-        for region in REGIONS:
-            oer_pct = region_avg.get(region)
-            if oer_pct is None:
-                if region == "Sabah":
-                    oer_pct = nat_sab
-                elif region == "Sarawak":
-                    oer_pct = nat_sar
-                else:
-                    oer_pct = nat_pen
-            regions_out.append({
-                "region": region,
-                "price_1pct_oer": p1,
-                "indicative_oer_pct": oer_pct,
-                "indicative_fair_price_per_tonne": (
-                    round(p1 * float(oer_pct), 2) if oer_pct else None
-                ),
-                "source": "Derived (MPOC CPO \u00d7 MPOB OER)",
-                "is_indicative": True,
-            })
-        payload["ffb"] = {
-            "date": (payload.get("cpo") or {}).get("date"),
-            "regions": regions_out,
-            "cpo_price": cpo_price,
-            "is_indicative": True,
-            "source": "SawitSense derived (Path C)",
-        }
+    ffb = _derive_ffb_block(payload)
+    if ffb is not None:
+        payload["ffb"] = ffb
 
     payload["success"] = bool(payload["cpo"] or payload["ffb"] or payload["oer"])
     payload["legacy_bepi_success"] = bool(legacy_attempt)

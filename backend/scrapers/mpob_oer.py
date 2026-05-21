@@ -31,23 +31,32 @@ logger = logging.getLogger(__name__)
 MYT = timezone(timedelta(hours=8))
 OER_API_URL = "https://prestasisawit.mpob.gov.my/api/oer"
 
+# Region labels — must match SawitSense's 6-region grid in scrapers.mpob_bepi.REGIONS
+# and the frontend Flutter PriceData model.
+REGION_NORTH = "North"
+REGION_SOUTH = "South"
+REGION_CENTRAL = "Central"
+REGION_EAST_COAST = "East Coast"
+REGION_SABAH = "Sabah"
+REGION_SARAWAK = "Sarawak"
+
 # MPOB state code -> (state name, SawitSense region)
 # Region mapping follows the README's 6-region grid; cross-checked against
 # MPOB Peninsular sub-region conventions used in their FFB Reference Price.
 STATE_REGION_MAP = {
-    "01": ("Johor",            "South"),
-    "02": ("Kedah",            "North"),
-    "03": ("Kelantan",         "East Coast"),
-    "04": ("Melaka",           "South"),
-    "05": ("Negeri Sembilan",  "South"),
-    "06": ("Pahang",           "East Coast"),
-    "07": ("Perak",            "North"),
-    "08": ("Perlis",           "North"),
-    "09": ("Pulau Pinang",     "North"),
-    "10": ("Selangor",         "Central"),
-    "11": ("Terengganu",       "East Coast"),
-    "12": ("Sabah",            "Sabah"),
-    "13": ("Sarawak",          "Sarawak"),
+    "01": ("Johor",            REGION_SOUTH),
+    "02": ("Kedah",            REGION_NORTH),
+    "03": ("Kelantan",         REGION_EAST_COAST),
+    "04": ("Melaka",           REGION_SOUTH),
+    "05": ("Negeri Sembilan",  REGION_SOUTH),
+    "06": ("Pahang",           REGION_EAST_COAST),
+    "07": ("Perak",            REGION_NORTH),
+    "08": ("Perlis",           REGION_NORTH),
+    "09": ("Pulau Pinang",     REGION_NORTH),
+    "10": ("Selangor",         REGION_CENTRAL),
+    "11": ("Terengganu",       REGION_EAST_COAST),
+    "12": ("Sabah",            REGION_SABAH),
+    "13": ("Sarawak",          REGION_SARAWAK),
 }
 
 DEFAULT_HEADERS = {
@@ -145,16 +154,16 @@ class MPOBOERScraper:
 
     def fetch(self, year: int, month: int) -> Optional[dict]:
         params = {"year": str(year), "month": f"{month:02d}"}
-        last_err: Optional[Exception] = None
         for attempt in range(self.max_retries + 1):
             try:
                 resp = self.session.get(OER_API_URL, params=params, timeout=self.timeout)
                 resp.raise_for_status()
                 return resp.json()
-            except (requests.RequestException, ValueError) as e:
-                last_err = e
-                logger.warning(f"OER fetch attempt {attempt + 1} failed: {e}")
-        logger.error(f"OER fetch failed after retries: {last_err}")
+            except (requests.RequestException, ValueError):
+                logger.warning(
+                    f"OER fetch attempt {attempt + 1} failed", exc_info=True
+                )
+        logger.error("OER fetch failed after retries")
         return None
 
     def scrape(
@@ -166,63 +175,101 @@ class MPOBOERScraper:
 
         Default month = "last full month" (MPOB publishes in arrears). If that
         month returns empty, fall back month-by-month for up to 3 months.
+        Refactored into helpers to satisfy SonarCloud python:S3776.
         """
         if year is None or month is None:
             year, month = _latest_available_month()
 
-        for back_off in range(3):  # try requested month, then 1mo, 2mo earlier
-            y, m = year, month - back_off
-            while m <= 0:
-                m += 12
-                y -= 1
-            payload = self.fetch(y, m)
-            if not payload:
-                continue
-            perf = payload.get("performance_data") or []
-            state_rows = payload.get("state_data") or []
-            if not perf or not state_rows:
-                logger.info(f"OER {y}-{m:02d}: empty payload, falling back further")
-                continue
-
-            p0 = perf[0]
-            states: list[StateOER] = []
-            for r in state_rows:
-                code = str(r.get("negeri", "")).zfill(2)
-                if code not in STATE_REGION_MAP:
-                    continue
-                name, region = STATE_REGION_MAP[code]
-                try:
-                    states.append(StateOER(
-                        state_code=code,
-                        state_name=name,
-                        region=region,
-                        year=str(r.get("tahun", y)),
-                        month=str(r.get("bulan", f"{m:02d}")).zfill(2),
-                        oer_cpo=float(r.get("oer_cpo", 0) or 0),
-                        oer_cpko=float(r.get("oer_cpko", 0) or 0),
-                        cpo_proc_tonnes=float(r.get("cpo_proc", 0) or 0),
-                        ffb_proc_tonnes=float(r.get("ffb_proc", 0) or 0),
-                    ))
-                except (TypeError, ValueError) as e:
-                    logger.warning(f"OER row parse error for state {code}: {e}")
-
-            snap = OERSnapshot(
-                year=y,
-                month=m,
-                oer_malaysia=float(p0.get("oer_malaysia", 0) or 0),
-                oer_peninsular=float(p0.get("oer_peninsular", 0) or 0),
-                oer_sabah=float(p0.get("oer_sabah", 0) or 0),
-                oer_sarawak=float(p0.get("oer_sarawak", 0) or 0),
-                mill_count=int(p0.get("mill_count", 0) or 0),
-                states=states,
-                region_avg=_weighted_region_average(states),
-            )
-            logger.info(
-                f"OER {y}-{m:02d}: MY={snap.oer_malaysia}% "
-                f"Pen={snap.oer_peninsular}% Sabah={snap.oer_sabah}% "
-                f"Sarawak={snap.oer_sarawak}% (states={len(states)})"
-            )
-            return snap
+        for back_off in range(3):  # requested month, then 1mo, 2mo earlier
+            y, m = _normalize_month(year, month - back_off)
+            snap = self._try_month(y, m)
+            if snap is not None:
+                return snap
 
         logger.error("OER scrape: no usable data in last 3 months")
         return None
+
+    def _try_month(self, year: int, month: int) -> Optional[OERSnapshot]:
+        """Fetch + parse a single month. Returns None when month is empty."""
+        payload = self.fetch(year, month)
+        if not payload:
+            return None
+        perf = payload.get("performance_data") or []
+        state_rows = payload.get("state_data") or []
+        if not perf or not state_rows:
+            logger.info(f"OER {year}-{month:02d}: empty payload, falling back further")
+            return None
+
+        states = _parse_state_rows(state_rows, year, month)
+        snap = _build_snapshot(perf[0], year, month, states)
+        logger.info(
+            f"OER {year}-{month:02d}: MY={snap.oer_malaysia}% "
+            f"Pen={snap.oer_peninsular}% Sabah={snap.oer_sabah}% "
+            f"Sarawak={snap.oer_sarawak}% (states={len(states)})"
+        )
+        return snap
+
+
+# ----- Module-level helpers (kept out of the class so they're easy to test) -----
+
+def _normalize_month(year: int, month: int) -> tuple[int, int]:
+    """Wrap month <= 0 back into the previous year."""
+    y, m = year, month
+    while m <= 0:
+        m += 12
+        y -= 1
+    return y, m
+
+
+def _parse_state_row(
+    r: dict, fallback_year: int, fallback_month: int
+) -> Optional[StateOER]:
+    """Parse a single state row from the OER API response. Returns None on error."""
+    code = str(r.get("negeri", "")).zfill(2)
+    if code not in STATE_REGION_MAP:
+        return None
+    name, region = STATE_REGION_MAP[code]
+    try:
+        return StateOER(
+            state_code=code,
+            state_name=name,
+            region=region,
+            year=str(r.get("tahun", fallback_year)),
+            month=str(r.get("bulan", f"{fallback_month:02d}")).zfill(2),
+            oer_cpo=float(r.get("oer_cpo", 0) or 0),
+            oer_cpko=float(r.get("oer_cpko", 0) or 0),
+            cpo_proc_tonnes=float(r.get("cpo_proc", 0) or 0),
+            ffb_proc_tonnes=float(r.get("ffb_proc", 0) or 0),
+        )
+    except (TypeError, ValueError):
+        logger.warning(f"OER row parse error for state {code}", exc_info=True)
+        return None
+
+
+def _parse_state_rows(
+    state_rows: list, year: int, month: int
+) -> list[StateOER]:
+    """Parse the full state_data list, skipping malformed/unknown rows."""
+    out: list[StateOER] = []
+    for r in state_rows:
+        parsed = _parse_state_row(r, year, month)
+        if parsed is not None:
+            out.append(parsed)
+    return out
+
+
+def _build_snapshot(
+    p0: dict, year: int, month: int, states: list[StateOER]
+) -> OERSnapshot:
+    """Assemble an OERSnapshot from the API's performance_data[0] block."""
+    return OERSnapshot(
+        year=year,
+        month=month,
+        oer_malaysia=float(p0.get("oer_malaysia", 0) or 0),
+        oer_peninsular=float(p0.get("oer_peninsular", 0) or 0),
+        oer_sabah=float(p0.get("oer_sabah", 0) or 0),
+        oer_sarawak=float(p0.get("oer_sarawak", 0) or 0),
+        mill_count=int(p0.get("mill_count", 0) or 0),
+        states=states,
+        region_avg=_weighted_region_average(states),
+    )

@@ -61,7 +61,7 @@ class TestWeightedRegionAverage:
             StateOER("04", "Melaka", "South", "2026", "04", 22.0, 0, 0, 1000000),
         ]
         out = _weighted_region_average(states)
-        assert out["South"] == 21.0  # equal-weighted because FFB equal
+        assert out["South"] == pytest.approx(21.0)  # equal-weighted because FFB equal
 
 
 class TestScraperFlow:
@@ -79,13 +79,13 @@ class TestScraperFlow:
         assert snap is not None
         assert snap.year == 2026
         assert snap.month == 4
-        assert snap.oer_malaysia == 20.49
+        assert snap.oer_malaysia == pytest.approx(20.49)
         assert snap.mill_count == 450
         assert len(snap.states) == 4
         # Sabah region average must equal Sabah state OER
-        assert snap.region_avg["Sabah"] == 21.54
+        assert snap.region_avg["Sabah"] == pytest.approx(21.54)
         # Sarawak region average must equal Sarawak state OER
-        assert snap.region_avg["Sarawak"] == 20.42
+        assert snap.region_avg["Sarawak"] == pytest.approx(20.42)
 
     def test_empty_payload_falls_back(self):
         scraper = MPOBOERScraper()

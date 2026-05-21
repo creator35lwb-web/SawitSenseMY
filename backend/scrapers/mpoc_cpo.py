@@ -78,12 +78,14 @@ _MONTH_MAP = {
 }
 
 
-def parse_mpoc_date(raw: str, today: Optional[datetime] = None) -> Optional[str]:
+def parse_mpoc_date(
+    raw: Optional[str], today: Optional[datetime] = None
+) -> Optional[str]:
     """Parse MPOC short date format ('20 May 26') -> ISO 'YYYY-MM-DD'.
 
-    Returns None if the string is not parseable. Two-digit years are treated
-    as 2000+YY, with a sanity guard against years more than 1 year ahead of
-    'today' (defensive against typos on MPOC's page).
+    Returns None if the string is not parseable, empty, or None. Two-digit
+    years are treated as 2000+YY, with a sanity guard against years more
+    than 1 year ahead of 'today' (defensive against typos on MPOC's page).
     """
     if not raw:
         return None
@@ -109,7 +111,7 @@ def parse_mpoc_date(raw: str, today: Optional[datetime] = None) -> Optional[str]
         return None
 
 
-def parse_price_number(text: str) -> Optional[float]:
+def parse_price_number(text: Optional[str]) -> Optional[float]:
     """Parse MPOC price cell (e.g. '4,541' or '4541' or 'NT') -> float."""
     if not text:
         return None
@@ -148,16 +150,16 @@ class MPOCDailyCPOScraper:
         self.session.headers.update(DEFAULT_HEADERS)
 
     def fetch_html(self) -> Optional[str]:
-        last_err: Optional[Exception] = None
         for attempt in range(self.max_retries + 1):
             try:
                 resp = self.session.get(MPOC_URL, timeout=self.timeout)
                 resp.raise_for_status()
                 return resp.text
-            except requests.RequestException as e:
-                last_err = e
-                logger.warning(f"MPOC fetch attempt {attempt + 1} failed: {e}")
-        logger.error(f"MPOC fetch failed after {self.max_retries + 1} attempts: {last_err}")
+            except requests.RequestException:
+                logger.warning(
+                    f"MPOC fetch attempt {attempt + 1} failed", exc_info=True
+                )
+        logger.error(f"MPOC fetch failed after {self.max_retries + 1} attempts")
         return None
 
     def scrape(self) -> Optional[MPOCDailyCPOSeries]:
