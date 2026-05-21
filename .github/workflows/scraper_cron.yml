@@ -7,6 +7,14 @@ on:
     - cron: '30 8 * * 1-5'
   workflow_dispatch: # Manual trigger
 
+permissions:
+  contents: write  # commit data/ JSON
+  issues: write    # auto-file alert on consecutive failures
+
+concurrency:
+  group: sawitsense-scraper
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -27,6 +35,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run scraper
+        id: run_scraper
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SA_KEY }}
           COMMODITIES_API_KEY: ${{ secrets.COMMODITIES_API_KEY }}
@@ -44,3 +53,49 @@ jobs:
           git add backend/data/ || true
           git diff --staged --quiet || git commit -m "data: update prices $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push || true
+
+      - name: Open alert issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `[scraper] SawitSense MPOB scraper failed: ${context.runId}`;
+            const body = [
+              `The scheduled SawitSense scraper run \`${context.runId}\` failed.`,
+              ``,
+              `- Workflow: \`${context.workflow}\``,
+              `- Triggered by: \`${context.eventName}\``,
+              `- Time (UTC): \`${new Date().toISOString()}\``,
+              `- Logs: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              ``,
+              `Likely causes to check first:`,
+              `1. MPOC daily-prices page structure changed (\`scrapers/mpoc_cpo.py\`).`,
+              `2. MPOB Prestasi Sawit OER API contract changed (\`scrapers/mpob_oer.py\`).`,
+              `3. Network/runner outage.`,
+              ``,
+              `This issue was auto-filed by the workflow's failure-alert step to`,
+              `prevent silent decay. Close once the next scheduled run succeeds.`,
+              ``,
+              `cc @creator35lwb-web`,
+            ].join('\n');
+
+            // Avoid spamming: skip if an open alert issue already exists.
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'scraper-alert',
+              per_page: 5,
+            });
+            if (existing.data.length > 0) {
+              core.info(`Existing open scraper-alert issue #${existing.data[0].number} \u2014 not filing a duplicate.`);
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['scraper-alert', 'bug', 'automated'],
+            });

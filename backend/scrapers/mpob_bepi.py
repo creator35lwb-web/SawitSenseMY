@@ -1,11 +1,26 @@
 """MPOB BEPI Scraper for SawitSense.
 
-Scrapes CPO spot price and FFB Reference Price (6 regions) from
-MPOB's BEPI (Malaysian Palm Oil Board - BEPI portal).
+Historically scraped CPO spot price and FFB Reference Price (6 regions) from
+MPOB's BEPI portal at bepi.mpob.gov.my.
 
-Data updates: 8:30am and 4:30pm MYT on trading days (Mon-Fri).
+!! DATA-SOURCE NOTICE (recovery patch, May 2026)
+   MPOB restructured the BEPI portal. The daily FFB Reference Price tables
+   that this scraper depended on are now login-gated:
+     'PRIVILEGED ACCESS ONLY TO MPOB LICENSEES'
+   Both legacy URLs return HTTP 404 to anonymous clients. As a result this
+   module's network methods will fail gracefully and the pipeline now relies
+   on two public collectors in this same package:
+     - scrapers.mpoc_cpo  (daily CPO settlement RM/tonne)
+     - scrapers.mpob_oer  (monthly OER % per state, official MPOB API)
+   See docs/ADR-001-mpob-data-source-change.md for the full record.
 
-Author: QQ (Qoder CSO)
+   The pure-math helpers in this file (parse_price, calculate_fair_price,
+   get_price_verdict, oer_sensitivity) are SawitSense's core formula and are
+   preserved unchanged. They continue to be the single source of truth for
+   the Fair Price verdict.
+
+Original author: QQ (Qoder CSO)
+Recovery patch:  QQ (Perplexity) — on behalf of YSenseAI / CIO XV (May 2026)
 """
 
 import re
@@ -21,6 +36,8 @@ logger = logging.getLogger(__name__)
 
 MYT = timezone(timedelta(hours=8))
 
+# DEPRECATED — kept for archival reference and for tests that may pin them.
+# These now return HTTP 404 to anonymous traffic; do not use in production.
 MPOB_CPO_URL = "https://bepi.mpob.gov.my/index.php/en/statistics/price/daily.html"
 MPOB_FFB_URL = "https://bepi.mpob.gov.my/index.php/en/statistics/price/ffb.html"
 
@@ -155,9 +172,19 @@ class MPOBScraper:
         })
 
     def scrape_cpo_price(self) -> Optional[CPOPrice]:
-        """Scrape latest CPO spot price from MPOB BEPI."""
+        """Legacy CPO scraper — kept for compatibility, now expected to fail.
+
+        Returns None and logs a clear deprecation message. Callers should use
+        scrapers.mpoc_cpo.MPOCDailyCPOScraper instead.
+        """
         try:
             resp = self.session.get(MPOB_CPO_URL, timeout=self.timeout)
+            if resp.status_code == 404:
+                logger.info(
+                    "MPOB BEPI CPO URL returns 404 — endpoint deprecated. "
+                    "Use scrapers.mpoc_cpo for daily CPO settlement instead."
+                )
+                return None
             resp.raise_for_status()
 
             soup = BeautifulSoup(resp.text, "html.parser")
@@ -194,9 +221,22 @@ class MPOBScraper:
             return None
 
     def scrape_ffb_prices(self) -> Optional[FFBPriceData]:
-        """Scrape FFB Reference Prices (all 6 regions) from MPOB BEPI."""
+        """Legacy FFB Reference Price scraper — now login-gated upstream.
+
+        Returns None and logs a clear deprecation message. The authoritative
+        daily FFB Reference Price (RM per 1% OER, 6 regions) now requires an
+        MPOB licensee account; see ADR-001.
+        """
         try:
             resp = self.session.get(MPOB_FFB_URL, timeout=self.timeout)
+            if resp.status_code == 404:
+                logger.info(
+                    "MPOB BEPI FFB URL returns 404 — endpoint moved behind "
+                    "licensee login. Indicative regional benchmarks now come "
+                    "from scrapers.mpob_oer (monthly OER) combined with "
+                    "scrapers.mpoc_cpo (daily CPO settlement)."
+                )
+                return None
             resp.raise_for_status()
 
             soup = BeautifulSoup(resp.text, "html.parser")
