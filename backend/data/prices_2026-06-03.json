@@ -1,13 +1,75 @@
 {
-  "scraped_at": "2026-06-03T13:28:29.155552+08:00",
-  "updated_at": "2026-06-03T13:28:29.155805+08:00",
+  "scraped_at": "2026-06-04T13:23:42.048703+08:00",
+  "updated_at": "2026-06-04T13:23:42.049003+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
   "is_indicative": true,
   "indicative_notice": "MPOB's daily FFB Reference Price tables moved behind a licensee login (May 2026). Until restored, regional Price_1%OER values shown are INDICATIVE — derived from MPOC daily CPO settlement and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a legal benchmark. Track restoration: ADR-001.",
-  "cpo": null,
-  "ffb": null,
+  "cpo": {
+    "date": "2026-06-03",
+    "date_raw": "3 Jun 26",
+    "price_myr_per_tonne": 4677.0,
+    "source": "MPOC Daily Palm Oil Prices",
+    "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
+    "scraped_at": "2026-06-04T13:23:40.338081+08:00"
+  },
+  "ffb": {
+    "date": "2026-06-03",
+    "regions": [
+      {
+        "region": "North",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 19.54,
+        "indicative_fair_price_per_tonne": 849.99,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "South",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 20.24,
+        "indicative_fair_price_per_tonne": 880.44,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Central",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 19.38,
+        "indicative_fair_price_per_tonne": 843.03,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "East Coast",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 20.45,
+        "indicative_fair_price_per_tonne": 889.57,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Sabah",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 21.54,
+        "indicative_fair_price_per_tonne": 936.99,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Sarawak",
+        "price_1pct_oer": 43.5,
+        "indicative_oer_pct": 21.54,
+        "indicative_fair_price_per_tonne": 936.99,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      }
+    ],
+    "cpo_price": 4677.0,
+    "is_indicative": true,
+    "source": "SawitSense derived (Path C)"
+  },
   "oer": {
     "year": 2026,
     "month": 4,
@@ -148,7 +210,7 @@
     ],
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-06-03T13:28:29.154166+08:00"
+    "scraped_at": "2026-06-04T13:23:42.047449+08:00"
   },
   "fallback_used": false,
   "legacy_bepi_attempted": true,
