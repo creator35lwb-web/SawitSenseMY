@@ -1,27 +1,89 @@
 {
-  "scraped_at": "2026-06-09T19:35:25.101159+08:00",
-  "updated_at": "2026-06-09T19:35:25.101392+08:00",
+  "scraped_at": "2026-06-10T13:00:52.603811+08:00",
+  "updated_at": "2026-06-10T13:00:52.604030+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
   "is_indicative": true,
   "indicative_notice": "MPOB's daily FFB Reference Price tables moved behind a licensee login (May 2026). Until restored, regional Price_1%OER values shown are INDICATIVE — derived from MPOC daily CPO settlement and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a legal benchmark. Track restoration: ADR-001.",
-  "cpo": null,
-  "ffb": null,
+  "cpo": {
+    "date": "2026-06-09",
+    "date_raw": "9 Jun 26",
+    "price_myr_per_tonne": 4528.0,
+    "source": "MPOC Daily Palm Oil Prices",
+    "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
+    "scraped_at": "2026-06-10T13:00:50.818224+08:00"
+  },
+  "ffb": {
+    "date": "2026-06-09",
+    "regions": [
+      {
+        "region": "North",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 19.15,
+        "indicative_fair_price_per_tonne": 806.41,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "South",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 19.68,
+        "indicative_fair_price_per_tonne": 828.72,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Central",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 18.76,
+        "indicative_fair_price_per_tonne": 789.98,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "East Coast",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 20.18,
+        "indicative_fair_price_per_tonne": 849.78,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Sabah",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 21.25,
+        "indicative_fair_price_per_tonne": 894.84,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
+        "region": "Sarawak",
+        "price_1pct_oer": 42.11,
+        "indicative_oer_pct": 21.25,
+        "indicative_fair_price_per_tonne": 894.84,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      }
+    ],
+    "cpo_price": 4528.0,
+    "is_indicative": true,
+    "source": "SawitSense derived (Path C)"
+  },
   "oer": {
     "year": 2026,
-    "month": 4,
-    "oer_malaysia": 20.49,
-    "oer_peninsular": 20.1,
-    "oer_sabah": 21.54,
-    "oer_sarawak": 20.42,
-    "mill_count": 450,
+    "month": 5,
+    "oer_malaysia": 20.11,
+    "oer_peninsular": 19.68,
+    "oer_sabah": 21.25,
+    "oer_sarawak": 20.05,
+    "mill_count": 451,
     "region_avg": {
-      "South": 20.24,
-      "North": 19.54,
-      "East Coast": 20.45,
-      "Central": 19.38,
-      "Sarawak": 21.54
+      "South": 19.68,
+      "North": 19.15,
+      "East Coast": 20.18,
+      "Central": 18.76,
+      "Sarawak": 21.25
     },
     "states": [
       {
@@ -29,126 +91,126 @@
         "state_name": "Johor",
         "region": "South",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 20.24,
-        "oer_cpko": 46.57,
-        "cpo_proc_tonnes": 253959.19,
-        "ffb_proc_tonnes": 1254710.0
+        "month": "05",
+        "oer_cpo": 19.66,
+        "oer_cpko": 46.67,
+        "cpo_proc_tonnes": 240287.48,
+        "ffb_proc_tonnes": 1222169.25
       },
       {
         "state_code": "02",
         "state_name": "Kedah",
         "region": "North",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 19.22,
+        "month": "05",
+        "oer_cpo": 19.73,
         "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 21408.12,
-        "ffb_proc_tonnes": 111367.95
+        "cpo_proc_tonnes": 19778.89,
+        "ffb_proc_tonnes": 100228.69
       },
       {
         "state_code": "03",
         "state_name": "Kelantan",
         "region": "East Coast",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 21.56,
+        "month": "05",
+        "oer_cpo": 21.16,
         "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 29191.08,
-        "ffb_proc_tonnes": 135376.81
+        "cpo_proc_tonnes": 26320.12,
+        "ffb_proc_tonnes": 124373.47
       },
       {
         "state_code": "04",
         "state_name": "Melaka",
         "region": "South",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 20.41,
-        "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 5775.56,
-        "ffb_proc_tonnes": 28299.63
+        "month": "05",
+        "oer_cpo": 20.16,
+        "oer_cpko": 48.0,
+        "cpo_proc_tonnes": 8046.27,
+        "ffb_proc_tonnes": 39915.62
       },
       {
         "state_code": "05",
         "state_name": "Negeri Sembilan",
         "region": "South",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 20.23,
+        "month": "05",
+        "oer_cpo": 19.71,
         "oer_cpko": 44.0,
-        "cpo_proc_tonnes": 56215.69,
-        "ffb_proc_tonnes": 277929.78
+        "cpo_proc_tonnes": 46125.56,
+        "ffb_proc_tonnes": 234067.62
       },
       {
         "state_code": "06",
         "state_name": "Pahang",
         "region": "East Coast",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 20.29,
-        "oer_cpko": 47.05,
-        "cpo_proc_tonnes": 234532.17,
-        "ffb_proc_tonnes": 1155817.12
+        "month": "05",
+        "oer_cpo": 20.01,
+        "oer_cpko": 47.16,
+        "cpo_proc_tonnes": 215422.98,
+        "ffb_proc_tonnes": 1076475.0
       },
       {
         "state_code": "07",
         "state_name": "Perak",
         "region": "North",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 19.6,
-        "oer_cpko": 46.53,
-        "cpo_proc_tonnes": 166444.25,
-        "ffb_proc_tonnes": 849078.88
+        "month": "05",
+        "oer_cpo": 19.07,
+        "oer_cpko": 46.8,
+        "cpo_proc_tonnes": 149552.48,
+        "ffb_proc_tonnes": 784409.06
       },
       {
         "state_code": "09",
         "state_name": "Pulau Pinang",
         "region": "North",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 19.19,
+        "month": "05",
+        "oer_cpo": 19.31,
         "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 10456.5,
-        "ffb_proc_tonnes": 54492.56
+        "cpo_proc_tonnes": 10121.35,
+        "ffb_proc_tonnes": 52405.3
       },
       {
         "state_code": "10",
         "state_name": "Selangor",
         "region": "Central",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 19.38,
-        "oer_cpko": 46.04,
-        "cpo_proc_tonnes": 48703.22,
-        "ffb_proc_tonnes": 251265.38
+        "month": "05",
+        "oer_cpo": 18.76,
+        "oer_cpko": 45.96,
+        "cpo_proc_tonnes": 43459.35,
+        "ffb_proc_tonnes": 231627.31
       },
       {
         "state_code": "11",
         "state_name": "Terengganu",
         "region": "East Coast",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 20.63,
+        "month": "05",
+        "oer_cpo": 20.56,
         "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 38035.51,
-        "ffb_proc_tonnes": 184386.73
+        "cpo_proc_tonnes": 35729.48,
+        "ffb_proc_tonnes": 173756.34
       },
       {
         "state_code": "13",
         "state_name": "Sarawak",
         "region": "Sarawak",
         "year": "2026",
-        "month": "04",
-        "oer_cpo": 21.54,
-        "oer_cpko": 46.18,
-        "cpo_proc_tonnes": 381092.5,
-        "ffb_proc_tonnes": 1769521.5
+        "month": "05",
+        "oer_cpo": 21.25,
+        "oer_cpko": 42.53,
+        "cpo_proc_tonnes": 345186.84,
+        "ffb_proc_tonnes": 1624735.12
       }
     ],
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-06-09T19:35:25.099648+08:00"
+    "scraped_at": "2026-06-10T13:00:52.602512+08:00"
   },
   "fallback_used": false,
   "legacy_bepi_attempted": true,
