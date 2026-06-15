@@ -1,6 +1,6 @@
 {
-  "scraped_at": "2026-06-15T13:39:48.180557+08:00",
-  "updated_at": "2026-06-15T13:39:48.180746+08:00",
+  "scraped_at": "2026-06-15T22:41:39.757041+08:00",
+  "updated_at": "2026-06-15T22:41:39.757273+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
@@ -148,7 +148,7 @@
     ],
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-06-15T13:39:48.179249+08:00"
+    "scraped_at": "2026-06-15T22:41:39.755487+08:00"
   },
   "fallback_used": false,
   "legacy_bepi_attempted": true,
