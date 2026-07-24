@@ -1,155 +1,76 @@
 {
-  "scraped_at": "2026-07-23T11:55:07.786249+08:00",
-  "updated_at": "2026-07-23T11:55:07.786466+08:00",
+  "scraped_at": "2026-07-24T11:54:52.391740+08:00",
+  "updated_at": "2026-07-24T11:54:52.391780+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
   "is_indicative": true,
   "indicative_notice": "MPOB's daily FFB Reference Price tables moved behind a licensee login (May 2026). Until restored, regional Price_1%OER values shown are INDICATIVE — derived from MPOC daily CPO settlement and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a legal benchmark. Track restoration: ADR-001.",
-  "cpo": null,
-  "ffb": null,
-  "oer": {
-    "year": 2026,
-    "month": 6,
-    "oer_malaysia": 19.67,
-    "oer_peninsular": 19.46,
-    "oer_sabah": 20.88,
-    "oer_sarawak": 19.06,
-    "mill_count": 451,
-    "region_avg": {
-      "South": 19.64,
-      "North": 18.9,
-      "East Coast": 19.85,
-      "Central": 18.51,
-      "Sarawak": 20.88
-    },
-    "states": [
+  "cpo": {
+    "date": "2026-07-23",
+    "date_raw": "23 Jul 26",
+    "price_myr_per_tonne": 4710.0,
+    "source": "MPOC Daily Palm Oil Prices",
+    "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
+    "scraped_at": "2026-07-24T11:54:49.605017+08:00"
+  },
+  "ffb": {
+    "date": "2026-07-23",
+    "regions": [
       {
-        "state_code": "01",
-        "state_name": "Johor",
-        "region": "South",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 19.63,
-        "oer_cpko": 46.74,
-        "cpo_proc_tonnes": 279615.69,
-        "ffb_proc_tonnes": 1424465.0
-      },
-      {
-        "state_code": "02",
-        "state_name": "Kedah",
         "region": "North",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 20.35,
-        "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 25540.71,
-        "ffb_proc_tonnes": 125485.36
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
       },
       {
-        "state_code": "03",
-        "state_name": "Kelantan",
-        "region": "East Coast",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 21.11,
-        "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 28858.02,
-        "ffb_proc_tonnes": 136711.23
-      },
-      {
-        "state_code": "04",
-        "state_name": "Melaka",
         "region": "South",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 19.72,
-        "oer_cpko": 48.0,
-        "cpo_proc_tonnes": 8474.09,
-        "ffb_proc_tonnes": 42965.6
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
       },
       {
-        "state_code": "05",
-        "state_name": "Negeri Sembilan",
-        "region": "South",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 19.67,
-        "oer_cpko": 44.0,
-        "cpo_proc_tonnes": 54117.04,
-        "ffb_proc_tonnes": 275087.91
-      },
-      {
-        "state_code": "06",
-        "state_name": "Pahang",
-        "region": "East Coast",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 19.67,
-        "oer_cpko": 47.17,
-        "cpo_proc_tonnes": 234627.03,
-        "ffb_proc_tonnes": 1192616.0
-      },
-      {
-        "state_code": "07",
-        "state_name": "Perak",
-        "region": "North",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 18.67,
-        "oer_cpko": 46.57,
-        "cpo_proc_tonnes": 183204.16,
-        "ffb_proc_tonnes": 981354.56
-      },
-      {
-        "state_code": "09",
-        "state_name": "Pulau Pinang",
-        "region": "North",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 19.55,
-        "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 12436.6,
-        "ffb_proc_tonnes": 63600.38
-      },
-      {
-        "state_code": "10",
-        "state_name": "Selangor",
         "region": "Central",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 18.51,
-        "oer_cpko": 46.3,
-        "cpo_proc_tonnes": 48753.22,
-        "ffb_proc_tonnes": 263370.12
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
       },
       {
-        "state_code": "11",
-        "state_name": "Terengganu",
         "region": "East Coast",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 20.09,
-        "oer_cpko": 0.0,
-        "cpo_proc_tonnes": 41459.31,
-        "ffb_proc_tonnes": 206383.34
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
       },
       {
-        "state_code": "13",
-        "state_name": "Sarawak",
+        "region": "Sabah",
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
+      },
+      {
         "region": "Sarawak",
-        "year": "2026",
-        "month": "06",
-        "oer_cpo": 20.88,
-        "oer_cpko": 41.47,
-        "cpo_proc_tonnes": 362688.81,
-        "ffb_proc_tonnes": 1736900.75
+        "price_1pct_oer": 43.8,
+        "indicative_oer_pct": null,
+        "indicative_fair_price_per_tonne": null,
+        "source": "Derived (MPOC CPO × MPOB OER)",
+        "is_indicative": true
       }
     ],
-    "source": "MPOB Prestasi Sawit (api/oer)",
-    "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-07-23T11:55:07.784825+08:00"
+    "cpo_price": 4710.0,
+    "is_indicative": true,
+    "source": "SawitSense derived (Path C)"
   },
+  "oer": null,
   "fallback_used": false,
   "legacy_bepi_attempted": true,
   "legacy_bepi_success": false
