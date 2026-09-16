@@ -1,6 +1,6 @@
 {
-  "scraped_at": "2026-09-16T13:06:30.080716+08:00",
-  "updated_at": "2026-09-16T13:06:30.080895+08:00",
+  "scraped_at": "2026-09-16T21:36:07.974355+08:00",
+  "updated_at": "2026-09-16T21:36:07.974594+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
@@ -12,7 +12,7 @@
     "price_myr_per_tonne": 4850.0,
     "source": "MPOC Daily Palm Oil Prices",
     "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
-    "scraped_at": "2026-09-16T13:06:28.566359+08:00"
+    "scraped_at": "2026-09-16T21:36:03.504820+08:00"
   },
   "ffb": {
     "date": "2026-09-14",
@@ -210,7 +210,7 @@
     ],
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-09-16T13:06:30.079420+08:00"
+    "scraped_at": "2026-09-16T21:36:07.973074+08:00"
   },
   "fallback_used": false,
   "legacy_bepi_attempted": true,
