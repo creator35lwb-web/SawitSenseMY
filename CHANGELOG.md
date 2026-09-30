@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.8] - 2026-09-30
+
+### Fixed
+- The calculator's green verdict said "FAIR — within 5% of MPOB benchmark", in BM and 中文 too. While prices are indicative, the benchmark behind a region's price is SawitSense's estimate, not MPOB's (ADR-001). It now says "within 5% of benchmark", like the amber and red verdicts, and a test keeps verdicts from naming MPOB (K13, #17)
+
 ## [0.3.7] - 2026-09-30
 
 ### Added
