@@ -87,6 +87,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy_web.yml --repo "${{ github.repository }}" --ref main
 
+      - name: Check data-quality warnings
+        # run_scraper.py lists self-check problems (e.g. OER figures that
+        # don't reconcile with MPOB's totals, or a missing source) in
+        # latest.json's `warnings`. The data is already published with safe
+        # fallbacks; failing here only raises the alert issue below.
+        run: |
+          python - <<'EOF'
+          import json, sys
+          with open("backend/data/latest.json", encoding="utf-8") as f:
+              warnings = json.load(f).get("warnings") or []
+          for w in warnings:
+              print(f"::error::{w}")
+          sys.exit(1 if warnings else 0)
+          EOF
+
       - name: Open alert issue on failure
         if: failure()
         uses: actions/github-script@v7
@@ -104,8 +119,9 @@ jobs:
               `Likely causes to check first:`,
               `1. MPOC daily-prices page structure changed (\`scrapers/mpoc_cpo.py\`).`,
               `2. MPOB Prestasi Sawit OER API contract changed (\`scrapers/mpob_oer.py\`).`,
-              `3. The data commit could not be pushed, or the deploy could not be dispatched.`,
-              `4. Network/runner outage.`,
+              `3. A data-quality self-check failed (see the run's error annotations).`,
+              `4. The data commit could not be pushed, or the deploy could not be dispatched.`,
+              `5. Network/runner outage.`,
               ``,
               `This issue was auto-filed by the workflow's failure-alert step to`,
               `prevent silent decay. Close once the next scheduled run succeeds.`,
