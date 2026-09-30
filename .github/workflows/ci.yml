@@ -66,6 +66,10 @@ jobs:
       - name: Test
         run: flutter test
 
+      # Catches web-only compile errors before merge rather than at deploy.
+      - name: Build for web
+        run: flutter build web --release --base-href "/SawitSenseMY/"
+
   secret-scan:
     runs-on: ubuntu-latest
     timeout-minutes: 5

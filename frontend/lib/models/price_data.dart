@@ -251,4 +251,12 @@ class HistoricalPrice {
       cpoPrice: (cpo?['price_myr_per_tonne'] as num?)?.toDouble() ?? 0.0,
     );
   }
+
+  /// One entry of history.json: `{"date": "2026-09-28", "cpo_price": 4664.0}`.
+  factory HistoricalPrice.fromHistoryEntry(Map<String, dynamic> json) {
+    return HistoricalPrice(
+      date: json['date'] as String? ?? '',
+      cpoPrice: (json['cpo_price'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
 }
