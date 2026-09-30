@@ -1,4 +1,8 @@
 // Riverpod providers for SawitSense price data.
+//
+// Patch: SS (Claude Code), Sep 2026 — no demo fallback. When real data can't
+// be loaded the providers say so (null / empty list) and the screens show an
+// honest "unavailable" state instead of made-up prices.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
 import '../services/price_service.dart';
@@ -7,32 +11,21 @@ final priceServiceProvider = Provider<PriceService>((ref) {
   return PriceService();
 });
 
-/// Fetches latest price snapshot. Falls back to demo data on failure.
-final latestPriceProvider = FutureProvider<PriceSnapshot>((ref) async {
+/// Latest price snapshot, or null when it can't be loaded (network error,
+/// missing file, or a snapshot the backend marked unsuccessful).
+final latestPriceProvider = FutureProvider<PriceSnapshot?>((ref) async {
   final service = ref.read(priceServiceProvider);
   final snapshot = await service.fetchLatest();
   if (snapshot != null && snapshot.success) {
     return snapshot;
   }
-  // Fallback to demo data so the UI is always usable
-  return PriceService.demoSnapshot();
+  return null;
 });
 
-/// Fetches 30-day historical prices. Falls back to demo data.
+/// Real 30-day history; empty when none can be loaded.
 final historyProvider = FutureProvider<List<HistoricalPrice>>((ref) async {
   final service = ref.read(priceServiceProvider);
-  final history = await service.fetchHistory(days: 30);
-  if (history.isNotEmpty) {
-    return history;
-  }
-  return PriceService.demoHistory();
-});
-
-/// Tracks whether we're showing demo data.
-final isDemoProvider = FutureProvider<bool>((ref) async {
-  final service = ref.read(priceServiceProvider);
-  final snapshot = await service.fetchLatest();
-  return snapshot == null || !snapshot.success;
+  return service.fetchHistory(days: 30);
 });
 
 /// Calculator state — holds the last calculation result.

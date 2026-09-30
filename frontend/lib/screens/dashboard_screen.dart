@@ -2,6 +2,9 @@
 //
 // Shows: CPO spot price + FFB Reference Prices (6 regions)
 // Zero auth, public read-only, smallholder-first design.
+//
+// Patch: SS (Claude Code), Sep 2026 — honest "unavailable" state instead of
+// demo prices.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +15,7 @@ import '../widgets/language_toggle.dart';
 import '../widgets/feedback_button.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/indicative_banner.dart';
+import '../widgets/unavailable_notice.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -19,7 +23,6 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final priceAsync = ref.watch(latestPriceProvider);
-    final isDemoAsync = ref.watch(isDemoProvider);
     final tr = ref.watch(trProvider);
 
     return Scaffold(
@@ -37,11 +40,15 @@ class DashboardScreen extends ConsumerWidget {
       ),
       body: priceAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(
-          child: Text(tr('no_data'), style: const TextStyle(fontSize: 18)),
+        error: (err, _) => UnavailableNotice(
+          onRetry: () => ref.invalidate(latestPriceProvider),
         ),
         data: (snapshot) {
-          final isDemo = isDemoAsync.valueOrNull ?? true;
+          if (snapshot == null) {
+            return UnavailableNotice(
+              onRetry: () => ref.invalidate(latestPriceProvider),
+            );
+          }
           // Bottom padding accounts for the persistent NavigationBar (~80px)
           // plus the platform safe-area inset, so the last region card
           // (Sarawak) is never hidden behind the bottom nav. See live-audit
@@ -53,35 +60,6 @@ class DashboardScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Demo banner
-                if (isDemo)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.shade100,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber.shade400),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline,
-                            color: Colors.amber.shade800, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            tr('demo_banner'),
-                            style: TextStyle(
-                              color: Colors.amber.shade900,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                if (isDemo) const SizedBox(height: 16),
-
                 // Indicative-mode banner (Path C — ADR-001)
                 if (snapshot.isIndicative) ...[
                   const IndicativeBanner(),

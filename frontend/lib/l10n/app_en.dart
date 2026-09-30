@@ -19,7 +19,9 @@ const Map<String, String> enStrings = {
   'last_updated': 'Last updated',
   'source': 'Source',
   'no_data': 'No price data available',
-  'demo_banner': 'Showing demo data — live data loads from MPOB BEPI',
+  'prices_unavailable':
+      "Prices can't be loaded right now. Check your connection and try again.",
+  'retry': 'Try again',
 
   // Indicative-mode banner (Path C — see ADR-001)
   'indicative_banner_headline':
@@ -50,6 +52,9 @@ const Map<String, String> enStrings = {
   'calc_verdict': 'Verdict',
   'calc_gap': 'Gap',
   'calc_oer_tip': 'Each 1% OER = ~RM 42+/tonne difference',
+  'calc_prices_unavailable':
+      "Today's prices can't be loaded. Enter the price per 1% OER from your "
+      'receipt or an MPOB notice.',
   'verdict_green': 'FAIR — within 5% of MPOB benchmark',
   'verdict_amber': 'CAUTION — 5-15% below benchmark',
   'verdict_red': 'BELOW FAIR — more than 15% below benchmark',
@@ -70,5 +75,6 @@ const Map<String, String> enStrings = {
   'footer_open_source': 'Open Source',
   'footer_github': 'View on GitHub',
   'footer_disclaimer':
-      'Prices are from MPOB BEPI for reference only. Not financial advice.',
+      'Prices are for reference only; check the source shown with each price. '
+      'Not financial advice.',
 };
