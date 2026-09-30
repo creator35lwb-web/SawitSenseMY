@@ -102,6 +102,18 @@ void main() {
       }
     });
 
+    test("verdicts don't name MPOB as the benchmark", () {
+      // The calculator's benchmark is whatever price per 1% OER the reader
+      // used: in indicative mode that is SawitSense's estimate, not MPOB's
+      // (ADR-001), so a verdict must not claim to be measured against MPOB.
+      for (final locale in AppLocale.values) {
+        for (final key in ['verdict_green', 'verdict_amber', 'verdict_red']) {
+          expect(stringsFor(locale)[key], isNot(contains('MPOB')),
+              reason: '${locale.name}: $key');
+        }
+      }
+    });
+
     test('the Chinese table is in Chinese', () {
       // Catches English pasted in by mistake. The name and tagline stay as
       // they are in every language.

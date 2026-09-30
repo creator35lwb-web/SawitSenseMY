@@ -82,7 +82,7 @@ const Map<String, String> zhStrings = {
   'calc_oer_tip': '出油率每差 1%，每公吨差 RM 42 以上',
   'calc_prices_unavailable':
       '无法加载今日价格。请根据您的收据或 MPOB 通告，输入每 1% 出油率的价格。',
-  'verdict_green': '公平 — 与 MPOB 基准相差 5% 以内',
+  'verdict_green': '公平 — 与基准相差 5% 以内',
   'verdict_amber': '注意 — 低于基准 5-15%',
   'verdict_red': '明显偏低 — 低于基准超过 15%',
   'verdict_badge_green': '绿灯',
