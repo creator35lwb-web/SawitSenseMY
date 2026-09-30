@@ -26,7 +26,11 @@ class HistoryScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr('history_title')),
+        // Long titles shrink to fit rather than being cut off on small phones.
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(tr('history_title')),
+        ),
         centerTitle: true,
         actions: const [
           LanguageMenu(),

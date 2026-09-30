@@ -80,7 +80,11 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(tr('calc_title')),
+        // Long titles shrink to fit rather than being cut off on small phones.
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(tr('calc_title')),
+        ),
         centerTitle: true,
         actions: const [
           LanguageMenu(),
