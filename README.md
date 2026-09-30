@@ -58,7 +58,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region + CPO spot price (indicative since May 2026) | Done |
 | **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote. GREEN/AMBER/RED verdict. | Done |
 | **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
-| **BM/EN Toggle** | Bahasa Malaysia / English language switch | Done |
+| **Languages** | Bahasa Malaysia / English / 简体中文 menu | Done |
 | **Feedback Button** | 3 preset options: helpful / confusing / wrong price | Done |
 
 ### Phase 2 (Production) — After Market Fit Confirmed

@@ -73,6 +73,7 @@ const Map<String, String> enStrings = {
   'calc_region': 'Select Region',
   'calc_price_1pct': 'Price per 1% OER (RM)',
   'calc_oer': 'Graded OER (%)',
+  'oer': 'OER',
   'calc_paid': 'Price Paid (RM/tonne) — optional',
   'calc_calculate': 'Calculate',
   'calc_fair_price': 'Fair Price',
@@ -85,6 +86,11 @@ const Map<String, String> enStrings = {
   'verdict_green': 'FAIR — within 5% of MPOB benchmark',
   'verdict_amber': 'CAUTION — 5-15% below benchmark',
   'verdict_red': 'BELOW FAIR — more than 15% below benchmark',
+  'verdict_badge_green': 'GREEN',
+  'verdict_badge_amber': 'AMBER',
+  'verdict_badge_red': 'RED',
+  'validation_required': 'Required',
+  'validation_number': 'Invalid number',
 
   // History
   'history_title': 'CPO Price History',
@@ -99,6 +105,7 @@ const Map<String, String> enStrings = {
   'feedback_confusing': 'Something is confusing',
   'feedback_wrong': 'Price looks wrong',
   'feedback_thanks': 'Thank you for your feedback!',
+  'close': 'Close',
 
   // Footer
   'footer_open_source': 'Open Source',

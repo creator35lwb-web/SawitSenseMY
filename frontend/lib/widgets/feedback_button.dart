@@ -57,7 +57,7 @@ class FeedbackButton extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(tr('close')),
           ),
         ],
       ),

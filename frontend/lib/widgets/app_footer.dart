@@ -8,7 +8,7 @@ import '../config/links.dart';
 import '../l10n/l10n_provider.dart';
 import '../services/link_opener.dart';
 
-const String appVersion = '0.3.5';
+const String appVersion = '0.3.6';
 
 class AppFooter extends ConsumerWidget {
   const AppFooter({super.key});
@@ -16,6 +16,7 @@ class AppFooter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
+    final locale = ref.watch(localeProvider);
     void open(String url) => ref.read(linkOpenerProvider)(Uri.parse(url));
 
     return Container(
@@ -65,7 +66,7 @@ class AppFooter extends ConsumerWidget {
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey.shade500,
-              fontStyle: FontStyle.italic,
+              fontStyle: asideFontStyle(locale),
             ),
             textAlign: TextAlign.center,
           ),
