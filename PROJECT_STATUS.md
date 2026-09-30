@@ -2,7 +2,7 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (third session) · SS (Claude Code)
+**Last updated:** 30 September 2026 (fourth session) · SS (Claude Code)
 
 ---
 
@@ -11,7 +11,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.1 live**; 0.3.2 in [#10](https://github.com/creator35lwb-web/SawitSenseMY/pull/10) (sources you can check) |
+| Version | **0.3.2 live**; 0.3.3 in [#11](https://github.com/creator35lwb-web/SawitSenseMY/pull/11) (a failed source keeps the last good data) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -24,6 +24,11 @@
 - The freshness watchdog passed with "Live site is current".
 - MPOC's latest settlement is dated 28 Sep. MPOC publishes a day or two late; this is not a scraper fault.
 - **v0.3.1 is live, checked after #9 merged.** The footer reads v0.3.1, the freshness badge shows in EN and BM, the honest unavailable state is present, and no demo data or old disclaimer remains in the app bundle.
+- **v0.3.2 is live, checked after #10 merged.**
+  - A manual scrape put the new fields in the live data.
+  - Redoing the published sum from the live figures gives exactly the published price: RM 4664.00 × 0.01 × 0.93 = RM 43.38.
+  - The footer reads v0.3.2, and the method sheet's text is present in EN and BM.
+  - All four links the app shows return HTTP 200: MPOC, MPOB OER, ADR-001, and open data.
 
 ---
 
@@ -31,7 +36,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#10](https://github.com/creator35lwb-web/SawitSenseMY/pull/10) | v0.3.2: every figure links to a public page where it can be checked (MPOC, MPOB OER). "How is this calculated?" shows the sum anyone can redo. Adds open data, and resolves K8 |
+| [#11](https://github.com/creator35lwb-web/SawitSenseMY/pull/11) | v0.3.3: a failed source never replaces the last good data (K7); the legacy BEPI log is made truthful |
 
 ---
 
@@ -39,7 +44,7 @@
 
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
-| K7 | 🟡 | When one source fails, `latest.json` is still overwritten, so the site can lose its prices until the next good run. Since #7 this raises an alert. | Keep the last good values per source (backlog item 1) |
+| K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
 
 ### Fixed on 30 Sep 2026
 
@@ -51,6 +56,7 @@
 | K4 | Sarawak's indicative OER was actually Sabah's | #7 |
 | K5 | Calculator auto-filled 2025 demo prices without a label | #9 |
 | K6 | Firestore and Telegram configured but never active | #9 retires Firestore; Telegram stays off by choice (D5) |
+| K7 | A failed source overwrote `latest.json`, so the site could lose its prices | #11 |
 | K8 | Six regional cards showed the same price per 1% OER with no explanation | #10 ("How is this calculated?") |
 | K9 | `test_no_data` only passed while the data was stale | #9 |
 
@@ -67,18 +73,17 @@
 | D5 | Retire Firestore. Telegram is optional and stays off; alert issues @-mention Alton | Done in #9 |
 | D6 | Track B: MPOB licensee registration to restore the authoritative price | **Open. Alton's call**; SS takes no action without it |
 | D7 | Close issue #5 (Headline Arena, promotional) | Done: closed with a courteous reply |
-| D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | In #10 |
+| D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | Done in #10 (verified live) |
 
 ---
 
 ## Backlog
 
-1. Keep the last good data per source when a source fails (K7).
-2. Cache the last known prices in the app. This is an AGENTS.md architecture decision that hasn't been built yet.
-3. Serve one `history.json` index instead of 30 requests every time History loads.
-4. Chinese (CN) language, which the ethical framework requires.
-5. Move the cron schedule off the half-hour to reduce GitHub's 4–8 hour scheduling delays.
-6. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
+1. Cache the last known prices in the app. This is an AGENTS.md architecture decision that hasn't been built yet.
+2. Serve one `history.json` index instead of 30 requests every time History loads.
+3. Chinese (CN) language, which the ethical framework requires.
+4. Move the cron schedule off the half-hour to reduce GitHub's 4–8 hour scheduling delays.
+5. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
 
 ---
 

@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.3] - 2026-09-30
+
+### Fixed
+- A failed data source no longer replaces the last good data (#11):
+  - If there is no CPO price, nothing is published, and the last good snapshot stays live with its freshness badge ageing honestly.
+  - If MPOB's OER is unavailable, the previous month's figures are carried forward, marked `carried_forward`, and an alert is raised.
+- When legacy MPOB BEPI returns data, the log no longer claims it switched to the authoritative path; that isn't wired up yet (Track B) (#11)
+
 ## [0.3.2] - 2026-09-30
 
 Every figure can now be checked against a public page, or recalculated by hand.

@@ -131,3 +131,20 @@ Tracked separately; this ADR explicitly does NOT authorize Track B.
 - **Track B** remains undecided (PROJECT_STATUS.md, decision D6). Sign-off
   rests with Alton; the earlier text naming CIO/XV was an attribution error
   (handoff-003).
+
+### 2026-09-30: Failure behaviour (SS (Claude Code), #11)
+
+- **A failed source never replaces the last good data.**
+  - With no CPO price (MPOC and the fallback both failed), nothing is
+    published. The last good snapshot stays live, the freshness badge shows
+    its age, and the run fails so the alert issue fires.
+  - If MPOB's OER fetch fails, the previous `oer` block is carried forward.
+    It is marked `carried_forward: true` and raises a data-quality warning.
+  - This replaces the earlier behaviour of writing a `success: false`
+    marker, or a payload without prices, over `latest.json`.
+- **Track B wiring.** If MPOB's BEPI ever serves data again, `run_scraper`
+  logs it but still publishes indicative values. Publishing the
+  authoritative price is part of Track B.
+- **Verifiable sources (#10).** The payload publishes
+  `ffb.indicative_share_factor` and `oer.source_page_url`, so anyone can
+  redo the sum and check the OER on MPOB's public page.

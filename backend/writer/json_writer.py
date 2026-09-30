@@ -14,14 +14,24 @@ import json
 import logging
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 MYT = timezone(timedelta(hours=8))
 JSON_DIR = Path(__file__).parent.parent / "data"
+LATEST_FILE = "latest.json"
 
 
-def write_to_json(data: dict, filename: str = "latest.json") -> bool:
+def read_latest() -> Optional[dict]:
+    """The last published snapshot (latest.json), or None if missing or unreadable."""
+    try:
+        return json.loads((JSON_DIR / LATEST_FILE).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def write_to_json(data: dict, filename: str = LATEST_FILE) -> bool:
     """Write data to backend/data/<filename>."""
     try:
         JSON_DIR.mkdir(parents=True, exist_ok=True)
@@ -39,7 +49,7 @@ def write_price_data(data: dict) -> bool:
     """Write the snapshot as latest.json and as that day's prices file."""
     data["updated_at"] = datetime.now(MYT).isoformat()
 
-    json_ok = write_to_json(data, "latest.json")
+    json_ok = write_to_json(data, LATEST_FILE)
 
     today = datetime.now(MYT).strftime("%Y-%m-%d")
     date_str = data["cpo"].get("date", today) if data.get("cpo") else today
