@@ -11,16 +11,14 @@
 //
 // Author: QQ (Perplexity)
 // Project: SawitSenseMY, YSenseAI ecosystem
+// Patch: SS (Claude Code), Sep 2026 — "Learn more" opens ADR-001 instead of
+// copying its link (url_launcher works on the web build; the footer uses it).
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../config/links.dart';
 import '../l10n/l10n_provider.dart';
-
-/// URL for the ADR explaining indicative-mode in detail (shown via copy-to-
-/// clipboard since GitHub Pages builds do not bundle url_launcher).
-const String _adrUrl =
-    'https://github.com/creator35lwb-web/SawitSenseMY/blob/main/docs/ADR-001-mpob-data-source-change.md';
+import '../services/link_opener.dart';
 
 class IndicativeBanner extends ConsumerWidget {
   /// Optional override for the body text. When null, the localized default
@@ -107,16 +105,8 @@ class IndicativeBanner extends ConsumerWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
-                  onPressed: () {
-                    Clipboard.setData(const ClipboardData(text: _adrUrl));
-                    final messenger = ScaffoldMessenger.maybeOf(context);
-                    messenger?.showSnackBar(
-                      SnackBar(
-                        content: Text(tr('indicative_banner_link_copied')),
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  },
+                  onPressed: () =>
+                      ref.read(linkOpenerProvider)(Uri.parse(adrUrl)),
                   icon: Icon(Icons.open_in_new, size: 16, color: orange.shade800),
                   label: Text(
                     learnMore,

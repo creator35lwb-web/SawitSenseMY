@@ -73,20 +73,27 @@ String localizedAge(Duration? age, AppLocale locale) {
       : 'Dikemas kini $n $msUnit lalu';
 }
 
+const _enMonths = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+const _msMonths = [
+  'Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Ogo', 'Sep', 'Okt', 'Nov', 'Dis',
+];
+
+String _monthName(int month, AppLocale locale) =>
+    (locale == AppLocale.en ? _enMonths : _msMonths)[month - 1];
+
 /// A timestamp in the device's time zone, e.g. "30 Sep 2026, 15:09"
 /// (BM month names in Malay).
 String localizedDateTime(DateTime time, AppLocale locale) {
-  const enMonths = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-  const msMonths = [
-    'Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun',
-    'Jul', 'Ogo', 'Sep', 'Okt', 'Nov', 'Dis',
-  ];
   final t = time.toLocal();
-  final month = (locale == AppLocale.en ? enMonths : msMonths)[t.month - 1];
   final hh = t.hour.toString().padLeft(2, '0');
   final mm = t.minute.toString().padLeft(2, '0');
-  return '${t.day} $month ${t.year}, $hh:$mm';
+  return '${t.day} ${_monthName(t.month, locale)} ${t.year}, $hh:$mm';
 }
+
+/// A month, e.g. "Aug 2026" / "Ogo 2026" (MPOB publishes OER monthly).
+String localizedMonthYear(int year, int month, AppLocale locale) =>
+    '${_monthName(month, locale)} $year';

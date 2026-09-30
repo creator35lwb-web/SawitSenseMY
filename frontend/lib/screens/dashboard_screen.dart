@@ -4,10 +4,11 @@
 // Zero auth, public read-only, smallholder-first design.
 //
 // Patch: SS (Claude Code), Sep 2026 — honest "unavailable" state instead of
-// demo prices.
+// demo prices; tappable CPO source and "How is this calculated?".
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/price_data.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/region_price_card.dart';
@@ -16,6 +17,8 @@ import '../widgets/feedback_button.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
+import '../widgets/price_method_sheet.dart';
+import '../widgets/source_link.dart';
 import '../widgets/unavailable_notice.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -82,7 +85,10 @@ class DashboardScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                const SizedBox(height: 12),
+                if (snapshot.isIndicative)
+                  PriceMethodLink(snapshot: snapshot)
+                else
+                  const SizedBox(height: 12),
 
                 if (snapshot.ffb != null &&
                     snapshot.ffb!.regions.isNotEmpty) ...[
@@ -142,13 +148,14 @@ class DashboardScreen extends ConsumerWidget {
 }
 
 class _CpoCard extends ConsumerWidget {
-  final dynamic snapshot;
+  final PriceSnapshot snapshot;
   const _CpoCard({required this.snapshot});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
     final cpo = snapshot.cpo;
+    final sourceUrl = cpo?.sourceUrl;
 
     return Card(
       elevation: 3,
@@ -201,9 +208,27 @@ class _CpoCard extends ConsumerWidget {
             ),
             if (cpo != null) ...[
               const SizedBox(height: 8),
-              Text(
-                '${cpo.date}  •  ${cpo.source}',
-                style: const TextStyle(color: Colors.white54, fontSize: 12),
+              // The source opens the official page showing this same price.
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    '${cpo.date}  •  ',
+                    style: const TextStyle(color: Colors.white54, fontSize: 12),
+                  ),
+                  if (sourceUrl != null)
+                    SourceLink(
+                      label: cpo.source,
+                      url: sourceUrl,
+                      color: Colors.white70,
+                    )
+                  else
+                    Text(
+                      cpo.source,
+                      style:
+                          const TextStyle(color: Colors.white54, fontSize: 12),
+                    ),
+                ],
               ),
             ],
           ],

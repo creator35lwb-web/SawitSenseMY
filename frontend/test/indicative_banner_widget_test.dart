@@ -3,15 +3,14 @@
 // Verifies:
 //   - Expanded variant shows headline, body, and "Learn more" affordance.
 //   - Compact variant shows headline only (no body, no Learn more).
-//   - Tapping "Learn more" copies the ADR-001 URL to the clipboard and shows
-//     a SnackBar.
+//   - Tapping "Learn more" opens ADR-001 (via linkOpenerProvider).
 //
 // Author: QQ (Perplexity)
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sawitsense_my/services/link_opener.dart';
 import 'package:sawitsense_my/widgets/indicative_banner.dart';
 
 Widget _wrap(Widget child) {
@@ -53,30 +52,26 @@ void main() {
       expect(find.byIcon(Icons.open_in_new), findsNothing);
     });
 
-    testWidgets('tapping Learn more copies URL and shows SnackBar',
-        (tester) async {
-      // Capture clipboard writes
-      String? lastCopied;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
-        if (call.method == 'Clipboard.setData') {
-          lastCopied = (call.arguments as Map)['text'] as String?;
-        }
-        return null;
-      });
-
-      await tester.pumpWidget(_wrap(const IndicativeBanner()));
+    testWidgets('tapping Learn more opens ADR-001', (tester) async {
+      // Patch: SS (Claude Code), Sep 2026 — the link now opens instead of
+      // being copied to the clipboard.
+      final opened = <Uri>[];
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          linkOpenerProvider.overrideWithValue((uri) async {
+            opened.add(uri);
+            return true;
+          }),
+        ],
+        child: const MaterialApp(home: Scaffold(body: IndicativeBanner())),
+      ));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.open_in_new));
       await tester.pump();
 
-      expect(lastCopied, isNotNull);
-      expect(lastCopied, contains('ADR-001'));
-
-      // SnackBar should appear
-      await tester.pump(const Duration(milliseconds: 100));
-      expect(find.byType(SnackBar), findsOneWidget);
+      expect(opened, hasLength(1));
+      expect(opened.single.toString(), contains('ADR-001'));
     });
   });
 }

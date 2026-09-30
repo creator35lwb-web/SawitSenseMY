@@ -37,8 +37,30 @@ const Map<String, String> msStrings = {
       'penyelesaian CPO harian MPOC dan OER bulanan MPOB. Gunakan sebagai panduan, '
       'bukan penanda aras sah.',
   'indicative_banner_learn_more': 'Ketahui lebih lanjut (ADR-001)',
-  'indicative_banner_link_copied': 'Pautan ADR-001 disalin ke papan keratan',
   'indicative_chip': 'Indikatif',
+
+  // Cara harga dikira (helaian kaedah), dengan pautan untuk menyemaknya
+  'method_link': 'Bagaimana ia dikira?',
+  'method_title': 'Bagaimana harga ini dikira',
+  'method_step1_title': 'Harga per 1% OER (indikatif)',
+  'method_step1_same':
+      'Sama untuk semua wilayah, kerana ia datang daripada satu harga CPO nasional.',
+  'method_cpo_source': 'Harga CPO: Harga Minyak Sawit Harian MPOC',
+  'method_factor_source': '0.93: anggaran SawitSense yang didokumenkan (ADR-001)',
+  'method_step2_title': 'Purata OER mengikut wilayah (MPOB)',
+  'method_step2_note':
+      'OER anda sendiri ialah gred yang diberi oleh peniaga atau kilang anda. '
+      'Ini ialah purata MPOB bagi setiap wilayah.',
+  'method_oer_source': 'OER: MPOB Prestasi Sawit',
+  'method_oer_source_month': 'OER: MPOB Prestasi Sawit (pilih {month})',
+  'method_step3_title': 'Harga adil anda',
+  'method_step3_body':
+      'Harga per 1% OER × OER gred anda = harga adil per tan. '
+      'Kira dalam kalkulator Harga Adil.',
+  'method_official_note':
+      'Harga Rujukan BTS rasmi MPOB memerlukan log masuk pelesen MPOB, jadi ia '
+      'tidak dapat dipautkan secara umum. Itulah sebabnya harga ini indikatif.',
+  'open_data': 'Data terbuka: setiap harga yang telah diterbitkan SawitSense',
   'region_north': 'Utara',
   'region_south': 'Selatan',
   'region_central': 'Tengah',
@@ -79,6 +101,7 @@ const Map<String, String> msStrings = {
 
   // Footer
   'footer_open_source': 'Sumber Terbuka',
+  'footer_open_data': 'Data terbuka',
   'footer_github': 'Lihat di GitHub',
   'footer_disclaimer':
       'Harga untuk rujukan sahaja; semak sumber yang ditunjukkan bersama setiap '
