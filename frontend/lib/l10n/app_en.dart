@@ -16,8 +16,13 @@ const Map<String, String> enStrings = {
   'ffb_reference': 'FFB Reference Price (1% OER)',
   'per_tonne': '/tonne',
   'per_1pct': '/1% OER',
-  'last_updated': 'Last updated',
   'source': 'Source',
+
+  // Data freshness (ethical framework: GREEN <6h, AMBER 6-12h, RED >12h)
+  'freshness_green': 'Up to date',
+  'freshness_amber': 'Getting old',
+  'freshness_red': 'Out of date',
+  'freshness_hint': "Check the date before comparing with a dealer's quote.",
   'no_data': 'No price data available',
   'prices_unavailable':
       "Prices can't be loaded right now. Check your connection and try again.",

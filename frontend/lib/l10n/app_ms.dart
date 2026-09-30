@@ -16,8 +16,13 @@ const Map<String, String> msStrings = {
   'ffb_reference': 'Harga Rujukan BTS (1% OER)',
   'per_tonne': '/tan',
   'per_1pct': '/1% OER',
-  'last_updated': 'Kemaskini terakhir',
   'source': 'Sumber',
+
+  // Kesegaran data (rangka kerja etika: HIJAU <6j, AMBAR 6-12j, MERAH >12j)
+  'freshness_green': 'Terkini',
+  'freshness_amber': 'Agak lama',
+  'freshness_red': 'Tidak terkini',
+  'freshness_hint': 'Semak tarikh sebelum membandingkan dengan harga peniaga.',
   'no_data': 'Tiada data harga tersedia',
   'prices_unavailable':
       'Harga tidak dapat dimuatkan sekarang. Semak sambungan anda dan cuba lagi.',

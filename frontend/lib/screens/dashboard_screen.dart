@@ -14,6 +14,7 @@ import '../widgets/region_price_card.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/feedback_button.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
 import '../widgets/unavailable_notice.dart';
 
@@ -60,6 +61,10 @@ class DashboardScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Data freshness — always visible (ethical framework)
+                FreshnessBadge(scrapedAt: snapshot.scrapedAt),
+                const SizedBox(height: 12),
+
                 // Indicative-mode banner (Path C — ADR-001)
                 if (snapshot.isIndicative) ...[
                   const IndicativeBanner(),
@@ -120,18 +125,6 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-
-                // Source + timestamp
-                if (snapshot.updatedAt.isNotEmpty)
-                  Text(
-                    '${tr('last_updated')}: ${snapshot.updatedAt}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
 
                 const SizedBox(height: 16),
 

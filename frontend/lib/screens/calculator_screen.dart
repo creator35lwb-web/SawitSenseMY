@@ -14,6 +14,7 @@ import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
@@ -116,6 +117,17 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                         child: IndicativeBanner(compact: true),
                       )
                     : const SizedBox.shrink(),
+                orElse: () => const SizedBox.shrink(),
+              ),
+
+              // Freshness of the prices the region selector auto-fills.
+              priceAsync.maybeWhen(
+                data: (snapshot) => snapshot == null
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: FreshnessBadge(scrapedAt: snapshot.scrapedAt),
+                      ),
                 orElse: () => const SizedBox.shrink(),
               ),
 
