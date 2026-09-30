@@ -112,7 +112,7 @@ Every figure SawitSense shows can be checked against a public page, or recalcula
 | CPO settlement price | [MPOC Daily Palm Oil Prices](https://mpoc.org.my/daily-palm-oil-prices/) lists the same price for the same date |
 | Regional OER | [MPOB Prestasi Sawit, OER Performance](https://prestasisawit.mpob.gov.my/en/oer). Choose the month shown in the app |
 | Indicative price per 1% OER | By hand: CPO × 0.01 × 0.93. The method is in [ADR-001](docs/ADR-001-mpob-data-source-change.md) |
-| Every price we've published | [backend/data/](backend/data/) (open data, one JSON file per day) |
+| Every price we've published | [backend/data/](backend/data/): open data, one JSON file per day, plus `history.json`, a 60-day index |
 
 MPOB's official FFB Reference Price requires an MPOB licensee login, so it can't be linked publicly. That is why the app labels its regional prices as indicative. In the app, tap **How is this calculated?** to see the sum with today's figures.
 

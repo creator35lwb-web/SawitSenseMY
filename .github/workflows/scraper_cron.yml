@@ -6,9 +6,11 @@ name: SawitSense MPOB Scraper
 
 on:
   schedule:
-    # 8:30am MYT (00:30 UTC) and 4:30pm MYT (08:30 UTC), Mon-Fri
-    - cron: '30 0 * * 1-5'
-    - cron: '30 8 * * 1-5'
+    # About 8:15am and 4:15pm MYT (00:13 / 08:13 UTC), Mon-Fri. GitHub delays
+    # scheduled runs most at busy times such as the top and half of the hour,
+    # and runs set for :30 started 4-8 hours late; an odd minute helps.
+    - cron: '13 0 * * 1-5'
+    - cron: '13 8 * * 1-5'
   workflow_dispatch: # Manual trigger
 
 permissions:
