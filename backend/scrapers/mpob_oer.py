@@ -13,8 +13,11 @@ downstream code can fold per-state OER into the 6-region grid that the
 README's Fair Price calculator expects (North / South / Central / East
 Coast / Sabah / Sarawak).
 
-Author: QQ (Perplexity) — recovery patch authored on behalf of YSenseAI / CIO XV.
+Author: QQ (Perplexity), May 2026 — recovery patch under Alton's authority
+(part of the YSenseAI ecosystem).
 Original SawitSense data layer authored by QQ (Qoder CSO).
+Patch: SS (Claude Code), Sep 2026 — MPOB state codes corrected (Sabah = 13,
+Sarawak = 14) and a cross-check against MPOB's published totals added.
 """
 
 from __future__ import annotations
@@ -43,6 +46,14 @@ REGION_SARAWAK = "Sarawak"
 # MPOB state code -> (state name, SawitSense region)
 # Region mapping follows the README's 6-region grid; cross-checked against
 # MPOB Peninsular sub-region conventions used in their FFB Reference Price.
+#
+# MPOB numbers the Peninsular states alphabetically, then Sabah = 13 and
+# Sarawak = 14. This is NOT the JPN/ISO numbering (Sabah = 12, Sarawak = 13)
+# that this map originally assumed, which published Sabah's OER as Sarawak's
+# and dropped Sarawak's row. Verified against the live API (Aug 2026): rows 13
+# and 14 reproduce MPOB's own oer_sabah (21.06) and oer_sarawak (19.58)
+# exactly. Codes 08 and 12 have not been seen in responses; 08 stays Perlis
+# (alphabetical order) and 12 is left unmapped. _cross_check() catches drift.
 STATE_REGION_MAP = {
     "01": ("Johor",            REGION_SOUTH),
     "02": ("Kedah",            REGION_NORTH),
@@ -55,9 +66,16 @@ STATE_REGION_MAP = {
     "09": ("Pulau Pinang",     REGION_NORTH),
     "10": ("Selangor",         REGION_CENTRAL),
     "11": ("Terengganu",       REGION_EAST_COAST),
-    "12": ("Sabah",            REGION_SABAH),
-    "13": ("Sarawak",          REGION_SARAWAK),
+    "13": ("Sabah",            REGION_SABAH),
+    "14": ("Sarawak",          REGION_SARAWAK),
 }
+
+PENINSULAR_REGIONS = {REGION_NORTH, REGION_SOUTH, REGION_CENTRAL, REGION_EAST_COAST}
+
+# Allowed gap (percentage points) between our aggregation of the state rows and
+# MPOB's published Sabah / Sarawak / Peninsular OER. MPOB rounds to 2 dp; a
+# Sabah/Sarawak mix-up moves the figures by ~1.5 points.
+CROSS_CHECK_TOLERANCE = 0.1
 
 DEFAULT_HEADERS = {
     "User-Agent": (
@@ -98,6 +116,7 @@ class OERSnapshot:
     mill_count: int
     states: list = field(default_factory=list)
     region_avg: dict = field(default_factory=dict)  # region -> weighted OER
+    warnings: list = field(default_factory=list)  # data-quality problems found while parsing
     source: str = "MPOB Prestasi Sawit (api/oer)"
     source_url: str = OER_API_URL
     scraped_at: str = ""
@@ -118,29 +137,53 @@ def _latest_available_month(today: Optional[datetime] = None) -> tuple[int, int]
     return year, month
 
 
+def _weighted_oer(states: list[StateOER]) -> Optional[float]:
+    """FFB-tonnes-weighted OER across `states`; None if they report no FFB."""
+    ffb = sum(s.ffb_proc_tonnes for s in states)
+    if ffb <= 0:
+        return None
+    return round(sum(s.oer_cpo * s.ffb_proc_tonnes for s in states) / ffb, 2)
+
+
 def _weighted_region_average(states: list[StateOER]) -> dict:
     """FFB-tonnes-weighted OER average per SawitSense region.
 
     OER is the lever per RM/1% in the fair-price formula, so we weight by FFB
     processed (the volume each state contributes to the regional pool).
     """
-    pools: dict[str, dict] = {}
-    for s in states:
-        bucket = pools.setdefault(s.region, {"oer_x_ffb": 0.0, "ffb": 0.0, "n": 0})
-        bucket["oer_x_ffb"] += s.oer_cpo * s.ffb_proc_tonnes
-        bucket["ffb"] += s.ffb_proc_tonnes
-        bucket["n"] += 1
     out = {}
-    for region, b in pools.items():
-        if b["ffb"] > 0:
-            out[region] = round(b["oer_x_ffb"] / b["ffb"], 2)
-        elif b["n"] > 0:
+    for region in dict.fromkeys(s.region for s in states):
+        members = [s for s in states if s.region == region]
+        avg = _weighted_oer(members)
+        if avg is None:
             # Equal-weight fallback if all states report zero FFB throughput.
-            simple = [s.oer_cpo for s in states if s.region == region]
-            out[region] = round(sum(simple) / len(simple), 2) if simple else 0.0
-        else:
-            out[region] = 0.0
+            avg = round(sum(s.oer_cpo for s in members) / len(members), 2)
+        out[region] = avg
     return out
+
+
+def _cross_check(states: list[StateOER], p0: dict) -> list[str]:
+    """Compare our aggregation of the state rows with MPOB's published totals.
+
+    Returns one message per mismatch (empty = consistent). A wrong state-code
+    mapping, like the Sabah/Sarawak mix-up found in Sep 2026, shows up here.
+    """
+    groups = [
+        ("Sabah", [s for s in states if s.region == REGION_SABAH], p0.get("oer_sabah")),
+        ("Sarawak", [s for s in states if s.region == REGION_SARAWAK], p0.get("oer_sarawak")),
+        ("Peninsular", [s for s in states if s.region in PENINSULAR_REGIONS], p0.get("oer_peninsular")),
+    ]
+    problems = []
+    for label, members, published in groups:
+        if not published:
+            continue
+        ours = _weighted_oer(members)
+        if ours is None or abs(ours - float(published)) > CROSS_CHECK_TOLERANCE:
+            problems.append(
+                f"MPOB OER cross-check failed for {label}: the state rows mapped there "
+                f"give {ours}%, but MPOB publishes {published}%"
+            )
+    return problems
 
 
 class MPOBOERScraper:
@@ -200,8 +243,8 @@ class MPOBOERScraper:
             logger.info(f"OER {year}-{month:02d}: empty payload, falling back further")
             return None
 
-        states = _parse_state_rows(state_rows, year, month)
-        snap = _build_snapshot(perf[0], year, month, states)
+        states, warnings = _parse_state_rows(state_rows, year, month)
+        snap = _build_snapshot(perf[0], year, month, states, warnings)
         logger.info(
             f"OER {year}-{month:02d}: MY={snap.oer_malaysia}% "
             f"Pen={snap.oer_peninsular}% Sabah={snap.oer_sabah}% "
@@ -248,20 +291,48 @@ def _parse_state_row(
 
 def _parse_state_rows(
     state_rows: list, year: int, month: int
-) -> list[StateOER]:
-    """Parse the full state_data list, skipping malformed/unknown rows."""
+) -> tuple[list[StateOER], list[str]]:
+    """Parse the full state_data list, skipping malformed/unknown rows.
+
+    Returns (states, warnings). A row whose state code is missing from
+    STATE_REGION_MAP produces a warning when it carries FFB volume, because
+    real data is being dropped.
+    """
     out: list[StateOER] = []
+    warnings: list[str] = []
     for r in state_rows:
+        code = str(r.get("negeri", "")).zfill(2)
+        if code not in STATE_REGION_MAP:
+            try:
+                ffb = float(r.get("ffb_proc") or 0)
+            except (TypeError, ValueError):
+                ffb = 0.0
+            if ffb > 0:
+                warnings.append(
+                    f"MPOB OER row for unknown state code {code!r} ({ffb:,.0f} t FFB) was skipped"
+                )
+            continue
         parsed = _parse_state_row(r, year, month)
         if parsed is not None:
             out.append(parsed)
-    return out
+    return out, warnings
 
 
 def _build_snapshot(
-    p0: dict, year: int, month: int, states: list[StateOER]
+    p0: dict, year: int, month: int, states: list[StateOER], warnings: Optional[list] = None
 ) -> OERSnapshot:
     """Assemble an OERSnapshot from the API's performance_data[0] block."""
+    warnings = list(warnings or [])
+    region_avg = _weighted_region_average(states)
+    mismatches = _cross_check(states, p0)
+    if mismatches:
+        # Don't publish per-region figures that don't reconcile with MPOB's own
+        # totals; run_scraper then falls back to MPOB's published Sabah,
+        # Sarawak and Peninsular OER for every region.
+        region_avg = {}
+        warnings.extend(mismatches)
+    for w in warnings:
+        logger.warning(w)
     return OERSnapshot(
         year=year,
         month=month,
@@ -271,5 +342,6 @@ def _build_snapshot(
         oer_sarawak=float(p0.get("oer_sarawak", 0) or 0),
         mill_count=int(p0.get("mill_count", 0) or 0),
         states=states,
-        region_avg=_weighted_region_average(states),
+        region_avg=region_avg,
+        warnings=warnings,
     )

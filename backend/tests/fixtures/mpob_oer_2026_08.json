@@ -1,0 +1,163 @@
+{
+  "_source": "GET https://prestasisawit.mpob.gov.my/api/oer?year=2026&month=08, recorded 2026-09-30. Only performance_data and state_data kept; district and licensee tables omitted.",
+  "performance_data": [
+    {
+      "oer_malaysia": 20.01,
+      "oer_peninsular": 19.88,
+      "oer_sabah": 21.06,
+      "oer_sarawak": 19.58,
+      "max_pelesen": 24.84,
+      "min_pelesen": 15.11,
+      "mill_count": 451
+    }
+  ],
+  "state_data": [
+    {
+      "oernegeri_id": 28221,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "01",
+      "oer_cpo": 20.04,
+      "oer_cpko": 46.66,
+      "ker_pk": 5.38,
+      "ker_pkc": 50.77,
+      "cpo_proc": 289559.25,
+      "ffb_proc": 1444588.25
+    },
+    {
+      "oernegeri_id": 28223,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "02",
+      "oer_cpo": 20.38,
+      "oer_cpko": 0,
+      "ker_pk": 5.54,
+      "ker_pkc": 0,
+      "cpo_proc": 22738.08,
+      "ffb_proc": 111579.75
+    },
+    {
+      "oernegeri_id": 28222,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "03",
+      "oer_cpo": 21.08,
+      "oer_cpko": 0,
+      "ker_pk": 4.93,
+      "ker_pkc": 0,
+      "cpo_proc": 32193.92,
+      "ffb_proc": 152710.98
+    },
+    {
+      "oernegeri_id": 28224,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "04",
+      "oer_cpo": 20.47,
+      "oer_cpko": 48,
+      "ker_pk": 5.36,
+      "ker_pkc": 50,
+      "cpo_proc": 8144.75,
+      "ffb_proc": 39796.34
+    },
+    {
+      "oernegeri_id": 28225,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "05",
+      "oer_cpo": 19.88,
+      "oer_cpko": 44,
+      "ker_pk": 5.12,
+      "ker_pkc": 55.95,
+      "cpo_proc": 65370.63,
+      "ffb_proc": 328786.84
+    },
+    {
+      "oernegeri_id": 28226,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "06",
+      "oer_cpo": 19.9,
+      "oer_cpko": 47.59,
+      "ker_pk": 4.89,
+      "ker_pkc": 48.52,
+      "cpo_proc": 298970.47,
+      "ffb_proc": 1502240.75
+    },
+    {
+      "oernegeri_id": 28227,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "07",
+      "oer_cpo": 19.46,
+      "oer_cpko": 46.98,
+      "ker_pk": 5.34,
+      "ker_pkc": 49.57,
+      "cpo_proc": 201625.05,
+      "ffb_proc": 1035979.75
+    },
+    {
+      "oernegeri_id": 28228,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "09",
+      "oer_cpo": 20.01,
+      "oer_cpko": 0,
+      "ker_pk": 5.75,
+      "ker_pkc": 0,
+      "cpo_proc": 11833.82,
+      "ffb_proc": 59132.61
+    },
+    {
+      "oernegeri_id": 28230,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "10",
+      "oer_cpo": 19.2,
+      "oer_cpko": 46.26,
+      "ker_pk": 5.22,
+      "ker_pkc": 50.35,
+      "cpo_proc": 56027.28,
+      "ffb_proc": 291773.03
+    },
+    {
+      "oernegeri_id": 28232,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "11",
+      "oer_cpo": 20.18,
+      "oer_cpko": 0,
+      "ker_pk": 4.85,
+      "ker_pkc": 0,
+      "cpo_proc": 52772.51,
+      "ffb_proc": 261495.58
+    },
+    {
+      "oernegeri_id": 28229,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "13",
+      "oer_cpo": 21.06,
+      "oer_cpko": 46.07,
+      "ker_pk": 4.11,
+      "ker_pkc": 50.17,
+      "cpo_proc": 339081.84,
+      "ffb_proc": 1610122.5
+    },
+    {
+      "oernegeri_id": 28231,
+      "tahun": "2026",
+      "bulan": "08",
+      "negeri": "14",
+      "oer_cpo": 19.58,
+      "oer_cpko": 45.75,
+      "ker_pk": 4.19,
+      "ker_pkc": 50.45,
+      "cpo_proc": 439181.41,
+      "ffb_proc": 2242847.5
+    }
+  ],
+  "district_data": [],
+  "pelesen_data": [],
+  "min_max": []
+}
