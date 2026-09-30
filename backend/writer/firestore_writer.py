@@ -14,7 +14,6 @@ import logging
 import os
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,8 @@ def write_price_data(data: dict) -> bool:
 
     json_ok = write_to_json(data, "latest.json")
 
-    date_str = data.get("cpo", {}).get("date", datetime.now(MYT).strftime("%Y-%m-%d")) if data.get("cpo") else datetime.now(MYT).strftime("%Y-%m-%d")
+    today = datetime.now(MYT).strftime("%Y-%m-%d")
+    date_str = data["cpo"].get("date", today) if data.get("cpo") else today
     write_to_json(data, f"prices_{date_str}.json")
 
     firestore_ok = write_to_firestore(data)

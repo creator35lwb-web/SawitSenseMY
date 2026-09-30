@@ -1,3 +1,7 @@
+# Patch: SS (Claude Code), Sep 2026 — push retries + fail loudly, and
+# dispatch deploy_web.yml after each data commit (live site was frozen on
+# 21 May 2026 data because GITHUB_TOKEN pushes never trigger other workflows).
+
 name: SawitSense MPOB Scraper
 
 on:
@@ -10,6 +14,7 @@ on:
 permissions:
   contents: write  # commit data/ JSON
   issues: write    # auto-file alert on consecutive failures
+  actions: write   # dispatch deploy_web.yml after a data commit
 
 concurrency:
   group: sawitsense-scraper
@@ -46,13 +51,41 @@ jobs:
           python run_scraper.py
 
       - name: Commit data files (JSON fallback)
+        id: commit
         if: always()
         run: |
           git config user.name 'SawitSense Bot'
           git config user.email 'bot@sawitsense.dev'
-          git add backend/data/ || true
-          git diff --staged --quiet || git commit -m "data: update prices $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push || true
+          git add backend/data/
+          if git diff --staged --quiet; then
+            echo "No data changes to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "data: update prices $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Retry transient push errors instead of swallowing them: on
+          # 2026-09-29 GitHub answered HTTP 500 and the old `git push || true`
+          # dropped that update without any alert.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "committed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "Push attempt ${attempt} failed; retrying."
+            sleep $((attempt * 15))
+            git pull --rebase origin main
+          done
+          echo "::error::Could not push the data commit after 3 attempts."
+          exit 1
+
+      - name: Deploy the new data to the live site
+        # Pushes made with GITHUB_TOKEN never start other workflows, so the
+        # `push` trigger in deploy_web.yml cannot fire for these bot commits;
+        # workflow_dispatch is the documented exception.
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy_web.yml --repo "${{ github.repository }}" --ref main
 
       - name: Open alert issue on failure
         if: failure()
@@ -71,7 +104,8 @@ jobs:
               `Likely causes to check first:`,
               `1. MPOC daily-prices page structure changed (\`scrapers/mpoc_cpo.py\`).`,
               `2. MPOB Prestasi Sawit OER API contract changed (\`scrapers/mpob_oer.py\`).`,
-              `3. Network/runner outage.`,
+              `3. The data commit could not be pushed, or the deploy could not be dispatched.`,
+              `4. Network/runner outage.`,
               ``,
               `This issue was auto-filed by the workflow's failure-alert step to`,
               `prevent silent decay. Close once the next scheduled run succeeds.`,

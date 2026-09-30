@@ -1,0 +1,77 @@
+# Live-site freshness watchdog.
+#
+# Compares the snapshot the live site is serving with the newest one on main
+# (backend/monitor/live_freshness.py) and files an alert issue when the site
+# falls behind. This checks the pipeline's output, which is what the
+# scraper's own alert missed while the site stayed frozen on 21 May 2026
+# data for four months.
+#
+# Author: SS (Claude Code), Sep 2026
+
+name: Live-site freshness watchdog
+
+on:
+  schedule:
+    # Mon-Fri, twice a day. Exact timing doesn't matter: the check allows a
+    # grace period after each data commit, so scheduling delays can't cause
+    # false alarms.
+    - cron: '17 3 * * 1-5'
+    - cron: '17 11 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compare the live site with main
+        run: |
+          pip install requests
+          cd backend
+          python -m monitor.live_freshness
+
+      - name: Open alert issue if the live site is stale
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'freshness-alert',
+              per_page: 5,
+            });
+            if (existing.data.length > 0) {
+              core.info(`Existing open freshness-alert issue #${existing.data[0].number} — not filing a duplicate.`);
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'The live site is serving stale price data',
+              body: [
+                `The freshness watchdog found that https://creator35lwb-web.github.io/SawitSenseMY/ is behind main, or that main itself has stopped receiving new data.`,
+                ``,
+                `- Details: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                `- Check the latest "Deploy Flutter Web to GitHub Pages" and "SawitSense MPOB Scraper" runs first.`,
+                ``,
+                `Close this issue once the watchdog passes again.`,
+                ``,
+                `cc @creator35lwb-web`,
+              ].join('\n'),
+              labels: ['freshness-alert', 'bug', 'automated'],
+            });
