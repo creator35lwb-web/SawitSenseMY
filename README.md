@@ -103,6 +103,19 @@ Before May 2026 the scraper read the Daily FFB Reference Price from MPOB BEPI di
 
 Every screen with prices shows a data freshness badge, as the ethical framework requires: GREEN (<6h) | AMBER (6-12h) | RED (>12h), with the age in words and the exact update time. When prices can't be loaded, the app says so. It never shows demo prices.
 
+### Check the numbers yourself
+
+Every figure SawitSense shows can be checked against a public page, or recalculated by hand:
+
+| Figure | Where to check it |
+|---|---|
+| CPO settlement price | [MPOC Daily Palm Oil Prices](https://mpoc.org.my/daily-palm-oil-prices/) lists the same price for the same date |
+| Regional OER | [MPOB Prestasi Sawit, OER Performance](https://prestasisawit.mpob.gov.my/en/oer). Choose the month shown in the app |
+| Indicative price per 1% OER | By hand: CPO × 0.01 × 0.93. The method is in [ADR-001](docs/ADR-001-mpob-data-source-change.md) |
+| Every price we've published | [backend/data/](backend/data/) (open data, one JSON file per day) |
+
+MPOB's official FFB Reference Price requires an MPOB licensee login, so it can't be linked publicly. That is why the app labels its regional prices as indicative. In the app, tap **How is this calculated?** to see the sum with today's figures.
+
 ---
 
 ## Project Structure

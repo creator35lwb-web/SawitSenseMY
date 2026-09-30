@@ -2,7 +2,7 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (second session) · SS (Claude Code)
+**Last updated:** 30 September 2026 (third session) · SS (Claude Code)
 
 ---
 
@@ -11,7 +11,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | 0.3.1 in [#9](https://github.com/creator35lwb-web/SawitSenseMY/pull/9); 0.3.0 is live until #9 merges |
+| Version | **0.3.1 live**; 0.3.2 in [#10](https://github.com/creator35lwb-web/SawitSenseMY/pull/10) (sources you can check) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -23,6 +23,7 @@
 - Sarawak is live at **19.58% / RM 849.38 per tonne**, down from 21.06% / RM 913.58.
 - The freshness watchdog passed with "Live site is current".
 - MPOC's latest settlement is dated 28 Sep. MPOC publishes a day or two late; this is not a scraper fault.
+- **v0.3.1 is live, checked after #9 merged.** The footer reads v0.3.1, the freshness badge shows in EN and BM, the honest unavailable state is present, and no demo data or old disclaimer remains in the app bundle.
 
 ---
 
@@ -30,7 +31,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#9](https://github.com/creator35lwb-web/SawitSenseMY/pull/9) | v0.3.1: freshness badge (D1), no made-up prices (D2), ethical framework v1.1 (D3), Firestore retired (D5), a flaky test fixed, and these records |
+| [#10](https://github.com/creator35lwb-web/SawitSenseMY/pull/10) | v0.3.2: every figure links to a public page where it can be checked (MPOC, MPOB OER). "How is this calculated?" shows the sum anyone can redo. Adds open data, and resolves K8 |
 
 ---
 
@@ -39,7 +40,6 @@
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
 | K7 | 🟡 | When one source fails, `latest.json` is still overwritten, so the site can lose its prices until the next good run. Since #7 this raises an alert. | Keep the last good values per source (backlog item 1) |
-| K8 | 🟡 | All six regional cards show the same indicative Price_1%, because it comes from one national CPO price. The banner implies OER is part of that figure. | Explain the regional cards honestly (backlog item 4) |
 
 ### Fixed on 30 Sep 2026
 
@@ -51,6 +51,7 @@
 | K4 | Sarawak's indicative OER was actually Sabah's | #7 |
 | K5 | Calculator auto-filled 2025 demo prices without a label | #9 |
 | K6 | Firestore and Telegram configured but never active | #9 retires Firestore; Telegram stays off by choice (D5) |
+| K8 | Six regional cards showed the same price per 1% OER with no explanation | #10 ("How is this calculated?") |
 | K9 | `test_no_data` only passed while the data was stale | #9 |
 
 ---
@@ -66,6 +67,7 @@
 | D5 | Retire Firestore. Telegram is optional and stays off; alert issues @-mention Alton | Done in #9 |
 | D6 | Track B: MPOB licensee registration to restore the authoritative price | **Open. Alton's call**; SS takes no action without it |
 | D7 | Close issue #5 (Headline Arena, promotional) | Done: closed with a courteous reply |
+| D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | In #10 |
 
 ---
 
@@ -74,10 +76,9 @@
 1. Keep the last good data per source when a source fails (K7).
 2. Cache the last known prices in the app. This is an AGENTS.md architecture decision that hasn't been built yet.
 3. Serve one `history.json` index instead of 30 requests every time History loads.
-4. Explain the regional cards honestly while prices are indicative (K8).
-5. Chinese (CN) language, which the ethical framework requires.
-6. Move the cron schedule off the half-hour to reduce GitHub's 4–8 hour scheduling delays.
-7. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
+4. Chinese (CN) language, which the ethical framework requires.
+5. Move the cron schedule off the half-hour to reduce GitHub's 4–8 hour scheduling delays.
+6. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
 
 ---
 

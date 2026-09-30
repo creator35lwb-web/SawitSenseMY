@@ -7,6 +7,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.2] - 2026-09-30
+
+Every figure can now be checked against a public page, or recalculated by hand.
+
+### Added
+- Tappable source on the CPO card, opening MPOC's daily prices page, which shows the same settlement price (#10)
+- "How is this calculated?" on the Dashboard and Calculator. It opens a panel with (#10):
+  - the indicative price as a sum anyone can redo (e.g. RM 4664.00 × 0.01 × 0.93 = RM 43.38)
+  - each region's MPOB OER, linked to MPOB's public OER page
+  - a plain note that MPOB's official FFB Reference Price is licensee-only
+- "Open data" link in the footer to every published price snapshot (#10)
+- Data payload: `ffb.indicative_share_factor` and `oer.source_page_url`, so the figures can be checked (#10)
+
+### Changed
+- "Learn more (ADR-001)" opens the document instead of copying its link (#10)
+
+### Fixed
+- The six regional cards showed the same price per 1% OER with no explanation. The panel now explains that it comes from one national CPO price, and that regions differ by OER (#10)
+
 ## [0.3.1] - 2026-09-30
 
 First release by SS (Claude Code). It makes the live site current, correct and honest about its data.
