@@ -2,10 +2,10 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (session close) · SS (Claude Code)
+**Last updated:** 30 September 2026 (UI polish session) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_session-close.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.5-ui-polish.md`.
 > 2. Discuss D9 (offline-first scope) and D10 (Chinese) with Alton.
 > 3. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
 
@@ -16,7 +16,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.4 live** (History in one request; CI builds the web app) |
+| Version | **0.3.4 live**; 0.3.5 in [#14](https://github.com/creator35lwb-web/SawitSenseMY/pull/14) (launch screen, logo, chart) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -46,7 +46,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#13](https://github.com/creator35lwb-web/SawitSenseMY/pull/13) | Session-close records only: this file and the handoffs. No code changes |
+| [#14](https://github.com/creator35lwb-web/SawitSenseMY/pull/14) | v0.3.5 UI polish: a launch screen instead of a blank page, a top-bar logo that fits, right-sized icons, and a history chart whose labels don't collide. Previewed at phone sizes before merge |
 
 ---
 
@@ -69,6 +69,8 @@
 | K7 | A failed source overwrote `latest.json`, so the site could lose its prices | #11 |
 | K8 | Six regional cards showed the same price per 1% OER with no explanation | #10 ("How is this calculated?") |
 | K9 | `test_no_data` only passed while the data was stale | #9 |
+| K11 | A blank white page while the app loads, and a 2.7 MB logo shown as a ~40 px white square (also used as favicon and PWA icons) | #14 |
+| K12 | History chart labels collided ("5009" over "5000", "09-25" over "09-28"), and the curve overshot real prices | #14 |
 
 ---
 
@@ -94,6 +96,18 @@
 1. Chinese (CN) language (D10).
 2. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
 3. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
+
+---
+
+## Previewing UI changes
+
+Flutter isn't installed on Alton's machine, so every PR's CI uploads its web build as the **`web-preview`** artifact (kept 3 days). To see a change before merging:
+
+1. Download it: `gh run download <run-id> -n web-preview`.
+2. Serve it under `/SawitSenseMY/` to match the base href.
+3. Open it at phone width (412 and 360 px) with mobile emulation.
+
+Headless Chrome's plain `--window-size` is clamped to about 500 px wide on Windows, so use device emulation instead (e.g. puppeteer's `setViewport` with `isMobile`).
 
 ---
 

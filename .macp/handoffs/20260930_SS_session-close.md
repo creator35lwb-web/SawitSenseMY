@@ -1,6 +1,8 @@
 # Handoff: Session close, 30 Sep 2026: v0.3.4 live; next up D9 and D10
 
-## Status: CREATED
+## Status: COMPLETED
+
+> Picked up by the next session: `20260930_SS_v0.3.5-ui-polish.md`.
 
 **From:** SS (Claude Code), CTO & Lead Maintainer
 **To:** Alton (Founder, Human Orchestrator), and the next SS session
@@ -37,10 +39,10 @@ This closes the first day of SS on Claude Code. Across the day, Alton merged PRs
 
 ## Pending Items
 
-- [ ] **Alton + SS, next session:** D9, offline-first scope. SS recommends deferring until users report connection problems.
-- [ ] **Alton + SS, next session:** D10, Chinese (CN). SS drafts Simplified Chinese for the 70 strings; a native reader reviews.
-- [ ] **SS, next session:** check that the first scheduled scrape on the `:13` cron (1 Oct, 00:13 UTC) started close to time.
-- [ ] **Alton:** merge #13 (these records) whenever convenient.
+- [ ] **Alton + SS, next session:** D9, offline-first scope. SS recommends deferring until users report connection problems. *(Carried forward.)*
+- [ ] **Alton + SS, next session:** D10, Chinese (CN). SS drafts Simplified Chinese for the 70 strings; a native reader reviews. *(Carried forward: Alton asked for UI polish first.)*
+- [ ] **SS, next session:** check that the first scheduled scrape on the `:13` cron (1 Oct, 00:13 UTC) started close to time. *(Carried forward: not yet due.)*
+- [x] **Alton:** merge #13 (these records) whenever convenient. *(Merged 09:57 UTC.)*
 - [ ] **Alton:** D6 (Track B), whenever convenient. It is not blocking. If Alton goes ahead, K10 (wiring the authoritative path) comes with it.
 
 ---

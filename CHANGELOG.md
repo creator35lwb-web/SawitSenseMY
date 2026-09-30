@@ -7,6 +7,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.5] - 2026-09-30
+
+Checked on phone-sized screens (412 and 360 px) before merging, using the new CI preview build.
+
+### Added
+- Launch screen: the emblem, name, tagline and a loading bar show at once while the app loads, instead of a blank white page (#14)
+- Right-sized icons: favicon (2 KB), iOS icon, PWA icons including a separate maskable icon that survives Android's circular crop, and an absolute share image for link previews. `frontend/tool/make_icons.py` derives them all from one master logo (#14)
+- CI uploads each PR's web build as a 3-day preview artifact (#14)
+
+### Fixed
+- The top-bar logo was the whole 2048 px, 2.7 MB logo squeezed into a ~40 px white square. It is now the emblem alone on a rounded white badge, at 31 KB (#14)
+- History chart:
+  - Y-axis labels no longer collide ("5009" over "5000"); gridlines are round numbers (4600–5000)
+  - Dates are spaced and read "28 Sep", with room for the latest one
+  - The line no longer overshoots between days (#14)
+- The History table shows every day in the window, not only the latest ten, with BM/EN headers (#14)
+
 ## [0.3.4] - 2026-09-30
 
 ### Changed

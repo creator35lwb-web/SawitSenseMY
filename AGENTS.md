@@ -27,7 +27,7 @@ flutter analyze
 flutter test
 ```
 
-On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plus a credential scan.
+On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plus a credential scan. It also uploads the web build as a `web-preview` artifact, so UI changes can be seen at phone width before merging (see "Previewing UI changes" in `PROJECT_STATUS.md`).
 
 ## Key Files
 
