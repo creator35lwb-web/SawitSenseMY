@@ -4,7 +4,8 @@
 // Shows: Fair Price + Verdict (GREEN/AMBER/RED).
 //
 // Patch: SS (Claude Code), Sep 2026 — when prices can't be loaded, say so and
-// ask for Price_1% instead of auto-filling demo values.
+// ask for Price_1% instead of auto-filling demo values; "How is this
+// calculated?" next to the auto-filled price.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import '../widgets/language_toggle.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
+import '../widgets/price_method_sheet.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
   const CalculatorScreen({super.key});
@@ -158,7 +160,13 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              // Where the auto-filled price comes from, with links to check it.
+              priceAsync.maybeWhen(
+                data: (snapshot) => snapshot != null && snapshot.isIndicative
+                    ? PriceMethodLink(snapshot: snapshot)
+                    : const SizedBox(height: 16),
+                orElse: () => const SizedBox(height: 16),
+              ),
 
               // Price per 1% OER
               TextFormField(

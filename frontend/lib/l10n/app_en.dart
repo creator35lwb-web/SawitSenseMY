@@ -36,8 +36,30 @@ const Map<String, String> enStrings = {
       'Until restored, regional prices shown are derived from MPOC daily CPO '
       'settlement and MPOB monthly OER. Use as guidance, not as a legal benchmark.',
   'indicative_banner_learn_more': 'Learn more (ADR-001)',
-  'indicative_banner_link_copied': 'ADR-001 link copied to clipboard',
   'indicative_chip': 'Indicative',
+
+  // How the prices are calculated (method sheet), with links to check them
+  'method_link': 'How is this calculated?',
+  'method_title': 'How these prices are calculated',
+  'method_step1_title': 'Price per 1% OER (indicative)',
+  'method_step1_same':
+      'The same for every region, because it comes from one national CPO price.',
+  'method_cpo_source': 'CPO price: MPOC Daily Palm Oil Prices',
+  'method_factor_source': "0.93: SawitSense's documented estimate (ADR-001)",
+  'method_step2_title': 'Average OER by region (MPOB)',
+  'method_step2_note':
+      'Your own OER is the grade your dealer or mill gives you. These are '
+      "MPOB's averages for each region.",
+  'method_oer_source': 'OER: MPOB Prestasi Sawit',
+  'method_oer_source_month': 'OER: MPOB Prestasi Sawit (choose {month})',
+  'method_step3_title': 'Your fair price',
+  'method_step3_body':
+      'Price per 1% OER × your graded OER = fair price per tonne. '
+      'Work it out in the Fair Price calculator.',
+  'method_official_note':
+      "MPOB's official FFB Reference Price needs an MPOB licensee login, so it "
+      "can't be linked publicly. That is why these prices are indicative.",
+  'open_data': 'Open data: every price SawitSense has published',
   'region_north': 'North',
   'region_south': 'South',
   'region_central': 'Central',
@@ -78,6 +100,7 @@ const Map<String, String> enStrings = {
 
   // Footer
   'footer_open_source': 'Open Source',
+  'footer_open_data': 'Open data',
   'footer_github': 'View on GitHub',
   'footer_disclaimer':
       'Prices are for reference only; check the source shown with each price. '

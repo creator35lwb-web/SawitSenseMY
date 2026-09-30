@@ -45,11 +45,14 @@ class CpoPrice {
   final String date;
   final double priceMyrPerTonne;
   final String source;
+  /// Public page where this price can be checked (e.g. MPOC's daily prices).
+  final String? sourceUrl;
 
   const CpoPrice({
     required this.date,
     required this.priceMyrPerTonne,
     this.source = 'MPOB BEPI',
+    this.sourceUrl,
   });
 
   factory CpoPrice.fromJson(Map<String, dynamic> json) {
@@ -57,6 +60,7 @@ class CpoPrice {
       date: json['date'] as String? ?? '',
       priceMyrPerTonne: (json['price_myr_per_tonne'] as num?)?.toDouble() ?? 0.0,
       source: json['source'] as String? ?? 'MPOB BEPI',
+      sourceUrl: json['source_url'] as String?,
     );
   }
 }
@@ -68,6 +72,9 @@ class FfbPriceData {
   final String source;
   /// True when the whole FFB block is derived (Path C). See ADR-001.
   final bool isIndicative;
+  /// The documented factor in Price_1% = CPO x 0.01 x factor (ADR-001).
+  /// Published so anyone can redo the sum; null in older payloads.
+  final double? indicativeShareFactor;
 
   const FfbPriceData({
     required this.date,
@@ -75,6 +82,7 @@ class FfbPriceData {
     this.cpoPrice,
     this.source = 'MPOB BEPI',
     this.isIndicative = false,
+    this.indicativeShareFactor,
   });
 
   factory FfbPriceData.fromJson(Map<String, dynamic> json) {
@@ -88,6 +96,29 @@ class FfbPriceData {
       cpoPrice: (json['cpo_price'] as num?)?.toDouble(),
       source: json['source'] as String? ?? 'MPOB BEPI',
       isIndicative: json['is_indicative'] as bool? ?? false,
+      indicativeShareFactor:
+          (json['indicative_share_factor'] as num?)?.toDouble(),
+    );
+  }
+}
+
+/// MPOB's monthly OER figures behind the regional prices (the payload's
+/// `oer` block).
+class OerInfo {
+  final int? year;
+  final int? month;
+  final String source;
+  /// Public MPOB page showing these figures (not the JSON API).
+  final String? sourcePageUrl;
+
+  const OerInfo({this.year, this.month, this.source = '', this.sourcePageUrl});
+
+  factory OerInfo.fromJson(Map<String, dynamic> json) {
+    return OerInfo(
+      year: (json['year'] as num?)?.toInt(),
+      month: (json['month'] as num?)?.toInt(),
+      source: json['source'] as String? ?? '',
+      sourcePageUrl: json['source_page_url'] as String?,
     );
   }
 }
@@ -99,6 +130,7 @@ class FfbPriceData {
 class PriceSnapshot {
   final CpoPrice? cpo;
   final FfbPriceData? ffb;
+  final OerInfo? oer;
   final String scrapedAt;
   final String updatedAt;
   final bool success;
@@ -115,6 +147,7 @@ class PriceSnapshot {
   const PriceSnapshot({
     this.cpo,
     this.ffb,
+    this.oer,
     required this.scrapedAt,
     required this.updatedAt,
     required this.success,
@@ -131,6 +164,9 @@ class PriceSnapshot {
           : null,
       ffb: json['ffb'] != null
           ? FfbPriceData.fromJson(json['ffb'] as Map<String, dynamic>)
+          : null,
+      oer: json['oer'] != null
+          ? OerInfo.fromJson(json['oer'] as Map<String, dynamic>)
           : null,
       scrapedAt: json['scraped_at'] as String? ?? '',
       updatedAt: json['updated_at'] as String? ?? '',
