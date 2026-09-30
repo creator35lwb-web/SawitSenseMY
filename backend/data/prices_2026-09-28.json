@@ -1,6 +1,6 @@
 {
-  "scraped_at": "2026-09-30T13:51:07.073318+08:00",
-  "updated_at": "2026-09-30T13:51:07.073464+08:00",
+  "scraped_at": "2026-09-30T15:09:20.926076+08:00",
+  "updated_at": "2026-09-30T15:09:20.926333+08:00",
   "success": true,
   "data_source_version": "0.3-recovery",
   "formula_status": "INDICATIVE",
@@ -12,7 +12,7 @@
     "price_myr_per_tonne": 4664.0,
     "source": "MPOC Daily Palm Oil Prices",
     "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
-    "scraped_at": "2026-09-30T13:51:03.192766+08:00"
+    "scraped_at": "2026-09-30T15:09:17.570273+08:00"
   },
   "ffb": {
     "date": "2026-09-28",
@@ -60,8 +60,8 @@
       {
         "region": "Sarawak",
         "price_1pct_oer": 43.38,
-        "indicative_oer_pct": 21.06,
-        "indicative_fair_price_per_tonne": 913.58,
+        "indicative_oer_pct": 19.58,
+        "indicative_fair_price_per_tonne": 849.38,
         "source": "Derived (MPOC CPO × MPOB OER)",
         "is_indicative": true
       }
@@ -83,7 +83,8 @@
       "North": 19.57,
       "East Coast": 20.03,
       "Central": 19.2,
-      "Sarawak": 21.06
+      "Sabah": 21.06,
+      "Sarawak": 19.58
     },
     "states": [
       {
@@ -198,21 +199,33 @@
       },
       {
         "state_code": "13",
-        "state_name": "Sarawak",
-        "region": "Sarawak",
+        "state_name": "Sabah",
+        "region": "Sabah",
         "year": "2026",
         "month": "08",
         "oer_cpo": 21.06,
         "oer_cpko": 46.07,
         "cpo_proc_tonnes": 339081.84,
         "ffb_proc_tonnes": 1610122.5
+      },
+      {
+        "state_code": "14",
+        "state_name": "Sarawak",
+        "region": "Sarawak",
+        "year": "2026",
+        "month": "08",
+        "oer_cpo": 19.58,
+        "oer_cpko": 45.75,
+        "cpo_proc_tonnes": 439181.41,
+        "ffb_proc_tonnes": 2242847.5
       }
     ],
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
-    "scraped_at": "2026-09-30T13:51:07.072208+08:00"
+    "scraped_at": "2026-09-30T15:09:20.924766+08:00"
   },
   "fallback_used": false,
   "legacy_bepi_attempted": true,
-  "legacy_bepi_success": false
+  "legacy_bepi_success": false,
+  "warnings": []
 }
