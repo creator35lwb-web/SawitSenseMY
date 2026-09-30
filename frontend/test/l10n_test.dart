@@ -1,6 +1,7 @@
 // Languages: every string exists in English, Bahasa Malaysia and Simplified
-// Chinese; dates, ages and regions read naturally in each; the language menu
-// switches the whole app, and the Chinese screens show no English or raw keys.
+// Chinese; dates, ages and regions read naturally in each; the app opens in
+// the reader's language; the language menu switches the whole app, and the
+// Chinese screens show no English or raw keys.
 //
 // Author: SS (Claude Code), Sep 2026
 
@@ -60,7 +61,7 @@ Widget _inChinese(Widget screen) => ProviderScope(
       overrides: [
         priceServiceProvider.overrideWithValue(_FakePriceService()),
         localeProvider
-            .overrideWith((ref) => LocaleNotifier()..setLocale(AppLocale.zh)),
+            .overrideWith((ref) => LocaleNotifier(initial: AppLocale.zh)),
       ],
       child: MaterialApp(home: screen),
     );
@@ -142,6 +143,61 @@ void main() {
           '5 小时前更新');
       expect(localizedAge(const Duration(days: 2), AppLocale.zh), '2 天前更新');
       expect(localizedAge(null, AppLocale.zh), '更新时间未知');
+    });
+  });
+
+  group('The language the app opens in', () {
+    test("is the reader's last choice on this phone", () {
+      expect(
+          initialLocale(saved: 'zh', deviceLocales: const [Locale('en', 'US')]),
+          AppLocale.zh);
+      expect(
+          initialLocale(saved: 'en', deviceLocales: const [Locale('ms', 'MY')]),
+          AppLocale.en);
+    });
+
+    test("otherwise the first of the phone's languages the app speaks", () {
+      expect(
+          initialLocale(
+              deviceLocales: const [Locale('ms', 'MY'), Locale('en', 'US')]),
+          AppLocale.ms);
+      expect(
+          initialLocale(
+              deviceLocales: const [Locale('fr', 'FR'), Locale('zh', 'CN')]),
+          AppLocale.zh);
+      // Traditional Chinese phones get Simplified Chinese, not English.
+      expect(
+          initialLocale(deviceLocales: const [
+            Locale.fromSubtags(
+                languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
+          ]),
+          AppLocale.zh);
+    });
+
+    test('otherwise English', () {
+      expect(initialLocale(), AppLocale.en);
+      expect(initialLocale(deviceLocales: const [Locale('id', 'ID')]),
+          AppLocale.en);
+      // Anything else found in storage is ignored, not trusted.
+      expect(initialLocale(saved: 'xx', deviceLocales: const [Locale('ms')]),
+          AppLocale.ms);
+    });
+
+    test('a choice from the menu is remembered; the starting language is not',
+        () {
+      final saved = <String>[];
+      final container = ProviderContainer(overrides: [
+        localeProvider.overrideWith(
+            (ref) => LocaleNotifier(initial: AppLocale.ms, save: saved.add)),
+      ]);
+      addTearDown(container.dispose);
+
+      expect(container.read(localeProvider), AppLocale.ms);
+      expect(saved, isEmpty);
+
+      container.read(localeProvider.notifier).setLocale(AppLocale.zh);
+      expect(container.read(localeProvider), AppLocale.zh);
+      expect(saved, ['zh']);
     });
   });
 

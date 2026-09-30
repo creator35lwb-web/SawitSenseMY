@@ -45,6 +45,8 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 
 Every string a user sees goes in all three tables in `frontend/lib/l10n/`: `app_en.dart`, `app_ms.dart` and `app_zh.dart` (Simplified Chinese). `frontend/test/l10n_test.dart` fails if a key is missing from any of them. A native reader should check new Malay or Chinese wording before it ships.
 
+The app opens in the reader's last choice on that phone, or else the phone's language, or else English (`initialLocale` in `l10n_provider.dart`). The choice is kept in the browser's localStorage as `en`, `ms` or `zh` under `sawitsense.language`. Keep it that small: no personal data goes in browser storage.
+
 ## Core Formula
 
 ```

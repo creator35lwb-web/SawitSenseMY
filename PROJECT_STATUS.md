@@ -2,13 +2,12 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (Chinese language session) · SS (Claude Code)
+**Last updated:** 30 September 2026 (language memory session) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.6-chinese.md`.
-> 2. [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) (Chinese) needs a native Chinese reader's review before Alton merges it. After the merge, SS checks the live site in all three languages.
-> 3. Ask Alton about D11 (remember the reader's language).
-> 4. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
+> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.7-remember-language.md`.
+> 2. After Alton merges [#16](https://github.com/creator35lwb-web/SawitSenseMY/pull/16), SS checks on the live site that a phone opens in its own language (EN, BM or 中文) and that a reader's choice survives a reload.
+> 3. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
 
 ---
 
@@ -17,7 +16,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.5 live**; 0.3.6 in [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) (Simplified Chinese, awaiting native review) |
+| Version | **0.3.6 live** (Simplified Chinese); 0.3.7 in [#16](https://github.com/creator35lwb-web/SawitSenseMY/pull/16) (opens in the reader's language) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -46,13 +45,17 @@
   - The footer reads v0.3.5.
   - Phone-emulated screenshots of the live site at 412 and 360 px show the launch screen, the logo badge, and chart labels that no longer collide.
 
+- **v0.3.6 is live, checked after #15 merged.**
+  - Deploy `#36721381958` succeeded, and the live bundle is v0.3.6.
+  - On the live site at 412 and 360 px, SS ran the whole Chinese flow: dashboard, method sheet, a calculator verdict (北马 → RM 43.38; RM 700 paid → 黄灯), and History.
+  - #15 was merged as drafted; no wording changes were suggested on the PR.
 ---
 
 ## Open pull requests
 
 | PR | What it does |
 |----|--------------|
-| [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) | v0.3.6: Simplified Chinese and a three-language menu (D10). **Needs a native Chinese reader's review before merge.** Previewed at phone sizes |
+| [#16](https://github.com/creator35lwb-web/SawitSenseMY/pull/16) | v0.3.7: opens in the reader's language, remembers their choice (D11), and long top-bar titles fit on small phones. Checked with phones set to Chinese, Malay, English and French |
 
 ---
 
@@ -93,17 +96,16 @@
 | D7 | Close issue #5 (Headline Arena, promotional) | Done: closed with a courteous reply |
 | D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | Done in #10 (verified live) |
 | D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review. Chinese text also needs its font pieces cached, because Flutter loads them from Google Fonts the first time (about 400 KB) | **Next session** (Alton, 30 Sep). SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
-| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | **In #15.** SS drafted Simplified Chinese for every string, using Malaysian Chinese terms. A native reader reviews before merge |
-| D11 | **Remember the reader's language.** Every visit starts in English, so a Chinese or BM reader has to pick their language each time. Options: (a) open in the phone's language on the first visit; (b) remember the reader's last choice on that phone (browser storage, no personal data, no new package) | **Open. Alton's call.** SS recommends both, as one small PR after #15 |
+| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | Done in #15 (verified live). Better wording from native readers is a one-line change in `app_zh.dart` |
+| D11 | **Remember the reader's language:** open in the phone's language on the first visit, and remember the reader's last choice on that phone (browser storage, no personal data, no new package) | Approved ("Go as recommendation"). **In #16** |
 
 ---
 
 ## Backlog
 
-1. Chinese (D10): native review, then merge #15.
-2. Remember the reader's language (D11), if Alton agrees.
-3. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
-4. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
+1. Remember the reader's language (D11): merge #16, then verify live.
+2. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
+3. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
 
 ---
 

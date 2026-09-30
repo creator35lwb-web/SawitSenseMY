@@ -43,7 +43,12 @@ class DashboardScreen extends ConsumerWidget {
             ),
           ),
         ),
-        title: Text(tr('dashboard_title')),
+        // Long titles shrink to fit rather than being cut off on small
+        // phones (e.g. "Papan Pemuka Harga Harian" at 360 px).
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(tr('dashboard_title')),
+        ),
         centerTitle: true,
         actions: const [
           LanguageMenu(),

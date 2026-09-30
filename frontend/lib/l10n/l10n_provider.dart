@@ -1,13 +1,15 @@
 // Localization provider: English, Bahasa Malaysia and Simplified Chinese.
 //
 // Patch: SS (Claude Code), Sep 2026 — Simplified Chinese (D10); region names
-// come from the string tables.
-import 'dart:ui' show FontStyle;
+// come from the string tables; the app opens in the reader's language (D11).
+import 'dart:ui' show FontStyle, Locale, PlatformDispatcher;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_en.dart';
 import 'app_ms.dart';
 import 'app_zh.dart';
+import 'language_store_stub.dart'
+    if (dart.library.js_interop) 'language_store_web.dart';
 
 enum AppLocale {
   en('EN', 'English'),
@@ -23,16 +25,47 @@ enum AppLocale {
   final String nativeName;
 }
 
-class LocaleNotifier extends StateNotifier<AppLocale> {
-  LocaleNotifier() : super(AppLocale.en);
+/// The language to open in: the reader's last choice on this phone if there
+/// is one, otherwise the first of the phone's languages that the app speaks,
+/// otherwise English. A phone set to any Chinese, Traditional included, opens
+/// in Simplified Chinese.
+AppLocale initialLocale({
+  String? saved,
+  List<Locale> deviceLocales = const [],
+}) {
+  for (final locale in AppLocale.values) {
+    if (locale.name == saved) return locale;
+  }
+  for (final device in deviceLocales) {
+    for (final locale in AppLocale.values) {
+      if (locale.name == device.languageCode) return locale;
+    }
+  }
+  return AppLocale.en;
+}
 
+class LocaleNotifier extends StateNotifier<AppLocale> {
+  /// Starts in [initial]; [save] keeps the reader's choices for next time.
+  LocaleNotifier({AppLocale initial = AppLocale.en, this.save})
+      : super(initial);
+
+  final void Function(String code)? save;
+
+  /// The reader chose [locale]: show it, and remember it on this phone.
   void setLocale(AppLocale locale) {
     state = locale;
+    save?.call(locale.name);
   }
 }
 
 final localeProvider = StateNotifierProvider<LocaleNotifier, AppLocale>(
-  (ref) => LocaleNotifier(),
+  (ref) => LocaleNotifier(
+    initial: initialLocale(
+      saved: readSavedLanguage(),
+      deviceLocales: PlatformDispatcher.instance.locales,
+    ),
+    save: saveLanguage,
+  ),
 );
 
 /// The string table for [locale].
