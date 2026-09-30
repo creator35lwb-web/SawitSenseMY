@@ -44,7 +44,6 @@ jobs:
       - name: Run scraper
         id: run_scraper
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SA_KEY }}
           COMMODITIES_API_KEY: ${{ secrets.COMMODITIES_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

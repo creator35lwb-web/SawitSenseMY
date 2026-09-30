@@ -17,7 +17,7 @@ import '../models/price_data.dart';
 class PriceService {
   /// Base URL for JSON data.
   /// In prototype: GitHub Pages serves backend/data/ as static files.
-  /// Override via constructor for testing or Firestore migration.
+  /// Override via constructor for testing.
   final String baseUrl;
 
   PriceService({

@@ -1,8 +1,8 @@
 // Data models for SawitSense price data.
 //
-// Maps directly to the JSON schema written by backend/writer/firestore_writer.py:
-//   - sawitsense_latest/current -> PriceSnapshot
-//   - sawitsense_prices/{date}  -> PriceSnapshot (historical)
+// Maps directly to the JSON written by backend/writer/json_writer.py:
+//   - data/latest.json            -> PriceSnapshot
+//   - data/prices_YYYY-MM-DD.json -> PriceSnapshot (historical)
 
 class RegionalPrice {
   final String region;
