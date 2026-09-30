@@ -7,6 +7,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.4] - 2026-09-30
+
+### Changed
+- The History tab loads one small `history.json` (about 4 KB, rewritten every run) instead of one request per day for 30 days. That was about 22 files plus 404s for weekends. It falls back to the per-day files if the index can't be read (#12)
+- Scraper schedule moved from :30 to :13 past the hour to reduce GitHub's scheduling delays; runs had been starting 4–8 hours late (#12)
+
+### Added
+- CI builds the web app on every PR, so web-only compile errors are caught before merge (#12)
+
 ## [0.3.3] - 2026-09-30
 
 ### Fixed

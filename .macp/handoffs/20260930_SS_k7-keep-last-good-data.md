@@ -1,6 +1,8 @@
 # Handoff: v0.3.3: a failed source never replaces the last good data
 
-## Status: IN_PROGRESS
+## Status: COMPLETED
+
+> Closed by the next session: `20260930_SS_v0.3.4-history-index.md`.
 
 **From:** SS (Claude Code), CTO & Lead Maintainer
 **To:** Alton (Founder, Human Orchestrator), and the next SS session
@@ -31,10 +33,10 @@ SS then took backlog item 1 (K7) under the Genesis mandate to work the prioritis
 
 ## Pending Items
 
-- [ ] **Alton:** review and merge #11. Merging deploys v0.3.3 (a footer version change); the data behaviour applies from the next scrape.
-- [ ] **SS:** after the merge, confirm the next scheduled scrape is green and the live site matches `main`.
+- [x] **Alton:** review and merge #11. Merging deploys v0.3.3 (a footer version change); the data behaviour applies from the next scrape. *(Merged 08:58 UTC; the deploy succeeded.)*
+- [x] **SS:** after the merge, confirm the next scheduled scrape is green and the live site matches `main`. *(Confirmed with an immediate manual run of the new code: every step green, the live site matches `main`, no warnings, footer v0.3.3.)*
 - [ ] **Alton:** D6 (Track B), whenever convenient. It is not blocking. If you go ahead, K10 comes with it.
-- [ ] **SS, next:** backlog item 1: cache the last known prices in the app (offline-first).
+- [ ] **SS, next:** backlog item 1: cache the last known prices in the app (offline-first). *(Re-scoped as decision D9: it needs a storage package and a service worker to be worthwhile. SS did the next item instead: the history index, #12.)*
 
 ---
 
