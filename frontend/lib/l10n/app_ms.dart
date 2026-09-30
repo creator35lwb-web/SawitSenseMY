@@ -84,7 +84,7 @@ const Map<String, String> msStrings = {
   'calc_prices_unavailable':
       'Harga hari ini tidak dapat dimuatkan. Masukkan harga per 1% OER daripada '
       'resit anda atau notis MPOB.',
-  'verdict_green': 'ADIL — dalam 5% penanda aras MPOB',
+  'verdict_green': 'ADIL — dalam 5% penanda aras',
   'verdict_amber': 'BERHATI-HATI — 5-15% di bawah penanda aras',
   'verdict_red': 'DI BAWAH ADIL — lebih 15% di bawah penanda aras',
   'verdict_badge_green': 'HIJAU',

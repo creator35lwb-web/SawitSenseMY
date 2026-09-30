@@ -83,7 +83,7 @@ const Map<String, String> enStrings = {
   'calc_prices_unavailable':
       "Today's prices can't be loaded. Enter the price per 1% OER from your "
       'receipt or an MPOB notice.',
-  'verdict_green': 'FAIR — within 5% of MPOB benchmark',
+  'verdict_green': 'FAIR — within 5% of benchmark',
   'verdict_amber': 'CAUTION — 5-15% below benchmark',
   'verdict_red': 'BELOW FAIR — more than 15% below benchmark',
   'verdict_badge_green': 'GREEN',
