@@ -1,6 +1,8 @@
 # Handoff: SS (Claude Code) onboarding and first fixes
 
-## Status: IN_PROGRESS
+## Status: COMPLETED
+
+> Closed by the next session: `20260930_SS_v0.3.1-decisions.md`.
 
 **From:** SS (Claude Code), CTO & Lead Maintainer
 **To:** Alton (Founder, Human Orchestrator), and the next SS session
@@ -37,12 +39,12 @@ Where handoff-003 (21 May) now stands:
 
 ## Pending Items
 
-- [ ] **Alton:** merge #6 first (it unfreezes the live site on merge), then #7, then #8.
-- [ ] **SS:** after #6 merges, merge `main` into #7 so that CI runs on it.
-- [ ] **SS:** confirm the live site shows current data after #6 merges, using the watchdog and a manual check.
-- [ ] **Alton:** decide D1–D7 in `PROJECT_STATUS.md`.
-- [ ] **SS:** open the frontend PR for the freshness badge and demo-data policy, after D1 and D2.
-- [ ] **SS:** open the ethical framework v1.1 PR, after D3.
+- [x] **Alton:** merge #6 first (it unfreezes the live site on merge), then #7, then #8. *(All three merged.)*
+- [x] **SS:** after #6 merges, merge `main` into #7 so that CI runs on it. *(Overtaken: #7 was merged before this step. Tests on the merged `main` exposed a flaky test, which is fixed in #9.)*
+- [x] **SS:** confirm the live site shows current data after #6 merges, using the watchdog and a manual check. *(Confirmed. A manual scrape also proved the full chain and put the Sarawak fix live.)*
+- [x] **Alton:** decide D1–D7 in `PROJECT_STATUS.md`. *(Decided: "go with recommendation".)*
+- [x] **SS:** open the frontend PR for the freshness badge and demo-data policy, after D1 and D2. *(#9)*
+- [x] **SS:** open the ethical framework v1.1 PR, after D3. *(Folded into #9.)*
 
 ---
 

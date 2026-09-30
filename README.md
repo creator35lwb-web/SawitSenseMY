@@ -77,7 +77,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | Frontend | Flutter Web | Cross-platform, mobile-responsive |
 | State Management | Riverpod | Scalable upgrade from Provider |
 | Backend/Scraper | Python + GitHub Actions | Zero hosting cost |
-| Data | JSON snapshots on GitHub Pages (Firestore writer present, not configured) | Zero hosting cost |
+| Data | JSON snapshots on GitHub Pages | Zero hosting cost |
 | Charts | fl_chart | Interactive price visualization |
 | Auth (Production) | Firebase Auth (Phone OTP) | Smallholders use phone numbers |
 | Languages | BM + English + Chinese | Malaysian multicultural reality |
@@ -101,7 +101,7 @@ MPOC Daily Palm Oil Prices (CPO)  +  MPOB Prestasi Sawit (monthly OER by state)
 
 Before May 2026 the scraper read the Daily FFB Reference Price from MPOB BEPI directly. That source now requires a licensee login.
 
-The ethical framework requires a data freshness indicator: GREEN (<6h) | AMBER (6-12h) | RED (>12h). The app doesn't show it yet; it's tracked in [PROJECT_STATUS.md](PROJECT_STATUS.md).
+Every screen with prices shows a data freshness badge, as the ethical framework requires: GREEN (<6h) | AMBER (6-12h) | RED (>12h), with the age in words and the exact update time. When prices can't be loaded, the app says so. It never shows demo prices.
 
 ---
 
@@ -111,7 +111,7 @@ The ethical framework requires a data freshness indicator: GREEN (<6h) | AMBER (
 SawitSenseMY/
 +-- backend/               # Python data pipeline
 |   +-- scrapers/          # MPOC CPO, MPOB OER, legacy MPOB BEPI + core formula
-|   +-- writer/            # JSON writer (Firestore optional, not configured)
+|   +-- writer/            # JSON writer
 |   +-- monitor/           # Health check + live-site freshness watchdog
 |   +-- data/              # Published price snapshots (written by the scraper)
 |   +-- tests/             # Unit tests

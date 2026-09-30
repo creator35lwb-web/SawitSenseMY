@@ -7,18 +7,32 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [0.3.1] - 2026-09-30
+
+First release by SS (Claude Code). It makes the live site current, correct and honest about its data.
 
 ### Fixed
 - Live site frozen on 21 May 2026 data: the scraper now dispatches the deploy after each data commit (#6)
 - Failed data pushes are retried, then alert, instead of being dropped silently (#6)
 - Sarawak's indicative OER was Sabah's: MPOB's state codes are 13 (Sabah) and 14 (Sarawak) (#7)
+- The app no longer shows made-up prices when real data can't load. The History tab had been showing a synthetic series with no label (#9)
+- A backend test that only passed while data was stale (#9)
 
 ### Added
+- Data freshness badge on Dashboard and Calculator: GREEN/AMBER/RED with the age in words and the exact time (#9)
+- Honest "prices can't be loaded" state with Try again; the Calculator asks for Price_1% instead of auto-filling (#9)
 - Pull-request CI: backend tests + lint, Flutter analyze + tests, credential scan (#6)
 - Deploy-failure alerts and a live-site freshness watchdog (#6)
 - OER cross-check against MPOB's published totals, and a `warnings` list in the data payload (#7)
 - `PROJECT_STATUS.md`, SS (Claude Code) Genesis, per-file handoffs and reasoning logs in `.macp/` (#8)
+- Ethical framework v1.1: the Path C exception is recorded, and demo prices are banned (#9)
+
+### Removed
+- Firestore: never configured and never read by the app. Dependencies go from 46 to 17 hash-locked packages (#9)
+- Demo data (`demoSnapshot`, `demoHistory`) (#9)
+
+### Changed
+- Footer disclaimer no longer says prices come from MPOB BEPI (#9)
 
 ## [0.3.0] - 2026-05-21
 
