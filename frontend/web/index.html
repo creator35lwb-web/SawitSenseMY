@@ -57,14 +57,19 @@
     @keyframes splash-slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
     @media (prefers-reduced-motion: reduce) { #splash .bar::after { animation: none; width: 100%; } }
     #splash.done { opacity: 0; }
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
   </style>
 </head>
 <body>
-  <div id="splash" role="status" aria-label="Loading SawitSense MY">
+  <div id="splash">
     <img src="icons/Icon-192.png" alt="" width="112" height="112">
     <div class="name">SawitSense MY</div>
     <div class="tagline">Sawit Kita, Harga Kita</div>
-    <div class="bar"></div>
+    <div class="bar" aria-hidden="true"></div>
+    <output class="visually-hidden">Loading SawitSense MY…</output>
   </div>
   <script>
     // Flutter fires this once the app has drawn its first frame.
