@@ -3,17 +3,29 @@
   "short_name": "SawitSense",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#1B5E20",
+  "background_color": "#F6FAF3",
   "theme_color": "#2E7D32",
   "description": "Sawit Kita, Harga Kita. CPO Price Tracker & OER Signal.",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "logo.png",
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/Icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/Icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

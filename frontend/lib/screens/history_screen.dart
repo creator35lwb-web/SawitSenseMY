@@ -1,12 +1,18 @@
 // M4: Price History Chart
 //
 // 30-day CPO spot price line chart using fl_chart.
+//
+// Patch: SS (Claude Code), Sep 2026 — axis labels no longer collide (round
+// gridlines, spaced dates, room at the right edge); the curve never overshoots
+// the real prices; the table lists every day and has BM/EN headers.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../models/price_data.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
+import '../widgets/chart_axis.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/app_footer.dart';
 
@@ -77,31 +83,31 @@ class HistoryScreen extends ConsumerWidget {
   }
 }
 
-class _PriceLineChart extends StatelessWidget {
-  final List prices;
+class _PriceLineChart extends ConsumerWidget {
+  final List<HistoricalPrice> prices;
   const _PriceLineChart({required this.prices});
 
   @override
-  Widget build(BuildContext context) {
-    final spots = <FlSpot>[];
-    for (int i = 0; i < prices.length; i++) {
-      spots.add(FlSpot(i.toDouble(), prices[i].cpoPrice));
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    if (prices.isEmpty) return const SizedBox.shrink();
 
-    if (spots.isEmpty) return const SizedBox.shrink();
-
-    final minY = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-    final maxY = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
-    final yPadding = (maxY - minY) * 0.1;
+    final spots = [
+      for (var i = 0; i < prices.length; i++)
+        FlSpot(i.toDouble(), prices[i].cpoPrice),
+    ];
+    final axis = PriceAxis.fromValues(prices.map((p) => p.cpoPrice));
+    final labelled = dateLabelIndices(prices.length);
+    final labelStyle = TextStyle(fontSize: 11, color: Colors.grey.shade600);
 
     return LineChart(
       LineChartData(
-        minY: minY - yPadding,
-        maxY: maxY + yPadding,
+        minY: axis.min,
+        maxY: axis.max,
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
-          horizontalInterval: (maxY - minY) > 0 ? (maxY - minY) / 4 : 100,
+          horizontalInterval: axis.interval,
           getDrawingHorizontalLine: (value) => FlLine(
             color: Colors.grey.shade200,
             strokeWidth: 1,
@@ -111,15 +117,14 @@ class _PriceLineChart extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 60,
+              reservedSize: 44,
+              interval: axis.interval,
               getTitlesWidget: (value, meta) => Padding(
                 padding: const EdgeInsets.only(right: 6),
                 child: Text(
                   value.toStringAsFixed(0),
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: labelStyle,
+                  textAlign: TextAlign.right,
                 ),
               ),
             ),
@@ -127,33 +132,33 @@ class _PriceLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 32,
-              interval: (prices.length / 5).ceilToDouble().clamp(1, 10),
+              reservedSize: 28,
+              interval: 1,
               getTitlesWidget: (value, meta) {
-                final idx = value.toInt();
-                if (idx < 0 || idx >= prices.length) {
+                final idx = value.round();
+                if ((value - idx).abs() > 0.01 || !labelled.contains(idx)) {
                   return const SizedBox.shrink();
                 }
-                final date = prices[idx].date;
-                // Show just MM-DD
-                final short =
-                    date.length >= 10 ? date.substring(5, 10) : date;
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    short,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey.shade600,
-                    ),
+                    localizedDayMonth(prices[idx].date, locale),
+                    style: labelStyle,
                   ),
                 );
               },
             ),
           ),
+          // Empty space on the right keeps the latest point and its date
+          // clear of the screen edge.
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 22,
+              getTitlesWidget: (value, meta) => const SizedBox.shrink(),
+            ),
+          ),
           topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(
               sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(
@@ -168,6 +173,9 @@ class _PriceLineChart extends StatelessWidget {
             spots: spots,
             isCurved: true,
             curveSmoothness: 0.3,
+            // Never draw the line above or below the real prices between
+            // two days: the chart must not show prices that never happened.
+            preventCurveOverShooting: true,
             color: Colors.green.shade700,
             barWidth: 3,
             isStrokeCapRound: true,
@@ -189,11 +197,14 @@ class _PriceLineChart extends StatelessWidget {
         ],
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
+            fitInsideHorizontally: true,
+            fitInsideVertically: true,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 final idx = spot.spotIndex;
-                final date =
-                    idx < prices.length ? prices[idx].date : '';
+                final date = idx < prices.length
+                    ? localizedDayMonth(prices[idx].date, locale)
+                    : '';
                 return LineTooltipItem(
                   'RM ${spot.y.toStringAsFixed(2)}\n$date',
                   const TextStyle(
@@ -211,12 +222,18 @@ class _PriceLineChart extends StatelessWidget {
   }
 }
 
-class _PriceTable extends StatelessWidget {
-  final List prices;
+class _PriceTable extends ConsumerWidget {
+  final List<HistoricalPrice> prices;
   const _PriceTable({required this.prices});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(trProvider);
+    final headerStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.grey.shade700,
+    );
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -235,46 +252,38 @@ class _PriceTable extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: Text('Date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700,
-                      )),
+                  child: Text(tr('history_col_date'), style: headerStyle),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: Text('CPO (RM/tonne)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700,
-                      ),
-                      textAlign: TextAlign.right),
+                  child: Text(tr('history_col_cpo'),
+                      style: headerStyle, textAlign: TextAlign.right),
                 ),
               ],
             ),
-            ...prices.reversed.take(10).map(
-                  (p) => TableRow(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Text(p.date,
-                            style: const TextStyle(fontSize: 13)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: Text(
-                          'RM ${p.cpoPrice.toStringAsFixed(2)}',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green.shade800,
-                          ),
-                        ),
-                      ),
-                    ],
+            // Every day in the chart, newest first.
+            ...prices.reversed.map(
+              (p) => TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Text(p.date, style: const TextStyle(fontSize: 13)),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Text(
+                      'RM ${p.cpoPrice.toStringAsFixed(2)}',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
