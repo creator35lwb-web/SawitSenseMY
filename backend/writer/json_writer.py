@@ -14,11 +14,20 @@ import json
 import logging
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 MYT = timezone(timedelta(hours=8))
 JSON_DIR = Path(__file__).parent.parent / "data"
+
+
+def read_latest() -> Optional[dict]:
+    """The last published snapshot (latest.json), or None if missing or unreadable."""
+    try:
+        return json.loads((JSON_DIR / "latest.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
 
 
 def write_to_json(data: dict, filename: str = "latest.json") -> bool:

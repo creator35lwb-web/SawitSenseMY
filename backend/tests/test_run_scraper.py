@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import pytest
 
-from run_scraper import build_payload, indicative_price_1pct  # noqa: E402
+from run_scraper import build_payload, decide_payload, indicative_price_1pct  # noqa: E402
 from scrapers.mpoc_cpo import MPOCDailyCPO
 from scrapers.mpob_oer import OERSnapshot, StateOER
 
@@ -140,3 +140,65 @@ class TestVerifiableSources:
         oer = self._payload()["oer"]
         assert oer["source_page_url"] == "https://prestasisawit.mpob.gov.my/en/oer"
         assert "/api/" not in oer["source_page_url"]
+
+
+class TestKeepLastGoodData:
+    """K7: a failed source never replaces the last good data."""
+
+    PREVIOUS = {
+        "cpo": {"date": "2026-09-28", "price_myr_per_tonne": 4664.0},
+        "oer": {
+            "year": 2026, "month": 4,
+            "oer_malaysia": 20.49, "oer_peninsular": 20.10,
+            "oer_sabah": 21.54, "oer_sarawak": 20.42,
+            "region_avg": {"South": 20.24, "Sabah": 21.54, "Sarawak": 20.42},
+        },
+    }
+
+    def test_no_cpo_keeps_the_last_snapshot(self):
+        oer = TestBuildPayload()._make_oer()
+        assert decide_payload(None, oer, False, None, self.PREVIOUS) is None
+
+    def test_fallback_cpo_still_publishes(self):
+        fb = {"date": "2026-09-28", "price_myr_per_tonne": 4600.0, "source": "Commodities-API (fallback)"}
+        payload = decide_payload(None, None, False, fb, self.PREVIOUS)
+        assert payload is not None
+        assert payload["fallback_used"] is True
+
+    def test_missing_oer_is_carried_forward_and_flagged(self):
+        payload = decide_payload(TestBuildPayload()._make_cpo(), None, False, None, self.PREVIOUS)
+        assert payload["oer"]["carried_forward"] is True
+        assert payload["oer"]["month"] == 4
+        regions = {r["region"]: r for r in payload["ffb"]["regions"]}
+        assert regions["Sarawak"]["indicative_oer_pct"] == pytest.approx(20.42)
+        assert any("kept the previous figures (2026-04)" in w for w in payload["warnings"])
+
+    def test_missing_oer_without_history_publishes_without_regional_oer(self):
+        payload = decide_payload(TestBuildPayload()._make_cpo(), None, False, None, None)
+        assert payload["oer"] is None
+        assert all(r["indicative_oer_pct"] is None for r in payload["ffb"]["regions"])
+        assert any("no regional OER" in w for w in payload["warnings"])
+
+    def test_fresh_oer_is_never_marked_carried_forward(self):
+        maker = TestBuildPayload()
+        payload = decide_payload(maker._make_cpo(), maker._make_oer(), False, None, self.PREVIOUS)
+        assert "carried_forward" not in payload["oer"]
+
+
+class TestMainKeepsLastSnapshot:
+    def test_run_without_cpo_writes_nothing_and_fails(self, monkeypatch):
+        import run_scraper
+        from types import SimpleNamespace
+
+        writes = []
+        monkeypatch.setattr(run_scraper, "MPOBScraper", lambda: SimpleNamespace(scrape_all=lambda: {"success": False}))
+        monkeypatch.setattr(run_scraper, "MPOCDailyCPOScraper", lambda: SimpleNamespace(scrape=lambda: None))
+        monkeypatch.setattr(run_scraper, "MPOBOERScraper", lambda: SimpleNamespace(scrape=lambda: None))
+        monkeypatch.setattr(run_scraper, "fetch_cpo_fallback", lambda: None)
+        monkeypatch.setattr(run_scraper, "read_latest", lambda: TestKeepLastGoodData.PREVIOUS)
+        monkeypatch.setattr(run_scraper, "write_price_data", lambda payload: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
+        monkeypatch.setattr(run_scraper, "report_success", lambda: {})
+
+        assert run_scraper.main() == 1
+        assert writes == []  # latest.json is left as it was
