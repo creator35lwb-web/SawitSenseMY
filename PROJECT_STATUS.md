@@ -2,13 +2,12 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (v0.3.7 check and verdict wording) · SS (Claude Code)
+**Last updated:** 1 October 2026 (v0.3.8 check and repo housekeeping) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.8-verdict-wording.md`.
-> 2. After Alton merges [#17](https://github.com/creator35lwb-web/SawitSenseMY/pull/17), SS checks the live calculator's green verdict in all three languages.
-> 3. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time. Use `gh run list --workflow scraper_cron.yml` **without** `--event schedule`: that filter returns old runs out of order.
-> 4. Ask Alton about housekeeping (backlog item 3).
+> 1. Read the newest handoff, `.macp/handoffs/20261001_SS_v0.3.8-live-and-housekeeping.md`.
+> 2. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time. Use `gh run list --workflow scraper_cron.yml` **without** `--event schedule`: that filter returns old runs out of order.
+> 3. Nothing else is waiting on SS. D9 (offline-first) and D6 (Track B) are Alton's calls.
 
 ---
 
@@ -17,7 +16,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.7 live** (opens in the reader's language); 0.3.8 in [#17](https://github.com/creator35lwb-web/SawitSenseMY/pull/17) (verdict wording, K13) |
+| Version | **0.3.8 live** (EN, BM and 中文; opens in the reader's language) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -57,6 +56,13 @@
     - Malay opens in BM;
     - English and French open in English.
   - All nine top-bar titles show in full at 360 px in EN, BM and 中文.
+- **v0.3.8 is live, checked after #17 merged.**
+  - Deploy after the merge succeeded, and the live bundle is v0.3.8.
+  - It contains "within 5% of benchmark", and the old "within 5% of MPOB benchmark" is gone.
+  - On the live calculator, North (RM 43.38 × 18% = RM 780.84) with RM 780 paid gives the green verdict in all three languages, and none of them names MPOB:
+    - FAIR — within 5% of benchmark;
+    - ADIL — dalam 5% penanda aras;
+    - 公平 — 与基准相差 5% 以内.
 - **Scheduled scrapes ran every weekday through September**, 4–6 hours late under the old `:30` schedule. For example, 29 Sep at 06:01 and 14:54 UTC, and 30 Sep at 05:50 UTC. The `:13` schedule's first run is due 1 Oct, 00:13 UTC.
 ---
 
@@ -64,7 +70,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#17](https://github.com/creator35lwb-web/SawitSenseMY/pull/17) | v0.3.8: the calculator's green verdict no longer claims an MPOB benchmark (K13), plus this session's records |
+| [#18](https://github.com/creator35lwb-web/SawitSenseMY/pull/18) | Records only: v0.3.8 verified live; repository housekeeping done (D12) |
 
 ---
 
@@ -108,14 +114,14 @@
 | D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review. Chinese text also needs its font pieces cached, because Flutter loads them from Google Fonts the first time (about 400 KB) | **Next session** (Alton, 30 Sep). SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
 | D10 | **Chinese (CN)**, which ethical framework v1.1 requires | Done in #15 (verified live). Better wording from native readers is a one-line change in `app_zh.dart` |
 | D11 | **Remember the reader's language:** open in the phone's language on the first visit, and remember the reader's last choice on that phone (browser storage, no personal data, no new package) | Done in #16 (verified live) |
+| D12 | **Repository housekeeping:** GitHub deletes each PR's branch after merge ("Automatically delete head branches"), and the 16 old merged branches are removed | Done on 1 Oct (Alton: "GO!"). Only `main` remains. Every deleted branch was already inside `main` and can be restored from its PR page |
 
 ---
 
 ## Backlog
 
-1. Verdict wording (K13): merge #17, then verify live.
-2. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
-3. Housekeeping, **needs Alton's OK:** turn on "Automatically delete head branches" and delete the merged PR branches. Each branch can be restored from its PR page.
+1. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
+2. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 
 ---
 
