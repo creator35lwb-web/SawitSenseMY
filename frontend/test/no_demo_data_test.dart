@@ -11,17 +11,17 @@ import 'package:sawitsense_my/providers/price_provider.dart';
 import 'package:sawitsense_my/screens/dashboard_screen.dart';
 import 'package:sawitsense_my/services/price_service.dart';
 
+/// Serves [latest] (null = loading failed) and never any history.
 class _FakePriceService extends PriceService {
   final PriceSnapshot? latest;
-  final List<HistoricalPrice> history;
 
-  _FakePriceService({this.latest, this.history = const []});
+  _FakePriceService({this.latest});
 
   @override
   Future<PriceSnapshot?> fetchLatest() async => latest;
 
   @override
-  Future<List<HistoricalPrice>> fetchHistory({int days = 30}) async => history;
+  Future<List<HistoricalPrice>> fetchHistory({int days = 30}) async => const [];
 }
 
 ProviderContainer _containerWith(PriceService service) {
