@@ -21,8 +21,9 @@ class PriceAxis {
   factory PriceAxis.fromValues(Iterable<double> values, {int maxSteps = 5}) {
     final lo = values.reduce(math.min);
     final hi = values.reduce(math.max);
-    // Headroom so the highest and lowest points aren't drawn on the border.
-    final pad = math.max((hi - lo) * 0.08, 1.0);
+    // A little headroom, so a point that lands exactly on a round number
+    // isn't drawn on the border. More than a few % adds an empty gridline.
+    final pad = math.max((hi - lo) * 0.02, 1.0);
     const steps = [10.0, 20.0, 25.0, 50.0, 100.0, 200.0, 250.0, 500.0, 1000.0];
     final interval = steps.firstWhere(
       (s) => (hi - lo + 2 * pad) / s <= maxSteps,
