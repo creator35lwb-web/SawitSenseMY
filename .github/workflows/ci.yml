@@ -70,6 +70,16 @@ jobs:
       - name: Build for web
         run: flutter build web --release --base-href "/SawitSenseMY/"
 
+      # Lets a reviewer (or SS, which has no local Flutter) open the exact
+      # build locally and check the UI before merging. Serve it under
+      # /SawitSenseMY/ to match the base href.
+      - name: Upload the web build for preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-preview
+          path: frontend/build/web
+          retention-days: 3
+
   secret-scan:
     runs-on: ubuntu-latest
     timeout-minutes: 5

@@ -97,3 +97,10 @@ String localizedDateTime(DateTime time, AppLocale locale) {
 /// A month, e.g. "Aug 2026" / "Ogo 2026" (MPOB publishes OER monthly).
 String localizedMonthYear(int year, int month, AppLocale locale) =>
     '${_monthName(month, locale)} $year';
+
+/// A short date for chart labels, e.g. "28 Sep" / "3 Ogo", from "2026-09-28".
+/// Returns [isoDate] unchanged if it can't be parsed.
+String localizedDayMonth(String isoDate, AppLocale locale) {
+  final d = DateTime.tryParse(isoDate);
+  return d == null ? isoDate : '${d.day} ${_monthName(d.month, locale)}';
+}

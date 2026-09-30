@@ -90,6 +90,8 @@ const Map<String, String> enStrings = {
   'history_title': 'CPO Price History',
   'history_subtitle': '30-day CPO spot price trend',
   'history_no_data': 'No historical data available yet',
+  'history_col_date': 'Date',
+  'history_col_cpo': 'CPO (RM/tonne)',
 
   // Feedback
   'feedback_title': 'Feedback',

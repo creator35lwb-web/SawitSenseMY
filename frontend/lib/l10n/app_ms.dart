@@ -91,6 +91,8 @@ const Map<String, String> msStrings = {
   'history_title': 'Sejarah Harga CPO',
   'history_subtitle': 'Trend harga semasa CPO 30 hari',
   'history_no_data': 'Tiada data sejarah tersedia lagi',
+  'history_col_date': 'Tarikh',
+  'history_col_cpo': 'CPO (RM/tan)',
 
   // Feedback
   'feedback_title': 'Maklum Balas',

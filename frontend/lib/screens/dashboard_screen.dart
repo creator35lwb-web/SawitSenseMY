@@ -31,9 +31,17 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        // The emblem on a white rounded badge. The full logo (with its
+        // wordmark) was unreadable at this size and weighed 2.7 MB.
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset('assets/logo.png'),
+          padding: const EdgeInsets.all(8),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/logo_mark.png',
+              semanticLabel: 'SawitSense MY',
+            ),
+          ),
         ),
         title: Text(tr('dashboard_title')),
         centerTitle: true,

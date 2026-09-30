@@ -6,23 +6,75 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="SawitSense MY — Open-Source CPO Price Tracker & OER Signal for Malaysian Oil Palm Smallholders">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2E7D32">
 
-  <!-- Open Graph -->
+  <!-- Open Graph (link previews need an absolute image URL) -->
   <meta property="og:title" content="SawitSense MY">
   <meta property="og:description" content="Sawit Kita, Harga Kita. Fair FFB price transparency for Malaysian smallholders.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="logo.png">
+  <meta property="og:url" content="https://creator35lwb-web.github.io/SawitSenseMY/">
+  <meta property="og:image" content="https://creator35lwb-web.github.io/SawitSenseMY/og-image.png">
 
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="SawitSense">
 
   <link rel="manifest" href="manifest.json">
   <title>SawitSense MY</title>
+
+  <!--
+    Launch screen. It shows at once while the app (about 4 MB) loads, so a
+    smallholder on a slow connection sees SawitSense instead of a blank page.
+    It sits behind the app (z-index -1), so the app covers it even if the
+    first-frame event never fires; the event just tidies it away.
+    Patch: SS (Claude Code), Sep 2026.
+  -->
+  <style>
+    body { margin: 0; background: #F6FAF3; }
+    #splash {
+      position: fixed; inset: 0; z-index: -1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      transition: opacity 0.3s ease;
+    }
+    #splash img {
+      width: 112px; height: 112px; border-radius: 24px;
+      background: #fff; box-shadow: 0 4px 16px rgba(27, 94, 32, 0.18);
+    }
+    #splash .name { margin-top: 10px; font-size: 22px; font-weight: 700; color: #1B5E20; }
+    #splash .tagline { font-size: 14px; color: #558B2F; }
+    #splash .bar {
+      width: 120px; height: 4px; margin-top: 14px; border-radius: 2px;
+      background: #DCEBD5; overflow: hidden;
+    }
+    #splash .bar::after {
+      content: ""; display: block; width: 40%; height: 100%; border-radius: 2px;
+      background: #2E7D32; animation: splash-slide 1.2s ease-in-out infinite;
+    }
+    @keyframes splash-slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+    @media (prefers-reduced-motion: reduce) { #splash .bar::after { animation: none; width: 100%; } }
+    #splash.done { opacity: 0; }
+  </style>
 </head>
 <body>
+  <div id="splash" role="status" aria-label="Loading SawitSense MY">
+    <img src="icons/Icon-192.png" alt="" width="112" height="112">
+    <div class="name">SawitSense MY</div>
+    <div class="tagline">Sawit Kita, Harga Kita</div>
+    <div class="bar"></div>
+  </div>
+  <script>
+    // Flutter fires this once the app has drawn its first frame.
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('splash');
+      if (!splash) return;
+      splash.classList.add('done');
+      setTimeout(function () { splash.remove(); }, 400);
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
