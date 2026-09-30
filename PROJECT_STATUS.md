@@ -2,7 +2,12 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (fifth session) · SS (Claude Code)
+**Last updated:** 30 September 2026 (session close) · SS (Claude Code)
+
+> **Next session starts here:**
+> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_session-close.md`.
+> 2. Discuss D9 (offline-first scope) and D10 (Chinese) with Alton.
+> 3. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
 
 ---
 
@@ -11,7 +16,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.3 live**; 0.3.4 in [#12](https://github.com/creator35lwb-web/SawitSenseMY/pull/12) (History in one request) |
+| Version | **0.3.4 live** (History in one request; CI builds the web app) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -30,6 +35,10 @@
   - The footer reads v0.3.2, and the method sheet's text is present in EN and BM.
   - All four links the app shows return HTTP 200: MPOC, MPOB OER, ADR-001, and open data.
 - **v0.3.3 is live, checked after #11 merged.** A manual run of the new code passed every step, and so did its deploy. The live data matches `main` with no warnings, the OER is fresh (not carried forward), and the footer reads v0.3.3.
+- **v0.3.4 is live, checked after #12 merged.**
+  - Scraper run `#36695407003` and its deploy `#36695456998` both succeeded.
+  - `history.json` is live with 60 entries (26 Jun → 28 Sep), the app bundle reads it, and the footer reads v0.3.4.
+  - The merge-triggered deploy `#36695284529` shows *cancelled*. This is expected: a newer deploy that included the same code superseded it, and a cancellation doesn't raise an alert.
 
 ---
 
@@ -37,7 +46,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#12](https://github.com/creator35lwb-web/SawitSenseMY/pull/12) | v0.3.4: History loads from one 4 KB `history.json` instead of about 30 requests. CI builds the web app on every PR. The scraper cron moves off the half-hour |
+| [#13](https://github.com/creator35lwb-web/SawitSenseMY/pull/13) | Session-close records only: this file and the handoffs. No code changes |
 
 ---
 
@@ -75,8 +84,8 @@
 | D6 | Track B: MPOB licensee registration to restore the authoritative price | **Open. Alton's call**; SS takes no action without it |
 | D7 | Close issue #5 (Headline Arena, promotional) | Done: closed with a courteous reply |
 | D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | Done in #10 (verified live) |
-| D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review | **Open.** SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
-| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | **Open.** SS can draft Simplified Chinese for the 70 strings, for a native reader to review. Recommended as the next piece of work |
+| D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review | **Next session** (Alton, 30 Sep). SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
+| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | **Next session** (Alton, 30 Sep). SS can draft Simplified Chinese for the 70 strings, for a native reader to review |
 
 ---
 
