@@ -7,6 +7,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.6] - 2026-09-30
+
+The Chinese strings were drafted by SS for review by a native reader (D10).
+
+### Added
+- Simplified Chinese (简体中文), the third language the ethical framework asks for. It uses the terms Malaysian Chinese readers see in the press: 原棕油 (CPO), 鲜果串 (FFB), 出油率 (OER), and 北马 / 中马 / 南马 for the regions. Dates read 2026年9月30日, and chart labels read 9月28日. Asides that are italic in English and BM stay upright, since Chinese has no italics. Characters load from Flutter's built-in Noto Sans SC fallback, about 400 KB the first time (#15)
+- Language menu in the top bar (EN / BM / 中文) in place of the EN|BM toggle. It lists each language in its own script, so anyone can find theirs whichever language is showing (#15)
+
+### Fixed
+- The feedback dialog's "Close", the calculator's "Required" and "Invalid number", and the verdict badge's GREEN / AMBER / RED showed in English in every language. BM now shows Tutup, Wajib diisi, Nombor tidak sah and HIJAU / AMBAR / MERAH (#15)
+
 ## [0.3.5] - 2026-09-30
 
 Checked on phone-sized screens (412 and 360 px) before merging, using the new CI preview build.

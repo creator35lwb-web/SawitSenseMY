@@ -2,12 +2,13 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 30 September 2026 (UI polish session) · SS (Claude Code)
+**Last updated:** 30 September 2026 (Chinese language session) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.5-ui-polish.md`.
-> 2. Discuss D9 (offline-first scope) and D10 (Chinese) with Alton.
-> 3. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
+> 1. Read the newest handoff, `.macp/handoffs/20260930_SS_v0.3.6-chinese.md`.
+> 2. [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) (Chinese) needs a native Chinese reader's review before Alton merges it. After the merge, SS checks the live site in all three languages.
+> 3. Ask Alton about D11 (remember the reader's language).
+> 4. Check that the first scheduled scrape on the new `:13` cron (1 Oct, 00:13 UTC) started close to time.
 
 ---
 
@@ -16,7 +17,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.4 live**; 0.3.5 in [#14](https://github.com/creator35lwb-web/SawitSenseMY/pull/14) (launch screen, logo, chart) |
+| Version | **0.3.5 live**; 0.3.6 in [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) (Simplified Chinese, awaiting native review) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Current.** Unfrozen on 30 Sep 2026 and checked by the freshness watchdog twice every weekday. |
 | Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -39,6 +40,11 @@
   - Scraper run `#36695407003` and its deploy `#36695456998` both succeeded.
   - `history.json` is live with 60 entries (26 Jun → 28 Sep), the app bundle reads it, and the footer reads v0.3.4.
   - The merge-triggered deploy `#36695284529` shows *cancelled*. This is expected: a newer deploy that included the same code superseded it, and a cancellation doesn't raise an alert.
+- **v0.3.5 is live, checked after #14 merged.**
+  - Deploy `#36716196010` succeeded.
+  - The new icons and share image return HTTP 200, the manifest lists the three intended icons, and the old 2.7 MB `logo.png` returns 404 as intended.
+  - The footer reads v0.3.5.
+  - Phone-emulated screenshots of the live site at 412 and 360 px show the launch screen, the logo badge, and chart labels that no longer collide.
 
 ---
 
@@ -46,7 +52,7 @@
 
 | PR | What it does |
 |----|--------------|
-| [#14](https://github.com/creator35lwb-web/SawitSenseMY/pull/14) | v0.3.5 UI polish: a launch screen instead of a blank page, a top-bar logo that fits, right-sized icons, and a history chart whose labels don't collide. Previewed at phone sizes before merge |
+| [#15](https://github.com/creator35lwb-web/SawitSenseMY/pull/15) | v0.3.6: Simplified Chinese and a three-language menu (D10). **Needs a native Chinese reader's review before merge.** Previewed at phone sizes |
 
 ---
 
@@ -86,16 +92,18 @@
 | D6 | Track B: MPOB licensee registration to restore the authoritative price | **Open. Alton's call**; SS takes no action without it |
 | D7 | Close issue #5 (Headline Arena, promotional) | Done: closed with a courteous reply |
 | D8 | Link every figure to a public page where it can be checked (small version, no over-engineering) | Done in #10 (verified live) |
-| D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review | **Next session** (Alton, 30 Sep). SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
-| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | **Next session** (Alton, 30 Sep). SS can draft Simplified Chinese for the 70 strings, for a native reader to review |
+| D9 | **Offline-first scope.** Caching prices on the phone only helps once the app itself has loaded. True offline use needs a service worker that caches the app, plus a new storage package. Adding a package needs Flutter to regenerate `pubspec.lock`: either installed on Alton's machine, or through a CI job that SonarCloud would flag for review. Chinese text also needs its font pieces cached, because Flutter loads them from Google Fonts the first time (about 400 KB) | **Next session** (Alton, 30 Sep). SS recommends deferring until smallholders report connection problems; #11 and #12 already cover most of the need |
+| D10 | **Chinese (CN)**, which ethical framework v1.1 requires | **In #15.** SS drafted Simplified Chinese for every string, using Malaysian Chinese terms. A native reader reviews before merge |
+| D11 | **Remember the reader's language.** Every visit starts in English, so a Chinese or BM reader has to pick their language each time. Options: (a) open in the phone's language on the first visit; (b) remember the reader's last choice on that phone (browser storage, no personal data, no new package) | **Open. Alton's call.** SS recommends both, as one small PR after #15 |
 
 ---
 
 ## Backlog
 
-1. Chinese (CN) language (D10).
-2. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
-3. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
+1. Chinese (D10): native review, then merge #15.
+2. Remember the reader's language (D11), if Alton agrees.
+3. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
+4. Optional housekeeping: delete merged branches on GitHub, or turn on "Automatically delete head branches".
 
 ---
 

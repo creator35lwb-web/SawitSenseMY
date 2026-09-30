@@ -41,6 +41,10 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 - `.github/workflows/deploy_web.yml`: builds and deploys the Flutter web app
 - `.github/workflows/freshness_watchdog.yml`: raises an alert when the live site falls behind `main`
 
+## Languages
+
+Every string a user sees goes in all three tables in `frontend/lib/l10n/`: `app_en.dart`, `app_ms.dart` and `app_zh.dart` (Simplified Chinese). `frontend/test/l10n_test.dart` fails if a key is missing from any of them. A native reader should check new Malay or Chinese wording before it ships.
+
 ## Core Formula
 
 ```
