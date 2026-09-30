@@ -32,7 +32,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pytest flake8
+        # Same hash-locked, wheels-only set the scraper installs.
+        run: |
+          pip install --require-hashes --only-binary :all: -r requirements.lock
 
       - name: Test
         run: pytest tests/ -v
@@ -50,13 +52,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: '3.41.6'
           channel: 'stable'
 
       - name: Get dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos

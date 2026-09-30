@@ -38,8 +38,8 @@ jobs:
           python-version: '3.11'
 
       - name: Compare the live site with main
+        # Standard library only, so nothing is installed.
         run: |
-          pip install requests
           cd backend
           python -m monitor.live_freshness
 

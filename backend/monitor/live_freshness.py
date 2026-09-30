@@ -18,10 +18,9 @@ import json
 import logging
 import sys
 import time
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-
-import requests
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +35,16 @@ MAX_DATA_AGE = timedelta(days=4)
 
 
 def fetch_live_snapshot(url: str = LIVE_LATEST_URL, timeout: int = 30) -> dict:
-    """Fetch the live latest.json, bypassing the Pages CDN cache."""
-    resp = requests.get(
-        url,
-        params={"t": int(time.time())},
-        headers={"Cache-Control": "no-cache"},
-        timeout=timeout,
+    """Fetch the live latest.json, bypassing the Pages CDN cache.
+
+    Standard library only, so the watchdog workflow installs nothing.
+    """
+    req = urllib.request.Request(
+        f"{url}?t={int(time.time())}",
+        headers={"Cache-Control": "no-cache", "User-Agent": "SawitSense-freshness-watchdog"},
     )
-    resp.raise_for_status()
-    return resp.json()
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.load(resp)
 
 
 def find_problems(live: dict, repo: dict, now: datetime) -> list:
@@ -75,7 +75,7 @@ def main() -> int:
     repo = json.loads(REPO_LATEST_FILE.read_text(encoding="utf-8"))
     try:
         live = fetch_live_snapshot()
-    except (requests.RequestException, ValueError) as e:
+    except (OSError, ValueError) as e:  # URLError/HTTPError/timeouts are OSErrors; bad JSON is a ValueError
         print(f"::error::Could not read the live snapshot at {LIVE_LATEST_URL}: {e}")
         return 1
 

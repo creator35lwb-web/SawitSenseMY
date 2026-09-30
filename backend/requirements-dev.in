@@ -1,0 +1,6 @@
+# Inputs for requirements.lock: the scraper's runtime dependencies plus the
+# test tools CI runs. Edit this file or requirements.txt, then regenerate the
+# lock with the command in requirements.lock's header.
+-r requirements.txt
+pytest
+flake8

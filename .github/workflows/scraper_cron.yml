@@ -35,9 +35,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
+        # Hash-locked and wheels-only: this job can write to the repo, so it
+        # installs nothing unverified and runs no package setup scripts.
         run: |
           cd backend
-          pip install -r requirements.txt
+          pip install --require-hashes --only-binary :all: -r requirements.lock
 
       - name: Run scraper
         id: run_scraper

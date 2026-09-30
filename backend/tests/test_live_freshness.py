@@ -3,10 +3,9 @@
 Author: SS (Claude Code), Sep 2026
 """
 
+import urllib.error
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
-
-import requests
 
 from monitor import live_freshness
 from monitor.live_freshness import find_problems
@@ -60,7 +59,7 @@ class TestMain:
         latest.write_text('{"scraped_at": "2026-09-30T08:00:00+08:00"}', encoding="utf-8")
         monkeypatch.setattr(live_freshness, "REPO_LATEST_FILE", latest)
         with patch.object(live_freshness, "fetch_live_snapshot",
-                          side_effect=requests.ConnectionError("boom")):
+                          side_effect=urllib.error.URLError("boom")):
             assert live_freshness.main() == 1
 
     def test_current_live_site_passes(self, tmp_path, monkeypatch):
