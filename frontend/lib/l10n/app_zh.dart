@@ -73,6 +73,7 @@ const Map<String, String> zhStrings = {
   'calc_region': '选择地区',
   'calc_price_1pct': '每 1% 出油率价格（RM）',
   'calc_oer': '评定出油率（%）',
+  'oer': '出油率',
   'calc_paid': '实收价格（RM/公吨）— 选填',
   'calc_calculate': '计算',
   'calc_fair_price': '公平价格',

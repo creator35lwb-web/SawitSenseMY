@@ -315,7 +315,8 @@ class _ResultCard extends ConsumerWidget {
                   ),
             ),
             Text(
-              '${result.price1PctOer.toStringAsFixed(2)} x ${result.gradedOer.toStringAsFixed(1)}% OER',
+              '${result.price1PctOer.toStringAsFixed(2)} x '
+              '${result.gradedOer.toStringAsFixed(1)}% ${tr('oer')}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey.shade500,
                   ),

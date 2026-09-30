@@ -73,6 +73,7 @@ const Map<String, String> enStrings = {
   'calc_region': 'Select Region',
   'calc_price_1pct': 'Price per 1% OER (RM)',
   'calc_oer': 'Graded OER (%)',
+  'oer': 'OER',
   'calc_paid': 'Price Paid (RM/tonne) — optional',
   'calc_calculate': 'Calculate',
   'calc_fair_price': 'Fair Price',

@@ -74,6 +74,7 @@ const Map<String, String> msStrings = {
   'calc_region': 'Pilih Wilayah',
   'calc_price_1pct': 'Harga per 1% OER (RM)',
   'calc_oer': 'OER Gred (%)',
+  'oer': 'OER',
   'calc_paid': 'Harga Dibayar (RM/tan) — pilihan',
   'calc_calculate': 'Kira',
   'calc_fair_price': 'Harga Adil',

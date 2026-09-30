@@ -224,6 +224,7 @@ void main() {
       await tester.tap(calculate);
       await tester.pumpAndSettle();
 
+      expect(find.text('43.38 x 18.0% 出油率'), findsOneWidget);
       expect(find.text('黄灯'), findsOneWidget);
       expect(find.text('注意 — 低于基准 5-15%'), findsOneWidget);
       final shown = _shownText(tester).toList();
