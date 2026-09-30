@@ -4,7 +4,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sawitsense_my/models/price_data.dart';
-import 'package:sawitsense_my/services/price_service.dart';
 
 void main() {
   group('FairPriceResult.calculate', () {
@@ -144,24 +143,6 @@ void main() {
       expect(snapshot.success, false);
       expect(snapshot.cpo, isNull);
       expect(snapshot.ffb, isNull);
-    });
-  });
-
-  group('Demo data', () {
-    test('demoSnapshot has all 6 regions', () {
-      final demo = PriceService.demoSnapshot();
-      expect(demo.success, true);
-      expect(demo.ffb?.regions.length, 6);
-      expect(demo.cpo?.priceMyrPerTonne, greaterThan(0));
-    });
-
-    test('demoHistory returns trading days only', () {
-      final history = PriceService.demoHistory();
-      expect(history.length, greaterThan(15)); // ~22 trading days in 30 days
-      expect(history.length, lessThanOrEqualTo(23));
-      for (final entry in history) {
-        expect(entry.cpoPrice, greaterThan(0));
-      }
     });
   });
 

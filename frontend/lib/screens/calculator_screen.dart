@@ -2,6 +2,9 @@
 //
 // 3-input model: Region (auto-fills Price_1%), OER%, optional Paid Price.
 // Shows: Fair Price + Verdict (GREEN/AMBER/RED).
+//
+// Patch: SS (Claude Code), Sep 2026 — when prices can't be loaded, say so and
+// ask for Price_1% instead of auto-filling demo values.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +14,7 @@ import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/language_toggle.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
@@ -107,7 +111,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
               // the auto-filled Price_1% comes from the SawitSense-derived
               // value, not the authoritative MPOB FFB Reference Price.
               priceAsync.maybeWhen(
-                data: (snapshot) => snapshot.isIndicative
+                data: (snapshot) => snapshot != null && snapshot.isIndicative
                     ? const Padding(
                         padding: EdgeInsets.only(bottom: 16),
                         child: IndicativeBanner(compact: true),
@@ -116,11 +120,23 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                 orElse: () => const SizedBox.shrink(),
               ),
 
-              // Region selector
+              // Freshness of the prices the region selector auto-fills.
+              priceAsync.maybeWhen(
+                data: (snapshot) => snapshot == null
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: FreshnessBadge(scrapedAt: snapshot.scrapedAt),
+                      ),
+                orElse: () => const SizedBox.shrink(),
+              ),
+
+              // Region selector (only when real prices are loaded)
               priceAsync.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, __) => const _ManualEntryNote(),
                 data: (snapshot) {
+                  if (snapshot == null) return const _ManualEntryNote();
                   final regions = snapshot.ffb?.regions ?? [];
                   return DropdownButtonFormField<String>(
                     // ignore: deprecated_member_use
@@ -221,6 +237,37 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Shown in place of the region selector when prices can't be loaded: the
+/// smallholder can still enter Price_1% from a receipt or MPOB notice.
+class _ManualEntryNote extends ConsumerWidget {
+  const _ManualEntryNote();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tr = ref.watch(trProvider);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade400),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_off_outlined, color: Colors.grey.shade700, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              tr('calc_prices_unavailable'),
+              style: TextStyle(color: Colors.grey.shade800, fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -16,10 +16,17 @@ const Map<String, String> msStrings = {
   'ffb_reference': 'Harga Rujukan BTS (1% OER)',
   'per_tonne': '/tan',
   'per_1pct': '/1% OER',
-  'last_updated': 'Kemaskini terakhir',
   'source': 'Sumber',
+
+  // Kesegaran data (rangka kerja etika: HIJAU <6j, AMBAR 6-12j, MERAH >12j)
+  'freshness_green': 'Terkini',
+  'freshness_amber': 'Agak lama',
+  'freshness_red': 'Tidak terkini',
+  'freshness_hint': 'Semak tarikh sebelum membandingkan dengan harga peniaga.',
   'no_data': 'Tiada data harga tersedia',
-  'demo_banner': 'Data demo — data langsung dari MPOB BEPI',
+  'prices_unavailable':
+      'Harga tidak dapat dimuatkan sekarang. Semak sambungan anda dan cuba lagi.',
+  'retry': 'Cuba lagi',
 
   // Sepanduk mod indikatif (Laluan C — lihat ADR-001)
   'indicative_banner_headline':
@@ -51,6 +58,9 @@ const Map<String, String> msStrings = {
   'calc_verdict': 'Keputusan',
   'calc_gap': 'Jurang',
   'calc_oer_tip': 'Setiap 1% OER = ~RM 42+/tan perbezaan',
+  'calc_prices_unavailable':
+      'Harga hari ini tidak dapat dimuatkan. Masukkan harga per 1% OER daripada '
+      'resit anda atau notis MPOB.',
   'verdict_green': 'ADIL — dalam 5% penanda aras MPOB',
   'verdict_amber': 'BERHATI-HATI — 5-15% di bawah penanda aras',
   'verdict_red': 'DI BAWAH ADIL — lebih 15% di bawah penanda aras',
@@ -71,5 +81,6 @@ const Map<String, String> msStrings = {
   'footer_open_source': 'Sumber Terbuka',
   'footer_github': 'Lihat di GitHub',
   'footer_disclaimer':
-      'Harga dari MPOB BEPI untuk rujukan sahaja. Bukan nasihat kewangan.',
+      'Harga untuk rujukan sahaja; semak sumber yang ditunjukkan bersama setiap '
+      'harga. Bukan nasihat kewangan.',
 };

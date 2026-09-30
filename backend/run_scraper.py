@@ -11,13 +11,14 @@ Pipeline (post May 2026 MPOB restructure, see docs/ADR-001):
   4. (Legacy) Try BEPI scrapers \u2014 currently expected to fail; will reactivate
      automatically the day MPOB restores anonymous access.
   5. (Legacy) Commodities-API CPO fallback if MPOC also fails.
-  6. Write Firestore + JSON.
+  6. Write the JSON snapshots (backend/data/), which the deploy publishes.
 
 Exit code 0 = success, 1 = failure (for GitHub Actions).
 
 Original author: QQ (Qoder CSO)
 Recovery patch:  QQ (Perplexity), May 2026 \u2014 under Alton's authority (part of the YSenseAI ecosystem)
-Patch:           SS (Claude Code), Sep 2026 \u2014 data-quality `warnings` in the payload
+Patch:           SS (Claude Code), Sep 2026 \u2014 data-quality `warnings` in the payload;
+                 Firestore retired (JSON only)
 """
 
 import logging
@@ -31,7 +32,7 @@ from scrapers.commodities_fallback import fetch_cpo_fallback
 from scrapers.mpob_bepi import MPOBScraper, REGIONS
 from scrapers.mpob_oer import MPOBOERScraper
 from scrapers.mpoc_cpo import MPOCDailyCPOScraper
-from writer.firestore_writer import write_price_data
+from writer.json_writer import write_price_data
 
 MYT = timezone(timedelta(hours=8))
 
@@ -277,7 +278,7 @@ def main() -> int:
 
     written = write_price_data(payload)
     if not written:
-        logger.error("Failed to write price data to JSON/Firestore")
+        logger.error("Failed to write the price data JSON")
         report_failure("Data write failed")
         return 1
 

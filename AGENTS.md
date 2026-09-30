@@ -35,7 +35,7 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 - `backend/scrapers/mpoc_cpo.py`: daily CPO price (MPOC)
 - `backend/scrapers/mpob_oer.py`: monthly OER by state (MPOB Prestasi Sawit)
 - `backend/scrapers/mpob_bepi.py`: core formula plus the legacy MPOB BEPI scraper. This is the math layer; don't refactor it.
-- `backend/writer/firestore_writer.py`: JSON writer (Firestore is not configured)
+- `backend/writer/json_writer.py`: writes the JSON snapshots the app reads
 - `backend/monitor/`: scraper health check and live-site freshness watchdog
 - `.github/workflows/scraper_cron.yml`: scrapes twice every weekday, then dispatches the deploy
 - `.github/workflows/deploy_web.yml`: builds and deploys the Flutter web app
