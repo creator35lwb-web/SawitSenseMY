@@ -8,6 +8,8 @@
   <strong>Sawit Kita, Harga Kita</strong> | Open-Source CPO Price Tracker & OER Signal
 </p>
 
+> **Current status (Sep 2026): indicative mode.** In May 2026 MPOB moved its Daily FFB Reference Price behind a licensee login. Until that price is available again, SawitSense shows **indicative** regional prices. They are derived from the MPOC daily CPO price and MPOB's monthly OER, and the app labels them as indicative. See [ADR-001](docs/ADR-001-mpob-data-source-change.md) and [PROJECT_STATUS.md](PROJECT_STATUS.md).
+
 ---
 
 ## What Is SawitSense?
@@ -53,7 +55,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region + CPO spot price | Done |
+| **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region + CPO spot price (indicative since May 2026) | Done |
 | **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote. GREEN/AMBER/RED verdict. | Done |
 | **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
 | **BM/EN Toggle** | Bahasa Malaysia / English language switch | Done |
@@ -75,7 +77,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | Frontend | Flutter Web | Cross-platform, mobile-responsive |
 | State Management | Riverpod | Scalable upgrade from Provider |
 | Backend/Scraper | Python + GitHub Actions | Zero hosting cost |
-| Database | Firestore | Real-time sync, offline capable |
+| Data | JSON snapshots on GitHub Pages (Firestore writer present, not configured) | Zero hosting cost |
 | Charts | fl_chart | Interactive price visualization |
 | Auth (Production) | Firebase Auth (Phone OTP) | Smallholders use phone numbers |
 | Languages | BM + English + Chinese | Malaysian multicultural reality |
@@ -86,17 +88,20 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 ## Data Pipeline
 
 ```
-MPOB BEPI (scraper, 2x daily at 8:30am + 4:30pm MYT)
-    -> FFB Reference Price (6 regions) + CPO spot price
+MPOC Daily Palm Oil Prices (CPO)  +  MPOB Prestasi Sawit (monthly OER by state)
+    -> scraper, twice every weekday (GitHub Actions)
+    -> indicative Price_1% per region (ADR-001), labelled is_indicative
          |
-    GitHub Actions Cron Job (free)
+    backend/data/*.json committed to main
          |
-    Firestore + JSON fallback
+    deploy dispatched -> Flutter Web App (GitHub Pages)
          |
-    Flutter Web App (GitHub Pages)
+    freshness watchdog: alerts if the live site falls behind main
 ```
 
-Data freshness indicator: GREEN (<6h) | AMBER (6-12h) | RED (>12h)
+Before May 2026 the scraper read the Daily FFB Reference Price from MPOB BEPI directly. That source now requires a licensee login.
+
+The ethical framework requires a data freshness indicator: GREEN (<6h) | AMBER (6-12h) | RED (>12h). The app doesn't show it yet; it's tracked in [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 ---
 
@@ -104,19 +109,20 @@ Data freshness indicator: GREEN (<6h) | AMBER (6-12h) | RED (>12h)
 
 ```
 SawitSenseMY/
-+-- backend/              # Python MPOB scraper + caching
-|   +-- scrapers/          # MPOB BEPI scraper
-|   +-- writer/            # Firestore writer
-|   +-- monitor/           # Health check + alerts
++-- backend/               # Python data pipeline
+|   +-- scrapers/          # MPOC CPO, MPOB OER, legacy MPOB BEPI + core formula
+|   +-- writer/            # JSON writer (Firestore optional, not configured)
+|   +-- monitor/           # Health check + live-site freshness watchdog
+|   +-- data/              # Published price snapshots (written by the scraper)
 |   +-- tests/             # Unit tests
 |   +-- run_scraper.py     # Pipeline orchestrator
 |   +-- requirements.txt   # Python deps
-+-- lib/                   # Flutter app (Phase 2)
-+-- docs/                  # Project documentation
-+-- .macp/                 # MACP v2.2 protocol files
-+-- .github/workflows/     # GitHub Actions
-+-- peas/                  # VerifiMind validation reports
++-- frontend/              # Flutter web app
++-- docs/                  # Architecture decision records (ADRs)
++-- .macp/                 # MACP v2.2: agents, handoffs, reasoning logs, ethics
++-- .github/workflows/     # Scraper, deploy, watchdog, CI
 +-- AGENTS.md              # Agent instructions
++-- PROJECT_STATUS.md      # Current state — the project's single source of truth
 +-- README.md              # This file
 ```
 
@@ -137,11 +143,14 @@ SawitSenseMY/
 
 ## Team (MACP v2.2)
 
-| Agent | Role | Platform |
-|-------|------|----------|
-| **Alton** | Human Orchestrator, Founder, Smallholder (~5 acres) | Human |
-| **SS** | CTO, Intelligence Tracker | Claude.ai |
-| **QQ** | CSO, Execution Lead | Qoder |
+| Agent | Role | Platform | Status |
+|-------|------|----------|--------|
+| **Alton** | Human Orchestrator, Founder, Smallholder (~5 acres) | Human | Always |
+| **SS** | CTO & Lead Maintainer | Claude Code (Claude.ai in Phase 0) | Active, sole agent |
+| **QQ** | CSO, Execution Lead (project originator) | Qoder | Inactive |
+| **QQ (Perplexity)** | CSO, Active Executor (May 2026 recovery) | Perplexity Computer | Paused |
+
+Authority: Alton > SS. Full registry: [.macp/agents.json](.macp/agents.json).
 
 ---
 

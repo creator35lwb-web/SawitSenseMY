@@ -7,6 +7,36 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- Live site frozen on 21 May 2026 data: the scraper now dispatches the deploy after each data commit (#6)
+- Failed data pushes are retried, then alert, instead of being dropped silently (#6)
+- Sarawak's indicative OER was Sabah's: MPOB's state codes are 13 (Sabah) and 14 (Sarawak) (#7)
+
+### Added
+- Pull-request CI: backend tests + lint, Flutter analyze + tests, credential scan (#6)
+- Deploy-failure alerts and a live-site freshness watchdog (#6)
+- OER cross-check against MPOB's published totals, and a `warnings` list in the data payload (#7)
+- `PROJECT_STATUS.md`, SS (Claude Code) Genesis, per-file handoffs and reasoning logs in `.macp/` (#8)
+
+## [0.3.0] - 2026-05-21
+
+Path C recovery after MPOB moved the Daily FFB Reference Price behind a licensee login (see ADR-001). Built by QQ (Perplexity).
+
+### Changed
+- Data sources: MPOC daily CPO settlement and MPOB Prestasi Sawit monthly OER replace the MPOB BEPI scraper (#1)
+- Regional Price_1% is now an **indicative** value (`CPO × 0.01 × 0.93`), labelled `is_indicative: true` (#1)
+
+### Added
+- Indicative-mode banner on Dashboard and Calculator, and an indicative chip on each region card, in EN and BM (#3)
+- Auto-filed GitHub issue when a scheduled scrape fails (#1)
+- ADR-001 and the QQ (Perplexity) Genesis Master Prompt v1.0 (#1, #2)
+
+### Fixed
+- Sarawak region card hidden behind the bottom navigation bar (#4)
+- Attribution: Alton is the project's sole Human Orchestrator (#4)
+
 ## [0.2.1] - 2026-04-12
 
 ### Added

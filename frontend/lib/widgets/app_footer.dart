@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../l10n/l10n_provider.dart';
 
-const String appVersion = '0.2.1';
+const String appVersion = '0.3.0';
 
 class AppFooter extends ConsumerWidget {
   const AppFooter({super.key});

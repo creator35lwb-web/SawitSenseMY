@@ -20,7 +20,7 @@ MPOB's BEPI portal at bepi.mpob.gov.my.
    the Fair Price verdict.
 
 Original author: QQ (Qoder CSO)
-Recovery patch:  QQ (Perplexity) — on behalf of YSenseAI / CIO XV (May 2026)
+Recovery patch:  QQ (Perplexity), May 2026 — under Alton's authority (part of the YSenseAI ecosystem)
 """
 
 import re

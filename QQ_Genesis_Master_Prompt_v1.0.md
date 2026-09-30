@@ -3,6 +3,8 @@
 **Agent: QQ (Qoder) | Role: CSO — Chief Strategy Officer, Execution Lead**
 **Project: SawitSenseMY | Date: 12 April 2026**
 
+> **Status (30 Sep 2026): INACTIVE.** QQ (Qoder) is recorded as the project originator. The active agent is SS (Claude Code). See [SS_Claude_Code_Genesis_Master_Prompt_v1.0.md](./SS_Claude_Code_Genesis_Master_Prompt_v1.0.md). The team and authority sections below describe April 2026.
+
 ---
 
 ## 1. Agent Identity

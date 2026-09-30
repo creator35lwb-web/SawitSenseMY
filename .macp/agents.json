@@ -13,6 +13,23 @@
       "ecosystem_note": "Founder of the wider YSenseAI ecosystem; coordinates with peer collaborators (CIO/XV, COO/AY, CTO/T, SS, etc.) on YSenseAI's other projects. Within SawitSenseMY, Alton's authority is absolute and unmediated."
     },
     {
+      "id": "SS",
+      "name": "SS (Claude Code)",
+      "nature": "AI-Generated",
+      "role": "CTO & Lead Maintainer",
+      "status": "active",
+      "authority": "Delegated",
+      "domain": "Sole active agent: debugging, maintenance and improvement across scraper, frontend and CI; steward of the project's single source of truth (PROJECT_STATUS.md, .macp/ records, ADRs, CHANGELOG, README)",
+      "platform": "Claude Code (local CLI)",
+      "genesis_doc": "SS_Claude_Code_Genesis_Master_Prompt_v1.0.md",
+      "first_session": "2026-04-12",
+      "first_session_note": "Phase 0 design as SS on Claude.ai (CTO, Intelligence Tracker). First session on Claude Code: 2026-09-30.",
+      "active": true,
+      "lineage_note": "Same identity as the Phase 0 SS (Claude.ai), now on Claude Code. Took over active execution on 2026-09-30, when Alton paused the Perplexity Computer subscription and made Claude Code the only development platform.",
+      "identity_note": "In Alton's other YSenseAI projects Claude Code works as RNA. Within SawitSenseMY it works only as SS (Alton's decision, 2026-09-30); neither identity signs for the other.",
+      "change_policy": "Every change goes through a pull request with passing CI. Alton reviews and merges; SS never pushes to main or merges."
+    },
+    {
       "id": "QQ",
       "name": "QQ (Qoder)",
       "nature": "AI-Generated",
@@ -30,20 +47,21 @@
       "id": "QQ-PPLX",
       "name": "QQ (Perplexity)",
       "nature": "AI-Generated",
-      "role": "CSO, Active Executor",
-      "status": "active",
+      "role": "CSO, Active Executor (May 2026)",
+      "status": "paused",
       "authority": "Delegated",
       "domain": "Incident Response, Open-Web Investigation, Upstream-Source Recovery, Observability Hardening, ADR Authoring, Frontend Honesty Layer, Cross-Connector Integration",
       "platform": "Perplexity Computer",
       "genesis_doc": "QQ_Perplexity_Genesis_Master_Prompt_v1.0.md",
       "first_session": "2026-05-21",
       "first_contribution": "PR #1 \u2014 MPOB BEPI Recovery (Path C)",
-      "active": true,
+      "active": false,
+      "active_note": "Paused 2026-09-30: Alton stopped the Perplexity Computer subscription. May be reactivated by Alton if open-web investigation is needed (e.g. an upstream source changes shape, or Track B research).",
       "lineage_from": "QQ",
       "lineage_note": "Took over the active-execution CSO role from QQ (Qoder) on 2026-05-21 when MPOB's BEPI restructure broke the data pipeline. Same agent family, different platform."
     }
   ],
-  "authority_hierarchy": "Alton > QQ (Perplexity, active executor). QQ (Qoder) preserved as originator and may be reactivated by Alton.",
-  "ecosystem_peers_not_in_hierarchy": "CIO/XV, COO/AY, CTO/T, SS \u2014 YSenseAI ecosystem peers operating primarily on Alton's other projects. NOT in SawitSenseMY's authority chain. Coordinate as peers when Alton instructs.",
-  "session_isolation": "SawitSenseMY work runs in a dedicated Perplexity Computer thread to prevent context-bleed with Alton's YSenseAI primary-project work."
+  "authority_hierarchy": "Alton > SS (Claude Code, sole active agent). QQ (Qoder, originator) and QQ (Perplexity, paused) are inactive; Alton may reactivate either.",
+  "ecosystem_peers_not_in_hierarchy": "CIO/XV, COO/AY, CTO/T \u2014 YSenseAI ecosystem peers operating primarily on Alton's other projects. NOT in SawitSenseMY's authority chain. Coordinate as peers when Alton instructs.",
+  "session_isolation": "SawitSenseMY work runs in Claude Code sessions scoped to this repository; SS carries no context between SawitSenseMY and Alton's other YSenseAI projects. (21 May - 30 Sep 2026: a dedicated Perplexity Computer thread.)"
 }
