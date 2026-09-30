@@ -13,7 +13,7 @@ import '../models/price_data.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/chart_axis.dart';
-import '../widgets/language_toggle.dart';
+import '../widgets/language_menu.dart';
 import '../widgets/app_footer.dart';
 
 class HistoryScreen extends ConsumerWidget {
@@ -29,7 +29,7 @@ class HistoryScreen extends ConsumerWidget {
         title: Text(tr('history_title')),
         centerTitle: true,
         actions: const [
-          LanguageToggle(),
+          LanguageMenu(),
           SizedBox(width: 8),
         ],
       ),

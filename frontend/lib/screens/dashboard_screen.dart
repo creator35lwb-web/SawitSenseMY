@@ -12,7 +12,7 @@ import '../models/price_data.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/region_price_card.dart';
-import '../widgets/language_toggle.dart';
+import '../widgets/language_menu.dart';
 import '../widgets/feedback_button.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
@@ -46,7 +46,7 @@ class DashboardScreen extends ConsumerWidget {
         title: Text(tr('dashboard_title')),
         centerTitle: true,
         actions: const [
-          LanguageToggle(),
+          LanguageMenu(),
           SizedBox(width: 8),
         ],
       ),

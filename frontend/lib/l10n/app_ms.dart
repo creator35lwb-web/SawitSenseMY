@@ -86,6 +86,11 @@ const Map<String, String> msStrings = {
   'verdict_green': 'ADIL — dalam 5% penanda aras MPOB',
   'verdict_amber': 'BERHATI-HATI — 5-15% di bawah penanda aras',
   'verdict_red': 'DI BAWAH ADIL — lebih 15% di bawah penanda aras',
+  'verdict_badge_green': 'HIJAU',
+  'verdict_badge_amber': 'AMBAR',
+  'verdict_badge_red': 'MERAH',
+  'validation_required': 'Wajib diisi',
+  'validation_number': 'Nombor tidak sah',
 
   // History
   'history_title': 'Sejarah Harga CPO',
@@ -100,6 +105,7 @@ const Map<String, String> msStrings = {
   'feedback_confusing': 'Sesuatu mengelirukan',
   'feedback_wrong': 'Harga nampak salah',
   'feedback_thanks': 'Terima kasih atas maklum balas anda!',
+  'close': 'Tutup',
 
   // Footer
   'footer_open_source': 'Sumber Terbuka',

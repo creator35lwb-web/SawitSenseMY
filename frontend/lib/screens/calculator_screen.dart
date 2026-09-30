@@ -5,7 +5,7 @@
 //
 // Patch: SS (Claude Code), Sep 2026 — when prices can't be loaded, say so and
 // ask for Price_1% instead of auto-filling demo values; "How is this
-// calculated?" next to the auto-filled price.
+// calculated?" next to the auto-filled price; form errors in every language.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +13,7 @@ import '../models/price_data.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
-import '../widgets/language_toggle.dart';
+import '../widgets/language_menu.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
@@ -83,7 +83,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
         title: Text(tr('calc_title')),
         centerTitle: true,
         actions: const [
-          LanguageToggle(),
+          LanguageMenu(),
           SizedBox(width: 8),
         ],
       ),
@@ -180,8 +180,10 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                   suffixText: tr('per_1pct'),
                 ),
                 validator: (v) {
-                  if (v == null || v.isEmpty) return 'Required';
-                  if (double.tryParse(v) == null) return 'Invalid number';
+                  if (v == null || v.isEmpty) return tr('validation_required');
+                  if (double.tryParse(v) == null) {
+                    return tr('validation_number');
+                  }
                   return null;
                 },
               ),
@@ -200,9 +202,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                   helperMaxLines: 2,
                 ),
                 validator: (v) {
-                  if (v == null || v.isEmpty) return 'Required';
+                  if (v == null || v.isEmpty) return tr('validation_required');
                   final val = double.tryParse(v);
-                  if (val == null) return 'Invalid number';
+                  if (val == null) return tr('validation_number');
                   if (val < 1 || val > 30) return '1-30%';
                   return null;
                 },
