@@ -1,0 +1,88 @@
+# Pull request checks: backend tests + lint, frontend analyze + tests, and a
+# credential scan (the repo is public and is the project's source of truth).
+#
+# Author: SS (Claude Code), Sep 2026
+
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        # Same hash-locked, wheels-only set the scraper installs.
+        run: |
+          pip install --require-hashes --only-binary :all: -r requirements.lock
+
+      - name: Test
+        run: pytest tests/ -v
+
+      - name: Lint
+        run: python -m flake8 scrapers/ writer/ monitor/ run_scraper.py --max-line-length=120
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: flutter test
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan tracked files for credentials
+        run: |
+          # GitHub, Google, Telegram bot, OpenAI-style, Slack and AWS keys,
+          # plus private-key blocks (e.g. a Firebase service-account JSON).
+          PATTERN='(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}|AIza[0-9A-Za-z_-]{30,}|[0-9]{8,12}:AA[0-9A-Za-z_-]{30,}|sk-[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|"private_key_id": *"[0-9a-f]{20,}"|xox[baprs]-[0-9A-Za-z-]{10,}|AKIA[0-9A-Z]{16}'
+          # Self-test first: a scanner that never fires is not a scanner that works.
+          printf 'token=ghp_%s\n' "$(printf 'a%.0s' {1..36})" | grep -qE "$PATTERN" \
+            || { echo "::error::Secret-scan self-test failed: the pattern no longer matches a known-bad sample."; exit 1; }
+          if git ls-files -z | xargs -0 grep -nIE "$PATTERN"; then
+            echo "::error::Possible credential in a tracked file (see matches above). Remove it and rotate the key."
+            exit 1
+          fi
+          echo "No credential patterns found in tracked files."
