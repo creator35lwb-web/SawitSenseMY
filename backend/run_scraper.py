@@ -125,6 +125,7 @@ def _oer_dict(oer_snap) -> dict:
         "states": [asdict(s) for s in oer_snap.states],
         "source": oer_snap.source,
         "source_url": oer_snap.source_url,
+        "source_page_url": oer_snap.source_page_url,
         "scraped_at": oer_snap.scraped_at,
     }
 
@@ -174,6 +175,8 @@ def _derive_ffb_block(payload: dict) -> Optional[dict]:
         "date": cpo_block.get("date"),
         "regions": regions_out,
         "cpo_price": cpo_price,
+        # Published so anyone can redo the sum: CPO x 0.01 x share factor.
+        "indicative_share_factor": DEFAULT_INDICATIVE_SHARE_FACTOR,
         "is_indicative": True,
         "source": DERIVED_FFB_SOURCE,
     }

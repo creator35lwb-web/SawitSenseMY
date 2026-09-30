@@ -33,6 +33,9 @@ logger = logging.getLogger(__name__)
 
 MYT = timezone(timedelta(hours=8))
 OER_API_URL = "https://prestasisawit.mpob.gov.my/api/oer"
+# Public page showing the same figures, with month/year pickers. Linked from
+# the app so smallholders can check the OER themselves (the API returns JSON).
+OER_PAGE_URL = "https://prestasisawit.mpob.gov.my/en/oer"
 
 # Region labels — must match SawitSense's 6-region grid in scrapers.mpob_bepi.REGIONS
 # and the frontend Flutter PriceData model.
@@ -119,6 +122,7 @@ class OERSnapshot:
     warnings: list = field(default_factory=list)  # data-quality problems found while parsing
     source: str = "MPOB Prestasi Sawit (api/oer)"
     source_url: str = OER_API_URL
+    source_page_url: str = OER_PAGE_URL
     scraped_at: str = ""
 
     def __post_init__(self) -> None:

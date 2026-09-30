@@ -117,3 +117,26 @@ class TestWarnings:
         assert regions["Sabah"]["indicative_oer_pct"] == pytest.approx(21.54)
         assert regions["Sarawak"]["indicative_oer_pct"] == pytest.approx(20.42)
         assert regions["North"]["indicative_oer_pct"] == pytest.approx(20.10)
+
+
+class TestVerifiableSources:
+    """The payload must let anyone check each figure against a public page."""
+
+    def _payload(self):
+        return build_payload(TestBuildPayload()._make_cpo(), TestBuildPayload()._make_oer(), False, None)
+
+    def test_share_factor_is_published_and_reproduces_price_1pct(self):
+        payload = self._payload()
+        factor = payload["ffb"]["indicative_share_factor"]
+        assert factor == pytest.approx(0.93)
+        cpo = payload["cpo"]["price_myr_per_tonne"]
+        for region in payload["ffb"]["regions"]:
+            assert region["price_1pct_oer"] == pytest.approx(round(cpo * 0.01 * factor, 2))
+
+    def test_cpo_links_to_the_public_mpoc_page(self):
+        assert self._payload()["cpo"]["source_url"] == "https://mpoc.org.my/daily-palm-oil-prices/"
+
+    def test_oer_links_to_the_public_mpob_page_not_the_api(self):
+        oer = self._payload()["oer"]
+        assert oer["source_page_url"] == "https://prestasisawit.mpob.gov.my/en/oer"
+        assert "/api/" not in oer["source_page_url"]
