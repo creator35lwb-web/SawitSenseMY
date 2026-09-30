@@ -7,6 +7,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.7] - 2026-09-30
+
+### Added
+- The app opens in the reader's language (D11, #16):
+  - their last choice on that phone;
+  - otherwise the phone's own language, if it's English, Malay or Chinese (any Chinese gets Simplified);
+  - otherwise English.
+
+  Before, every visit started in English. The choice is kept in the browser as `en`, `ms` or `zh`: that isn't personal data, and it never leaves the phone.
+
+### Fixed
+- At 360 px the dashboard title was cut off: "Daily Price Dash…" in English, "Papan Pemuka …" in BM. Long top-bar titles now shrink to fit, with no wording changes (#16)
+
 ## [0.3.6] - 2026-09-30
 
 The Chinese strings were drafted by SS for review by a native reader (D10).
