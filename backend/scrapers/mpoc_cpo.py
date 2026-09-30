@@ -9,7 +9,8 @@ Source URL: https://mpoc.org.my/daily-palm-oil-prices/
 Data shape: HTML table with columns: "Pricing Date" | "Settlement Price RM"
 Reliability: Static HTML, no JS, no auth — high.
 
-Author: QQ (Perplexity) — recovery patch authored on behalf of YSenseAI / CIO XV.
+Author: QQ (Perplexity), May 2026 — recovery patch under Alton's authority
+(part of the YSenseAI ecosystem).
 Original SawitSense data layer authored by QQ (Qoder CSO).
 """
 

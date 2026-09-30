@@ -15,6 +15,19 @@ venv/
 firebase-sa-key.json
 service-account*.json
 
+# Credentials — this public repo is the project's single source of truth;
+# secrets belong in GitHub Actions secrets, never in files here.
+.env.*
+!.env.example
+*.key
+*.p12
+*.pfx
+*credentials*.json
+secrets/
+
+# Local AI-assistant settings
+.claude/settings.local.json
+
 # IDE
 .idea/
 .vscode/

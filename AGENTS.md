@@ -1,32 +1,45 @@
 # AGENTS.md — SawitSenseMY
 
+## Active Agent
+
+**SS (Claude Code)**, CTO & Lead Maintainer, is the only active agent and reports to Alton (Founder, Human Orchestrator). See `SS_Claude_Code_Genesis_Master_Prompt_v1.0.md`; the full registry is in `.macp/agents.json`.
+
 ## Session Protocol
 
-1. **Start:** Read this file, then README.md, then `.macp/handoffs.json` for latest state
-2. **Work:** Implement changes per current phase
-3. **Test:** Run `pytest backend/tests/` for backend changes
-4. **End:** Create handoff record in `.macp/handoffs.json`
+1. **Start:** Read this file, then `PROJECT_STATUS.md`, then the newest handoff in `.macp/handoffs/`. Check open Issues (`scraper-alert`, `deploy-alert`, `freshness-alert`) and open PRs.
+2. **Work:** Branch, diagnose before patching, test.
+3. **Land:** Open a pull request. CI must pass. Alton reviews and merges. Agents never push to `main` and never merge.
+4. **End:** Update `PROJECT_STATUS.md`. Write a handoff in `.macp/handoffs/YYYYMMDD_SS_<topic>.md` and a reasoning log in `.macp/reasoning/YYYYMMDD_SS_<topic>.md`.
+
+Handoffs up to 21 May 2026 are archived in `.macp/handoffs.json`.
 
 ## Lint / Test Commands
 
 ```bash
 # Backend
-cd backend && pip install -r requirements.txt
+cd backend && pip install -r requirements.txt pytest flake8
 pytest tests/ -v
-python -m flake8 scrapers/ writer/ monitor/ --max-line-length=120
+python -m flake8 scrapers/ writer/ monitor/ run_scraper.py --max-line-length=120
 
-# Frontend (Phase 2)
-cd lib && flutter analyze
+# Frontend
+cd frontend && flutter pub get
+flutter analyze
 flutter test
 ```
 
+On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plus a credential scan.
+
 ## Key Files
 
-- `backend/scrapers/mpob_bepi.py` — Core MPOB scraper
-- `backend/writer/firestore_writer.py` — Firestore + JSON writer
-- `backend/monitor/health_check.py` — Scraper health monitoring
-- `backend/run_scraper.py` — Pipeline orchestrator
-- `.github/workflows/scraper_cron.yml` — Automated 2x daily scrape
+- `backend/run_scraper.py`: pipeline orchestrator (Path C, ADR-001)
+- `backend/scrapers/mpoc_cpo.py`: daily CPO price (MPOC)
+- `backend/scrapers/mpob_oer.py`: monthly OER by state (MPOB Prestasi Sawit)
+- `backend/scrapers/mpob_bepi.py`: core formula plus the legacy MPOB BEPI scraper. This is the math layer; don't refactor it.
+- `backend/writer/firestore_writer.py`: JSON writer (Firestore is not configured)
+- `backend/monitor/`: scraper health check and live-site freshness watchdog
+- `.github/workflows/scraper_cron.yml`: scrapes twice every weekday, then dispatches the deploy
+- `.github/workflows/deploy_web.yml`: builds and deploys the Flutter web app
+- `.github/workflows/freshness_watchdog.yml`: raises an alert when the live site falls behind `main`
 
 ## Core Formula
 
@@ -36,9 +49,21 @@ Price/mt = MPOB_Price_1% x Graded_OER%
 
 Do NOT use: `CPO x 0.2? x 0.7?` (rejected — unverifiable constants from unofficial dealer shorthand)
 
+While MPOB's reference price is unavailable, the indicative `CPO x 0.01 x 0.93` (ADR-001) may be used. It must always be labelled `is_indicative: true`.
+
+## Secrets and Privacy
+
+This public repo is the project's single source of truth, so never commit:
+
+- credentials (they belong in GitHub Actions secrets)
+- personal data about smallholders, dealers or mills
+- private notes
+
+Only the scraper writes to `backend/data/`.
+
 ## Architecture Decisions
 
 - Prototype-first: public read-only dashboard, zero auth
-- Offline-first: always cache last known prices
+- Offline-first: always cache last known prices (not built yet; see `PROJECT_STATUS.md`)
 - Local-first: Sales Journal data stored locally by default
 - Module 5 (Dealer Map): deferred to last phase with anti-manipulation safeguards
