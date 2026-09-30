@@ -32,7 +32,7 @@ const Map<String, String> zhStrings = {
   'retry': '重试',
 
   // 估算模式横幅（路径 C，见 ADR-001）
-  'indicative_banner_headline': '估算价格 — 并非 MPOB 官方鲜果串参考价',
+  'indicative_banner_headline': '估算价 — 并非 MPOB 官方鲜果串参考价',
   'indicative_banner_body':
       'MPOB 已将每日鲜果串参考价移至执照持有人登录页面。在恢复公开之前，'
       '这里显示的各地区价格，是根据 MPOC 每日原棕油结算价和 MPOB 每月出油率推算出来的。'
@@ -78,7 +78,7 @@ const Map<String, String> zhStrings = {
   'calc_fair_price': '公平价格',
   'calc_verdict': '评估结果',
   'calc_gap': '差距',
-  'calc_oer_tip': '出油率每差 1%，每公吨约差 RM 42 以上',
+  'calc_oer_tip': '出油率每差 1%，每公吨差 RM 42 以上',
   'calc_prices_unavailable':
       '无法加载今日价格。请根据您的收据或 MPOB 通告，输入每 1% 出油率的价格。',
   'verdict_green': '公平 — 与 MPOB 基准相差 5% 以内',

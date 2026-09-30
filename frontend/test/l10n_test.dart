@@ -195,6 +195,10 @@ void main() {
       expect(find.text('原棕油现货价'), findsOneWidget);
       expect(find.text('北马'), findsOneWidget);
       expect(find.text('砂拉越'), findsOneWidget);
+      // Chinese has no italics; the disclaimer stays upright.
+      final disclaimer =
+          tester.widget<Text>(find.text(zhStrings['footer_disclaimer']!));
+      expect(disclaimer.style?.fontStyle, FontStyle.normal);
 
       final shown = _shownText(tester).toList();
       expect(shown.where(enStrings.containsKey), isEmpty);

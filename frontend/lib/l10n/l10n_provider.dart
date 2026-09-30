@@ -2,6 +2,8 @@
 //
 // Patch: SS (Claude Code), Sep 2026 — Simplified Chinese (D10); region names
 // come from the string tables.
+import 'dart:ui' show FontStyle;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_en.dart';
 import 'app_ms.dart';
@@ -45,6 +47,11 @@ final trProvider = Provider<String Function(String)>((ref) {
   final strings = stringsFor(ref.watch(localeProvider));
   return (String key) => strings[key] ?? key;
 });
+
+/// Italic for asides in English and BM. Chinese has no italics, and slanted
+/// characters look broken, so Chinese stays upright.
+FontStyle asideFontStyle(AppLocale locale) =>
+    locale == AppLocale.zh ? FontStyle.normal : FontStyle.italic;
 
 const _regionKeys = {
   'North': 'region_north',

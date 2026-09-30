@@ -102,7 +102,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                 tr('calc_subtitle'),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey.shade700,
-                      fontStyle: FontStyle.italic,
+                      fontStyle: asideFontStyle(locale),
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -290,6 +290,7 @@ class _ResultCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
+    final locale = ref.watch(localeProvider);
 
     return Card(
       elevation: 4,
@@ -339,7 +340,7 @@ class _ResultCard extends ConsumerWidget {
                         ? tr('verdict_amber')
                         : tr('verdict_red'),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontStyle: FontStyle.italic,
+                      fontStyle: asideFontStyle(locale),
                       color: Colors.grey.shade600,
                     ),
                 textAlign: TextAlign.center,
