@@ -16,7 +16,8 @@ Pipeline (post May 2026 MPOB restructure, see docs/ADR-001):
 Exit code 0 = success, 1 = failure (for GitHub Actions).
 
 Original author: QQ (Qoder CSO)
-Recovery patch:  QQ (Perplexity) \u2014 on behalf of YSenseAI / CIO XV (May 2026)
+Recovery patch:  QQ (Perplexity), May 2026 \u2014 under Alton's authority (part of the YSenseAI ecosystem)
+Patch:           SS (Claude Code), Sep 2026 \u2014 data-quality `warnings` in the payload
 """
 
 import logging
@@ -93,6 +94,7 @@ def _empty_payload() -> dict:
         "fallback_used": False,
         "legacy_bepi_attempted": True,
         "legacy_bepi_success": False,
+        "warnings": [],
     }
 
 
@@ -202,7 +204,25 @@ def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs):
 
     payload["success"] = bool(payload["cpo"] or payload["ffb"] or payload["oer"])
     payload["legacy_bepi_success"] = bool(legacy_attempt)
+    payload["warnings"] = _collect_warnings(cpo_obs, oer_snap, fallback_obs)
     return payload
+
+
+def _collect_warnings(cpo_obs, oer_snap, fallback_obs) -> list:
+    """Data-quality problems for this run. The data is still published; the
+    scraper workflow turns a non-empty list into an alert issue."""
+    warnings = []
+    if cpo_obs is None:
+        warnings.append(
+            "MPOC daily CPO price unavailable; Commodities-API fallback used"
+            if fallback_obs is not None
+            else "MPOC daily CPO price unavailable; no CPO price this run"
+        )
+    if oer_snap is None:
+        warnings.append("MPOB OER data unavailable; no regional OER this run")
+    else:
+        warnings.extend(oer_snap.warnings)
+    return warnings
 
 
 def main() -> int:
@@ -251,6 +271,9 @@ def main() -> int:
         payload["error"] = "all_sources_failed"
         write_price_data(payload)
         return 1
+
+    for warning in payload["warnings"]:
+        logger.warning(f"Data-quality warning: {warning}")
 
     written = write_price_data(payload)
     if not written:

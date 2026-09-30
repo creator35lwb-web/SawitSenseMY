@@ -36,8 +36,8 @@ class TestBuildPayload:
         states = [
             StateOER("01", "Johor",  "South",      "2026", "04", 20.24, 0, 0, 1254710),
             StateOER("06", "Pahang", "East Coast", "2026", "04", 19.80, 0, 0, 500000),
-            StateOER("12", "Sabah",  "Sabah",      "2026", "04", 21.54, 0, 0, 370000),
-            StateOER("13", "Sarawak","Sarawak",    "2026", "04", 20.42, 0, 0, 340000),
+            StateOER("13", "Sabah",  "Sabah",      "2026", "04", 21.54, 0, 0, 370000),
+            StateOER("14", "Sarawak","Sarawak",    "2026", "04", 20.42, 0, 0, 340000),
         ]
         from scrapers.mpob_oer import _weighted_region_average
         return OERSnapshot(
@@ -87,3 +87,33 @@ class TestBuildPayload:
         assert payload["success"] is True
         assert payload["fallback_used"] is True
         assert payload["cpo"]["price_myr_per_tonne"] == pytest.approx(4500.0)
+
+
+class TestWarnings:
+    """Data-quality warnings that the scraper workflow turns into an alert."""
+
+    def test_clean_run_has_no_warnings(self):
+        payload = build_payload(TestBuildPayload()._make_cpo(), TestBuildPayload()._make_oer(), False, None)
+        assert payload["warnings"] == []
+
+    def test_missing_sources_are_reported(self):
+        payload = build_payload(None, None, False, None)
+        assert any("MPOC daily CPO price unavailable" in w for w in payload["warnings"])
+        assert any("MPOB OER data unavailable" in w for w in payload["warnings"])
+
+    def test_oer_snapshot_warnings_are_carried_over(self):
+        oer = TestBuildPayload()._make_oer()
+        oer.warnings = ["MPOB OER cross-check failed for Sarawak: ..."]
+        payload = build_payload(TestBuildPayload()._make_cpo(), oer, False, None)
+        assert payload["warnings"] == oer.warnings
+
+    def test_withheld_region_averages_fall_back_to_mpob_totals(self):
+        # When the cross-check fails, mpob_oer withholds region_avg; every
+        # region must then use MPOB's own published figure.
+        oer = TestBuildPayload()._make_oer()
+        oer.region_avg = {}
+        payload = build_payload(TestBuildPayload()._make_cpo(), oer, False, None)
+        regions = {r["region"]: r for r in payload["ffb"]["regions"]}
+        assert regions["Sabah"]["indicative_oer_pct"] == pytest.approx(21.54)
+        assert regions["Sarawak"]["indicative_oer_pct"] == pytest.approx(20.42)
+        assert regions["North"]["indicative_oer_pct"] == pytest.approx(20.10)
