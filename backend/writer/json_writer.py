@@ -30,8 +30,8 @@ def write_to_json(data: dict, filename: str = "latest.json") -> bool:
             json.dump(data, f, indent=2, ensure_ascii=False)
         logger.info(f"Written: {filepath}")
         return True
-    except (IOError, OSError) as e:
-        logger.error(f"JSON write failed: {e}")
+    except OSError:
+        logger.exception("JSON write failed")
         return False
 
 
