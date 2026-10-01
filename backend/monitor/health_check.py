@@ -4,6 +4,8 @@ Tracks consecutive failures and sends alerts.
 Designed to run after each scraper execution.
 
 Author: QQ (Qoder CSO)
+Patch: SS (Claude Code), Oct 2026 — the failure count read from health.json
+is parsed as a number before it is used or logged (SonarCloud S5145).
 """
 
 import json
@@ -80,26 +82,39 @@ def report_success() -> dict:
 def report_failure(error_msg: str = "") -> dict:
     """Report failed scrape. Send alert if threshold reached."""
     state = load_health_state()
-    state["consecutive_failures"] = state.get("consecutive_failures", 0) + 1
+    failures = _previous_failures(state) + 1
+    state["consecutive_failures"] = failures
     state["last_failure"] = datetime.now(MYT).isoformat()
     state["last_error"] = error_msg
     state["total_runs"] = state.get("total_runs", 0) + 1
     save_health_state(state)
 
-    if state["consecutive_failures"] >= ALERT_THRESHOLD:
+    if failures >= ALERT_THRESHOLD:
         alert_msg = (
             f"*SawitSense Scraper Alert*\n"
-            f"Consecutive failures: {state['consecutive_failures']}\n"
+            f"Consecutive failures: {failures}\n"
             f"Last error: {error_msg}\n"
             f"Last success: {state.get('last_success', 'Never')}\n"
             f"Action: Check MPOB BEPI portal or fallback API"
         )
         send_telegram_alert(alert_msg)
-        logger.warning(f"Health: {state['consecutive_failures']} consecutive failures. Alert sent.")
+        logger.warning("Health: %d consecutive failures. Alert sent.", failures)
     else:
-        logger.warning(f"Health: scrape FAILED ({state['consecutive_failures']} consecutive)")
+        logger.warning("Health: scrape FAILED (%d consecutive)", failures)
 
     return state
+
+
+def _previous_failures(state: dict) -> int:
+    """The stored failure count as a number.
+
+    health.json is data on disk: anything that isn't a count (e.g. text with
+    line breaks that could forge log lines) restarts the count from zero.
+    """
+    try:
+        return max(int(state.get("consecutive_failures", 0)), 0)
+    except (TypeError, ValueError):
+        return 0
 
 
 def get_data_freshness(last_success_iso: Optional[str] = None) -> dict:

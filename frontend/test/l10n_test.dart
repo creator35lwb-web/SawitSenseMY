@@ -211,6 +211,21 @@ void main() {
       expect(container.read(localeProvider), AppLocale.zh);
       expect(saved, ['zh']);
     });
+
+    test('the page is told which language is showing, for screen readers', () {
+      expect(AppLocale.values.map((l) => l.htmlLang), ['en', 'ms', 'zh-Hans']);
+      final shown = <AppLocale>[];
+      final container = ProviderContainer(overrides: [
+        localeProvider.overrideWith((ref) =>
+            LocaleNotifier(initial: AppLocale.ms, showLanguage: shown.add)),
+      ]);
+      addTearDown(container.dispose);
+
+      container.read(localeProvider);
+      expect(shown, [AppLocale.ms]);
+      container.read(localeProvider.notifier).setLocale(AppLocale.zh);
+      expect(shown, [AppLocale.ms, AppLocale.zh]);
+    });
   });
 
   testWidgets('the language menu lists each language in its own script and '
