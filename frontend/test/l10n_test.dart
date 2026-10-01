@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sawitsense_my/l10n/app_en.dart';
 import 'package:sawitsense_my/l10n/app_zh.dart';
+import 'package:sawitsense_my/l10n/builtin_labels.dart';
 import 'package:sawitsense_my/l10n/l10n_provider.dart';
 import 'package:sawitsense_my/models/price_data.dart';
 import 'package:sawitsense_my/providers/price_provider.dart';
@@ -212,20 +213,38 @@ void main() {
       expect(saved, ['zh']);
     });
 
-    test('the page is told which language is showing, for screen readers', () {
-      expect(AppLocale.values.map((l) => l.htmlLang), ['en', 'ms', 'zh-Hans']);
-      final shown = <AppLocale>[];
-      final container = ProviderContainer(overrides: [
-        localeProvider.overrideWith((ref) =>
-            LocaleNotifier(initial: AppLocale.ms, showLanguage: shown.add)),
-      ]);
-      addTearDown(container.dispose);
-
-      container.read(localeProvider);
-      expect(shown, [AppLocale.ms]);
-      container.read(localeProvider.notifier).setLocale(AppLocale.zh);
-      expect(shown, [AppLocale.ms, AppLocale.zh]);
+    test("Flutter is given each language's tag, which becomes the page's lang",
+        () {
+      expect([for (final l in AppLocale.values) l.flutterLocale.toLanguageTag()],
+          ['en', 'ms', 'zh-Hans']);
     });
+  });
+
+  testWidgets("Flutter's built-in labels still work in BM and Chinese",
+      (tester) async {
+    for (final locale in AppLocale.values) {
+      late Locale seen;
+      await tester.pumpWidget(MaterialApp(
+        locale: locale.flutterLocale,
+        supportedLocales: appSupportedLocales,
+        localizationsDelegates: appLocalizationsDelegates,
+        home: Builder(builder: (context) {
+          seen = Localizations.localeOf(context);
+          // A menu button's default tooltip and a text field both need
+          // Flutter's Material labels; without them they would fail.
+          return Scaffold(
+            appBar: AppBar(actions: [
+              PopupMenuButton<int>(itemBuilder: (_) => const []),
+            ]),
+            body: const TextField(),
+          );
+        }),
+      ));
+      expect(seen, locale.flutterLocale);
+      expect(MaterialLocalizations.of(tester.element(find.byType(TextField))),
+          isNotNull);
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('the language menu lists each language in its own script and '

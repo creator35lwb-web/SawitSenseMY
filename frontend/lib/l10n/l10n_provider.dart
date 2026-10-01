@@ -12,11 +12,12 @@ import 'language_store_stub.dart'
     if (dart.library.js_interop) 'language_store_web.dart';
 
 enum AppLocale {
-  en('EN', 'English', 'en'),
-  ms('BM', 'Bahasa Malaysia', 'ms'),
-  zh('中文', '简体中文', 'zh-Hans');
+  en('EN', 'English', Locale('en')),
+  ms('BM', 'Bahasa Malaysia', Locale('ms')),
+  zh('中文', '简体中文',
+      Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'));
 
-  const AppLocale(this.shortName, this.nativeName, this.htmlLang);
+  const AppLocale(this.shortName, this.nativeName, this.flutterLocale);
 
   /// Shown in the app bar, e.g. "BM".
   final String shortName;
@@ -24,8 +25,9 @@ enum AppLocale {
   /// The language's name in its own script, for the language menu.
   final String nativeName;
 
-  /// The page's language tag, so screen readers use the right voice.
-  final String htmlLang;
+  /// The language as Flutter knows it. Flutter sets the page's `lang` from
+  /// it (e.g. "zh-Hans"), so screen readers use the right voice.
+  final Locale flutterLocale;
 }
 
 /// The language to open in: the reader's last choice on this phone if there
@@ -48,24 +50,16 @@ AppLocale initialLocale({
 }
 
 class LocaleNotifier extends StateNotifier<AppLocale> {
-  /// Starts in [initial]. [save] keeps the reader's choices for next time;
-  /// [showLanguage] tells the page which language is showing.
-  LocaleNotifier({
-    AppLocale initial = AppLocale.en,
-    this.save,
-    this.showLanguage,
-  }) : super(initial) {
-    showLanguage?.call(initial);
-  }
+  /// Starts in [initial]; [save] keeps the reader's choices for next time.
+  LocaleNotifier({AppLocale initial = AppLocale.en, this.save})
+      : super(initial);
 
   final void Function(String code)? save;
-  final void Function(AppLocale locale)? showLanguage;
 
   /// The reader chose [locale]: show it, and remember it on this phone.
   void setLocale(AppLocale locale) {
     state = locale;
     save?.call(locale.name);
-    showLanguage?.call(locale);
   }
 }
 
@@ -76,7 +70,6 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, AppLocale>(
       deviceLocales: PlatformDispatcher.instance.locales,
     ),
     save: saveLanguage,
-    showLanguage: (locale) => setPageLanguage(locale.htmlLang),
   ),
 );
 

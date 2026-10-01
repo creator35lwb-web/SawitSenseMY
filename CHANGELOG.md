@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.10] - 2026-10-01
+
+### Fixed
+- The page's language was reset to `en-US` as soon as the app started, so screen readers used English rules for BM and Chinese too. The app now tells Flutter the reader's language, and Flutter sets the page's `lang` (`en`, `ms`, `zh-Hans`) at start and on every change. The extra script from 0.3.9 is removed. Flutter's own built-in labels (Copy/Paste, menu tooltips) stay in English, as before (K19, #20)
+
+### Added
+- `docs/feedback-form.md`: the draft feedback form for D14. It has 3 questions with a star rating, asks for no personal data, and needs no sign-in (#20)
+
 ## [0.3.9] - 2026-10-01
 
 ### Fixed
