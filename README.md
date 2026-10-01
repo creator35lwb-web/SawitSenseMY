@@ -10,6 +10,8 @@
 
 > **Current status (Sep 2026): indicative mode.** In May 2026 MPOB moved its Daily FFB Reference Price behind a licensee login. Until that price is available again, SawitSense shows **indicative** regional prices. They are derived from the MPOC daily CPO price and MPOB's monthly OER, and the app labels them as indicative. See [ADR-001](docs/ADR-001-mpob-data-source-change.md) and [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
+**Ideas, questions or a price that looks wrong?** Join the [Discussions](https://github.com/creator35lwb-web/SawitSenseMY/discussions). Use *Q&A* for questions, *Ideas* for suggestions and *General* for anything else.
+
 ---
 
 ## What Is SawitSense?
@@ -89,7 +91,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 
 ```
 MPOC Daily Palm Oil Prices (CPO)  +  MPOB Prestasi Sawit (monthly OER by state)
-    -> scraper, twice every weekday (GitHub Actions)
+    -> scraper, every 2 hours (GitHub Actions)
     -> indicative Price_1% per region (ADR-001), labelled is_indicative
          |
     backend/data/*.json committed to main
