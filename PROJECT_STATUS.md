@@ -10,8 +10,15 @@
 >    - the deploy still succeeds with the narrower permissions (K14);
 >    - the live page's `lang` follows the reader's language (K15);
 >    - the footer reads v0.3.9.
-> 3. Check when the first scheduled scrape on the `:13` cron ran. The 1 Oct, 00:13 UTC run had not started by 02:55 UTC. Use `gh run list --workflow scraper_cron.yml` **without** `--event schedule`.
-> 4. Ask Alton for D13 (check the sources every 2 hours) and D14 (the feedback button sends nothing).
+> 3. Check when the first scheduled scrape on the `:13` cron ran.
+>    - The 1 Oct, 00:13 UTC run still had not started by 05:32 UTC.
+>    - SS ran the scraper by hand at 03:00 UTC (11:01 MYT), which brought in MPOC's 30 Sep price (RM 4,610.00).
+>    - Use `gh run list --workflow scraper_cron.yml` **without** `--event schedule`.
+> 4. Ask Alton for D13–D16:
+>    - D13: freshness;
+>    - D14: a real feedback channel;
+>    - D15: a Google Play app;
+>    - D16: GitHub Discussions.
 
 ---
 
@@ -143,15 +150,17 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D11 | **Remember the reader's language:** open in the phone's language on the first visit, and remember the reader's last choice on that phone (browser storage, no personal data, no new package) | Done in #16 (verified live) |
 | D12 | **Repository housekeeping:** GitHub deletes each PR's branch after merge ("Automatically delete head branches"), and the 16 old merged branches are removed | Done on 1 Oct (Alton: "GO!"). Only `main` remains. Every deleted branch was already inside `main` and can be restored from its PR page |
 | D13 | **Check the sources every 2 hours, every day,** instead of twice on weekdays. GitHub's delays then matter far less, and weekends stop showing "Out of date" just because MPOC doesn't publish (the CPO card still shows the trading date). Cost: about 12 bot commits and deploys a day instead of 2; still free for a public repo | **Open. Alton's call.** SS recommends it |
-| D14 | **The feedback button sends nothing (K17).** Options: (a) remove it until there's a real channel; (b) Alton chooses a channel (for example a form, or a WhatsApp number Alton is happy to publish), and SS connects the three options to it | **Open. Alton's call.** SS recommends (a) now, then (b) when Alton is ready |
+| D14 | **The feedback button sends nothing (K17).** Make it real: its options open a short, anonymous form that Alton owns (no login needed), and in the Android app "This is helpful" opens the Play Store rating | **Open. Alton's call.** SS recommends this. Until the form exists, the false "Thank you" should go |
+| D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open. Alton's call.** SS recommends yes, after D13 and D14. The closed test doubles as the first structured feedback from smallholders |
+| D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Open. Alton's call.** SS recommends turning it on now (free) |
 
 ---
 
 ## Backlog
 
 1. Check the sources every 2 hours (D13), if Alton agrees.
-2. Make the feedback button honest (D14), if Alton agrees.
-3. Offline-first: cache prices and the app shell (D9, deferred by recommendation).
+2. A real feedback loop (D14, D16), if Alton agrees.
+3. A Google Play app (D15), if Alton agrees. It includes keeping the last prices on the phone (D9).
 4. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 
 ---
