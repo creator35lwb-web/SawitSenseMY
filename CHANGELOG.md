@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.12] - 2026-10-01
+
+### Fixed
+- The Feedback button now opens a short Google Form (owned by Alton), with the reader's choice selected and the app details filled in: version, language, and when the prices on screen were updated. No personal data is sent, and no sign-in is needed. It used to say "Thank you for your feedback!" while sending nothing (K17, D14, #22)
+
 ## [0.3.11] - 2026-10-01
 
 ### Changed

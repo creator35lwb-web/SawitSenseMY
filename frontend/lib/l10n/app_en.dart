@@ -104,7 +104,9 @@ const Map<String, String> enStrings = {
   'feedback_helpful': 'This is helpful!',
   'feedback_confusing': 'Something is confusing',
   'feedback_wrong': 'Price looks wrong',
-  'feedback_thanks': 'Thank you for your feedback!',
+  'feedback_form_note':
+      "Opens a short Google Form. No sign-in needed; please don't include "
+      'personal details.',
   'close': 'Close',
 
   // Footer
