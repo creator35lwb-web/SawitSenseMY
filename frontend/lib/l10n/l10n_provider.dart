@@ -12,17 +12,20 @@ import 'language_store_stub.dart'
     if (dart.library.js_interop) 'language_store_web.dart';
 
 enum AppLocale {
-  en('EN', 'English'),
-  ms('BM', 'Bahasa Malaysia'),
-  zh('中文', '简体中文');
+  en('EN', 'English', 'en'),
+  ms('BM', 'Bahasa Malaysia', 'ms'),
+  zh('中文', '简体中文', 'zh-Hans');
 
-  const AppLocale(this.shortName, this.nativeName);
+  const AppLocale(this.shortName, this.nativeName, this.htmlLang);
 
   /// Shown in the app bar, e.g. "BM".
   final String shortName;
 
   /// The language's name in its own script, for the language menu.
   final String nativeName;
+
+  /// The page's language tag, so screen readers use the right voice.
+  final String htmlLang;
 }
 
 /// The language to open in: the reader's last choice on this phone if there
@@ -45,16 +48,24 @@ AppLocale initialLocale({
 }
 
 class LocaleNotifier extends StateNotifier<AppLocale> {
-  /// Starts in [initial]; [save] keeps the reader's choices for next time.
-  LocaleNotifier({AppLocale initial = AppLocale.en, this.save})
-      : super(initial);
+  /// Starts in [initial]. [save] keeps the reader's choices for next time;
+  /// [showLanguage] tells the page which language is showing.
+  LocaleNotifier({
+    AppLocale initial = AppLocale.en,
+    this.save,
+    this.showLanguage,
+  }) : super(initial) {
+    showLanguage?.call(initial);
+  }
 
   final void Function(String code)? save;
+  final void Function(AppLocale locale)? showLanguage;
 
   /// The reader chose [locale]: show it, and remember it on this phone.
   void setLocale(AppLocale locale) {
     state = locale;
     save?.call(locale.name);
+    showLanguage?.call(locale);
   }
 }
 
@@ -65,6 +76,7 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, AppLocale>(
       deviceLocales: PlatformDispatcher.instance.locales,
     ),
     save: saveLanguage,
+    showLanguage: (locale) => setPageLanguage(locale.htmlLang),
   ),
 );
 
