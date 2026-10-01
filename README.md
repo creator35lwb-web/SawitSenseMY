@@ -61,7 +61,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote. GREEN/AMBER/RED verdict. | Done |
 | **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
-| **Feedback Button** | 3 preset options: helpful / confusing / wrong price | Done |
+| **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
 
 ### Phase 2 (Production) — After Market Fit Confirmed
 

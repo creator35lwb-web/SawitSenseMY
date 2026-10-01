@@ -1,6 +1,12 @@
 # Feedback form (draft for D14)
 
-The in-app **Feedback** button will open this Google Form, with the reader's choice and the app details already filled in. Alton owns the form, and its responses go to Alton's Google Sheet. **Status:** a draft for Alton to create. The BM and 中文 wording needs a native check.
+The in-app **Feedback** button opens this Google Form, with the reader's choice and the app details already filled in. Alton owns the form, and its responses go to Alton's Google Sheet.
+
+**Status:** created by Alton on 1 Oct 2026 (https://forms.gle/yeuwdJahywktBnWk6) and connected in v0.3.12.
+- SS checked it matches this draft word for word, needs no sign-in, and has no email field.
+- In a real browser, the app's links select the right option.
+- Field IDs: rating `entry.1400080953`, topic `entry.2059050621`, more `entry.1450778564`, app details `entry.1276594150`. The app fills topic and app details (`frontend/lib/config/links.dart`).
+- **If the options' wording changes in the form, change `FeedbackTopic` in `frontend/lib/services/feedback_link.dart` too.** The test `feedback_test.dart` pins the current wording.
 
 ## Settings
 
