@@ -7,6 +7,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.11] - 2026-10-01
+
+### Changed
+- Prices are checked every 2 hours, every day, instead of twice on weekdays. GitHub starts scheduled runs hours late, so mornings in Malaysia often showed out-of-date data. Weekends now stay up to date with the latest trading day's price (D13, #21)
+- The freshness watchdog runs every 6 hours, every day. It alerts when no new data has arrived for a day; the limit was 4 days (#21)
+
+### Added
+- GitHub Discussions are open for ideas and questions, linked from the README (D16)
+
 ## [0.3.10] - 2026-10-01
 
 ### Fixed
