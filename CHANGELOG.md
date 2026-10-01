@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.13] - 2026-10-01
+
+### Changed
+- The workflows run on Ubuntu 24.04 instead of `ubuntu-latest`, which moves to Ubuntu 26 on 19 Oct 2026, and on the current versions of GitHub's actions. That ends the "Node.js 20 is deprecated" warning on every run. No change to the app (K20, #23)
+
 ## [0.3.12] - 2026-10-01
 
 ### Fixed
