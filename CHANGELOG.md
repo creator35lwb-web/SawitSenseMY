@@ -7,6 +7,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.9] - 2026-10-01
+
+### Fixed
+- The page now declares its language: `en`, then the reader's language (`ms`, `zh-Hans`) at start and on every change, so screen readers use the right voice (K15, #19)
+
+### Security
+- The deploy workflow is read-only by default. Only the deploy job can write to GitHub Pages (K14, #19)
+- The health monitor parses the failure count from `health.json` as a number before using or logging it, so a crafted file can't forge log lines (K16, #19)
+
 ## [0.3.8] - 2026-09-30
 
 ### Fixed
