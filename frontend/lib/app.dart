@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'l10n/builtin_labels.dart';
 import 'l10n/l10n_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/calculator_screen.dart';
@@ -47,9 +48,15 @@ class SawitSenseApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: tr('app_title'),
+      // The reader's language. Flutter sets the page's `lang` from it, so
+      // screen readers use the right voice (builtin_labels.dart).
+      locale: locale.flutterLocale,
+      supportedLocales: appSupportedLocales,
+      localizationsDelegates: appLocalizationsDelegates,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
