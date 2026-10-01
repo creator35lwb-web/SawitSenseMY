@@ -8,7 +8,7 @@
 
 1. **Start:** Read this file, then `PROJECT_STATUS.md`, then the newest handoff in `.macp/handoffs/`. Check open Issues (`scraper-alert`, `deploy-alert`, `freshness-alert`) and open PRs.
 2. **Work:** Branch, diagnose before patching, test.
-3. **Land:** Open a pull request. CI must pass. Alton reviews and merges. Agents never push to `main` and never merge.
+3. **Land:** Open a pull request. CI must pass. Alton reviews and merges. Agents never push to `main` and never merge. GitHub deletes the PR's branch after the merge (D12), so run `git fetch --prune` and start the next change from a fresh branch off `main`.
 4. **End:** Update `PROJECT_STATUS.md`. Write a handoff in `.macp/handoffs/YYYYMMDD_SS_<topic>.md` and a reasoning log in `.macp/reasoning/YYYYMMDD_SS_<topic>.md`.
 
 Handoffs up to 21 May 2026 are archived in `.macp/handoffs.json`.
