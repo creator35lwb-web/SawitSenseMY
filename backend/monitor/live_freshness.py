@@ -29,9 +29,10 @@ REPO_LATEST_FILE = Path(__file__).parent.parent / "data" / "latest.json"
 
 # Time allowed for the deploy to publish a new data commit before we alert.
 DEPLOY_GRACE = timedelta(hours=2)
-# Scrapes run twice per weekday; 4 days covers a long weekend plus GitHub's
-# scheduling delays without false alarms.
-MAX_DATA_AGE = timedelta(days=4)
+# Scrapes run every 2 hours, every day (D13). A day without a new snapshot
+# means about 12 runs in a row failed or never started, which GitHub's
+# scheduling delays alone don't explain.
+MAX_DATA_AGE = timedelta(days=1)
 
 
 def fetch_live_snapshot(url: str = LIVE_LATEST_URL, timeout: int = 30) -> dict:
@@ -65,8 +66,8 @@ def find_problems(live: dict, repo: dict, now: datetime) -> list:
         )
     if repo_age > MAX_DATA_AGE:
         problems.append(
-            f"The newest snapshot on main was scraped {repo_age.days} days ago "
-            f"({repo_scraped_at}). The scraper may have stopped running."
+            f"The newest snapshot on main was scraped {repo_age.total_seconds() / 3600:.0f} "
+            f"hours ago ({repo_scraped_at}). The scraper may have stopped running."
         )
     return problems
 

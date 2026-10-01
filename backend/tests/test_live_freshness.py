@@ -42,9 +42,16 @@ class TestFindProblems:
         assert len(problems) == 1
         assert "scraper may have stopped" in problems[0]
 
-    def test_long_weekend_is_not_an_alarm(self):
-        # Friday evening scrape, checked Monday morning before the first run.
-        snap = _snapshot(NOW - timedelta(days=3, hours=6))
+    def test_a_day_without_new_data_is_an_alarm(self):
+        # Scrapes run every 2 hours, every day (D13): about 12 missed runs.
+        snap = _snapshot(NOW - timedelta(hours=26))
+        problems = find_problems(snap, snap, NOW)
+        assert len(problems) == 1
+        assert "26 hours ago" in problems[0]
+
+    def test_late_runs_within_a_day_are_not_an_alarm(self):
+        # GitHub starts scheduled runs hours late; that alone is not an alarm.
+        snap = _snapshot(NOW - timedelta(hours=14))
         assert find_problems(snap, snap, NOW) == []
 
     def test_unreadable_timestamp_is_reported(self):

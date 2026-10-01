@@ -2,18 +2,16 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 1 October 2026 (v0.3.9 check, page-language fix, web vs store) · SS (Claude Code)
+**Last updated:** 1 October 2026 (v0.3.10 check; D13 and D16) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261001_SS_v0.3.10-page-language-and-web-vs-store.md`.
-> 2. After Alton merges [#20](https://github.com/creator35lwb-web/SawitSenseMY/pull/20), check on the live site that:
->    - the page's `lang` is `en`, `ms` or `zh-Hans` after the app starts and after each language change (K19);
->    - the footer reads v0.3.10.
-> 3. Waiting on Alton:
->    - D13 (check the sources every 2 hours);
->    - D14: create the feedback form from `docs/feedback-form.md` and send SS its pre-filled link;
->    - D15 (web first, store later);
->    - D16 (Discussions).
+> 1. Read the newest handoff, `.macp/handoffs/20261001_SS_v0.3.11-every-2-hours.md`.
+> 2. After Alton merges [#21](https://github.com/creator35lwb-web/SawitSenseMY/pull/21), check that:
+>    - scheduled scrapes now arrive roughly every 2 hours, each followed by a deploy (use the unfiltered `gh run list --workflow scraper_cron.yml`);
+>    - the watchdog runs every 6 hours;
+>    - the footer reads v0.3.11.
+> 3. D14: when Alton sends the form's pre-filled link, connect the Feedback button and remove the false "Thank you".
+> 4. D15 (web first, store later) stays Alton's call.
 
 ---
 
@@ -22,10 +20,10 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.9 live** (SonarCloud fixes); 0.3.10 in [#20](https://github.com/creator35lwb-web/SawitSenseMY/pull/20) (page language for screen readers) |
+| Version | **0.3.10 live** (page language follows the reader); 0.3.11 in [#21](https://github.com/creator35lwb-web/SawitSenseMY/pull/21) (sources checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Refreshed twice every weekday, but late.** GitHub starts the scheduled scrapes a median 4.7 h late, so on weekday mornings in Malaysia the badge shows AMBER, then RED from about 10:00 until the early-afternoon run (K18, D13). The freshness watchdog checks that the live site matches `main`. |
-| Data pipeline | The scraper runs twice every weekday and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
+| Live site freshness | **Being fixed.** Twice-weekday scrapes started a median 4.7 h late, so weekday mornings showed AMBER, then RED (K18). From #21 the sources are checked every 2 hours, every day (D13). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Data pipeline | The scraper runs twice every weekday (every 2 hours, every day once #21 merges) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
 ### Verified in production on 30 Sep 2026
@@ -73,6 +71,7 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **v0.3.10 is live, checked after #20 merged.** The deploy succeeded and the live bundle is v0.3.10. On the live site the page's `lang` is `en`, `ms` and `zh-Hans` for phones set to English, Malay and Chinese once the app starts, and it switches with the menu (K19 fixed).
 - **The first run on the `:13` schedule** (1 Oct, 00:13 UTC) started at 05:45 UTC, 5 h 32 min late. The schedule move didn't help (K18, D13).
 - **Scheduled scrapes ran every weekday through September**, 4–6 hours late under the old `:30` schedule. For example, 29 Sep at 06:01 and 14:54 UTC, and 30 Sep at 05:50 UTC. The `:13` schedule's first run is due 1 Oct, 00:13 UTC.
 ---
@@ -99,7 +98,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#20](https://github.com/creator35lwb-web/SawitSenseMY/pull/20) | v0.3.10: Flutter sets the page's language from the reader's language (K19), the draft feedback form (D14), and the web vs store recommendation (D15) |
+| [#21](https://github.com/creator35lwb-web/SawitSenseMY/pull/21) | v0.3.11: sources checked every 2 hours, every day (D13); watchdog every 6 hours, alerting after a day without new data; Discussions linked (D16) |
 
 ---
 
@@ -109,7 +108,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 |---|----------|-------|-----------|
 | K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
 | K17 | 🟠 | The feedback button thanks the reader ("Thank you for your feedback!") but sends nothing. Firestore was retired (D5), and the code only prints to the browser console | D14, Alton's call |
-| K18 | 🟠 | Weekday mornings show AMBER, then RED, because GitHub starts the twice-daily scrapes about 5 h late. The first `:13` run started 5 h 32 min late | D13, Alton's call |
+| K18 | 🟠 | Weekday mornings show AMBER, then RED, because GitHub starts the twice-daily scrapes about 5 h late. The first `:13` run started 5 h 32 min late | Fix in #21 (D13). SS checks the run cadence after the merge |
 
 ### Fixed on 30 Sep 2026
 
@@ -150,18 +149,18 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D10 | **Chinese (CN)**, which ethical framework v1.1 requires | Done in #15 (verified live). Better wording from native readers is a one-line change in `app_zh.dart` |
 | D11 | **Remember the reader's language:** open in the phone's language on the first visit, and remember the reader's last choice on that phone (browser storage, no personal data, no new package) | Done in #16 (verified live) |
 | D12 | **Repository housekeeping:** GitHub deletes each PR's branch after merge ("Automatically delete head branches"), and the 16 old merged branches are removed | Done on 1 Oct (Alton: "GO!"). Only `main` remains. Every deleted branch was already inside `main` and can be restored from its PR page |
-| D13 | **Check the sources every 2 hours, every day,** instead of twice on weekdays. GitHub's delays then matter far less, and weekends stop showing "Out of date" just because MPOC doesn't publish (the CPO card still shows the trading date). Cost: about 12 bot commits and deploys a day instead of 2; still free for a public repo | **Open. Alton's call.** SS recommends it |
+| D13 | **Check the sources every 2 hours, every day,** instead of twice on weekdays. GitHub's delays then matter far less, and weekends stop showing "Out of date" just because MPOC doesn't publish (the CPO card still shows the trading date). Cost: about 12 bot commits and deploys a day instead of 2; still free for a public repo | **Approved** (Alton, 1 Oct). In #21 |
 | D14 | **The feedback button sends nothing (K17).** Make it real: its options open a short, anonymous form that Alton owns (no login needed), and in the Android app "This is helpful" opens the Play Store rating | **Open.** Alton suggested starting with a free Google Form with a rating (1 Oct). The draft is in [`docs/feedback-form.md`](docs/feedback-form.md): 3 questions, a star rating, no personal data, no sign-in. **Waiting on Alton** to create it and send its pre-filled link; SS then connects the button |
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
-| D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Open. Alton's call.** SS recommends turning it on now (free) |
+| D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
 
 ---
 
 ## Backlog
 
-1. Check the sources every 2 hours (D13), if Alton agrees.
-2. A real feedback loop (D14, D16), if Alton agrees.
-3. A Google Play app (D15), if Alton agrees. It includes keeping the last prices on the phone (D9).
+1. Every 2 hours (D13): merge #21, then confirm the run cadence.
+2. Feedback button (D14): connect it once Alton sends the form's pre-filled link.
+3. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
 4. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 
 ---

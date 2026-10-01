@@ -12,11 +12,10 @@ name: Live-site freshness watchdog
 
 on:
   schedule:
-    # Mon-Fri, twice a day. Exact timing doesn't matter: the check allows a
-    # grace period after each data commit, so scheduling delays can't cause
-    # false alarms.
-    - cron: '17 3 * * 1-5'
-    - cron: '17 11 * * 1-5'
+    # Every 6 hours, every day, matching the scraper's every-day schedule
+    # (D13). Exact timing doesn't matter: the check allows a grace period
+    # after each data commit, so scheduling delays can't cause false alarms.
+    - cron: '17 */6 * * *'
   workflow_dispatch:
 
 permissions:

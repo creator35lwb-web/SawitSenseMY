@@ -37,7 +37,7 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 - `backend/scrapers/mpob_bepi.py`: core formula plus the legacy MPOB BEPI scraper. This is the math layer; don't refactor it.
 - `backend/writer/json_writer.py`: writes the JSON snapshots the app reads
 - `backend/monitor/`: scraper health check and live-site freshness watchdog
-- `.github/workflows/scraper_cron.yml`: scrapes twice every weekday, then dispatches the deploy
+- `.github/workflows/scraper_cron.yml`: scrapes every 2 hours, every day (D13), then dispatches the deploy
 - `.github/workflows/deploy_web.yml`: builds and deploys the Flutter web app
 - `.github/workflows/freshness_watchdog.yml`: raises an alert when the live site falls behind `main`
 

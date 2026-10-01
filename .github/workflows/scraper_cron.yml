@@ -1,16 +1,19 @@
 # Patch: SS (Claude Code), Sep 2026 — push retries + fail loudly, and
 # dispatch deploy_web.yml after each data commit (live site was frozen on
 # 21 May 2026 data because GITHUB_TOKEN pushes never trigger other workflows).
+# Oct 2026 — every 2 hours, every day (D13).
 
 name: SawitSense MPOB Scraper
 
 on:
   schedule:
-    # About 8:15am and 4:15pm MYT (00:13 / 08:13 UTC), Mon-Fri. GitHub delays
-    # scheduled runs most at busy times such as the top and half of the hour,
-    # and runs set for :30 started 4-8 hours late; an odd minute helps.
-    - cron: '13 0 * * 1-5'
-    - cron: '13 8 * * 1-5'
+    # Every 2 hours, every day, at 13 minutes past (D13). GitHub starts
+    # scheduled runs hours late (a median 4.7 h in Aug-Sep 2026; the first
+    # 00:13 run started 5.5 h late), so frequent slots keep the data checked
+    # despite the delays. Weekends are included: MPOC doesn't publish then,
+    # but checking keeps the site honestly "up to date" with the latest
+    # trading day's price instead of going stale.
+    - cron: '13 */2 * * *'
   workflow_dispatch: # Manual trigger
 
 permissions:
