@@ -105,7 +105,9 @@ const Map<String, String> msStrings = {
   'feedback_helpful': 'Ini berguna!',
   'feedback_confusing': 'Sesuatu mengelirukan',
   'feedback_wrong': 'Harga nampak salah',
-  'feedback_thanks': 'Terima kasih atas maklum balas anda!',
+  'feedback_form_note':
+      'Membuka Borang Google yang ringkas. Tidak perlu log masuk; jangan '
+      'sertakan butiran peribadi.',
   'close': 'Tutup',
 
   // Footer

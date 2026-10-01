@@ -1,7 +1,15 @@
 // Feedback button with 3 preset options.
+//
+// Patch: SS (Claude Code), Oct 2026 — each option opens the feedback form
+// (D14) with that choice and the app details filled in. It used to say
+// "Thank you for your feedback!" while sending nothing (K17).
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/l10n_provider.dart';
+import '../providers/price_provider.dart';
+import '../services/feedback_link.dart';
+import '../services/link_opener.dart';
+import 'app_footer.dart' show appVersion;
 
 class FeedbackButton extends ConsumerWidget {
   const FeedbackButton({super.key});
@@ -36,21 +44,27 @@ class FeedbackButton extends ConsumerWidget {
               icon: Icons.thumb_up_outlined,
               label: tr('feedback_helpful'),
               color: Colors.green,
-              onTap: () => _submitFeedback(ctx, tr, 'helpful'),
+              onTap: () => _openForm(ctx, ref, FeedbackTopic.helpful),
             ),
             const SizedBox(height: 8),
             _FeedbackOption(
               icon: Icons.help_outline,
               label: tr('feedback_confusing'),
               color: Colors.orange,
-              onTap: () => _submitFeedback(ctx, tr, 'confusing'),
+              onTap: () => _openForm(ctx, ref, FeedbackTopic.confusing),
             ),
             const SizedBox(height: 8),
             _FeedbackOption(
               icon: Icons.report_outlined,
               label: tr('feedback_wrong'),
               color: Colors.red,
-              onTap: () => _submitFeedback(ctx, tr, 'wrong_price'),
+              onTap: () => _openForm(ctx, ref, FeedbackTopic.wrongPrice),
+            ),
+            const SizedBox(height: 12),
+            // Say where the reader is going before they tap.
+            Text(
+              tr('feedback_form_note'),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
           ],
         ),
@@ -64,18 +78,16 @@ class FeedbackButton extends ConsumerWidget {
     );
   }
 
-  void _submitFeedback(BuildContext ctx, String Function(String) tr, String type) {
+  /// Opens the feedback form with [topic] chosen. The form shows its own
+  /// thank-you once the reader sends it.
+  void _openForm(BuildContext ctx, WidgetRef ref, FeedbackTopic topic) {
     Navigator.of(ctx).pop();
-    ScaffoldMessenger.of(ctx).showSnackBar(
-      SnackBar(
-        content: Text(tr('feedback_thanks')),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.green.shade700,
-        duration: const Duration(seconds: 2),
-      ),
+    final details = feedbackAppDetails(
+      version: appVersion,
+      language: ref.read(localeProvider).name,
+      pricesScrapedAt: ref.read(latestPriceProvider).valueOrNull?.scrapedAt,
     );
-    // Future: send to Firestore analytics
-    debugPrint('[SawitSense] Feedback submitted: $type');
+    ref.read(linkOpenerProvider)(feedbackFormLink(topic, appDetails: details));
   }
 }
 

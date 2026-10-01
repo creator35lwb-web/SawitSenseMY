@@ -103,7 +103,7 @@ const Map<String, String> zhStrings = {
   'feedback_helpful': '很有帮助！',
   'feedback_confusing': '有些地方看不懂',
   'feedback_wrong': '价格好像不对',
-  'feedback_thanks': '谢谢您的反馈！',
+  'feedback_form_note': '将打开一份简短的 Google 表单，无需登录。请勿填写个人资料。',
   'close': '关闭',
 
   // Footer

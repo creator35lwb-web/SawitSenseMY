@@ -11,3 +11,12 @@ const String adrUrl =
 /// Every price snapshot SawitSense has published (open data).
 const String openDataUrl =
     'https://github.com/creator35lwb-web/SawitSenseMY/tree/main/backend/data';
+
+/// The feedback form (D14): a Google Form Alton owns. It is anonymous and
+/// needs no sign-in; see docs/feedback-form.md.
+const String feedbackFormUrl =
+    'https://docs.google.com/forms/d/e/1FAIpQLSf0oHnG7Xx4zGcCHuB9xgeGDGcL0Y2PKDbOVHMVaQ8XvkKCyQ/viewform';
+
+/// The form's fields the app fills in, from its pre-filled link.
+const String feedbackTopicField = 'entry.2059050621';
+const String feedbackAppDetailsField = 'entry.1276594150';
