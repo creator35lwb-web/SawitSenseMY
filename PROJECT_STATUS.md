@@ -7,7 +7,9 @@
 > **Next session starts here:**
 > 1. Read the newest handoff, `.macp/handoffs/20261002_SS_v0.3.13-verified.md`.
 > 2. Keep measuring D13 over a few days: how many scheduled scrapes GitHub actually runs per day, and the longest gap. Use the unfiltered `gh run list`. Day one: 2 of about 7 slots.
-> 3. Ask Alton about D17 (Dependabot alerts). D15 (web first, store later) stays Alton's call.
+> 3. Check `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`.
+> 4. Re-run the OSV check on `backend/requirements.lock`: Dependabot only sees the 2 direct Python packages (D17).
+> 5. D15 (web first, store later) stays Alton's call.
 
 ---
 
@@ -72,7 +74,7 @@
   - A scraper run on `main` committed and pushed data under checkout v7 (`a32b821..732ea56`), and the deploy it dispatched succeeded.
   - The live bundle is v0.3.13, with data scraped at 08:15 MYT and no warnings.
 - **First day of the 2-hourly schedule** (#21 merged 1 Oct, 09:49 UTC): GitHub ran scheduled scrapes at 17:00 and 22:37 UTC (01:00 and 06:37 MYT), each followed by a successful deploy. That's 2 of about 7 slots (K18).
-- **Dependencies have no known vulnerabilities** (2 Oct). All 84 locked packages (67 Dart in `pubspec.lock`, 17 Python in `requirements.lock`) were checked against the OSV database: 0 found. Dependabot alerts are off for this repo (D17).
+- **Dependencies have no known vulnerabilities** (2 Oct). All 84 locked packages (67 Dart in `pubspec.lock`, 17 Python in `requirements.lock`) were checked against the OSV database: 0 found. Dependabot alerts were off then; they are now on (D17).
 - **v0.3.12 is live, checked after #22 merged.** The deploy succeeded and the live bundle is v0.3.12. On the live site, Feedback → "Price looks wrong" opens the form on docs.google.com with that option selected and the app details `v0.3.12 · en · prices 2026-10-01T13:45:57+08:00`.
 - **v0.3.11 is live** (#21 merged 1 Oct, 09:49 UTC). Its deploy succeeded. The first 2-hourly slots had not fired by 10:26 UTC; the cadence check is pending.
 - **v0.3.10 is live, checked after #20 merged.** The deploy succeeded and the live bundle is v0.3.10. On the live site the page's `lang` is `en`, `ms` and `zh-Hans` for phones set to English, Malay and Chinese once the app starts, and it switches with the menu (K19 fixed).
@@ -157,7 +159,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D13 | **Check the sources every 2 hours, every day,** instead of twice on weekdays. GitHub's delays then matter far less, and weekends stop showing "Out of date" just because MPOC doesn't publish (the CPO card still shows the trading date). Cost: about 12 bot commits and deploys a day instead of 2; still free for a public repo | **Approved** (Alton, 1 Oct). In #21 |
 | D14 | **The feedback button sends nothing (K17).** Make it real: its options open a short, anonymous form that Alton owns (no login needed), and in the Android app "This is helpful" opens the Play Store rating | **Done in #22 (verified live).** Alton created the form on 1 Oct from [`docs/feedback-form.md`](docs/feedback-form.md). SS checked it matches the draft word for word, needs no sign-in and has no email field, and that the app's links select the right option in a real browser |
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
-| D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Open. Alton's call.** SS recommends it. On 2 Oct an OSV check of all 84 locked packages found 0 known vulnerabilities |
+| D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
 
 ---
@@ -165,7 +167,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 ## Backlog
 
 1. Every 2 hours (D13): measure GitHub's actual run count and gaps for a few days (K18).
-2. Dependabot alerts (D17), if Alton agrees.
+2. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
 3. Feedback (D14): live. Alton reads the form's responses; SS picks up anything that needs a fix.
 4. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
 5. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
