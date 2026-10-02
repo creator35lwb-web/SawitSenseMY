@@ -2,11 +2,14 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 2 October 2026 (v0.3.13 check; first day of the 2-hourly schedule) · SS (Claude Code)
+**Last updated:** 2 October 2026 (session close: D13 day-one measurement) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261002_SS_v0.3.13-verified.md`.
-> 2. Keep measuring D13 over a few days: how many scheduled scrapes GitHub actually runs per day, and the longest gap. Use the unfiltered `gh run list`. Day one: 2 of about 7 slots.
+> 1. Read the newest handoff, `.macp/handoffs/20261002_SS_session-close.md`.
+> 2. Finish measuring D13 including a weekend: scheduled runs per day, the longest gap, and the share of time GREEN / AMBER / RED (from the data commit times on `main`). Then record the result and close K18, or propose hourly slots if any gap passed 12 h.
+>    - Day one: 3 of about 12 slots ran;
+>    - 75% GREEN, 25% AMBER, 0% RED;
+>    - mornings (06:00–12:00 MYT) 100% GREEN.
 > 3. Check `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`.
 > 4. Re-run the OSV check on `backend/requirements.lock`: Dependabot only sees the 2 direct Python packages (D17).
 > 5. D15 (web first, store later) stays Alton's call.
@@ -20,7 +23,7 @@
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
 | Version | **0.3.13 live** (EN, BM and 中文; feedback form; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Better, still measuring (K18).** The schedule asks for a check every 2 hours (D13). On its first day GitHub ran 2 of about 7 slots, at 01:00 and 06:37 MYT, so the morning starts with fresh data instead of the previous night's. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Live site freshness | **Much better, still measuring (K18).** The schedule asks for a check every 2 hours (D13). In its first 24 hours GitHub ran 3 of about 12 slots (01:00, 06:37 and 13:28 MYT). Data was GREEN 75% of the time and never RED, against 34% and 41% before. Mornings were 100% GREEN, against 2% before. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -113,7 +116,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
 | K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
-| K18 | 🟡 | GitHub runs scheduled scrapes late and skips many slots. Twice-weekday runs left mornings AMBER or RED. Since #21 (every 2 hours, D13), the first day's runs landed at 01:00 and 06:37 MYT, so mornings are fresh, but only 2 of about 7 slots ran | SS keeps measuring for a few days, then reports whether more is needed |
+| K18 | 🟡 | GitHub runs scheduled scrapes late and skips many slots. Twice-weekday runs left mornings AMBER or RED. Over the 14 days before D13, data was 34% GREEN, 25% AMBER and 41% RED, and mornings were 60% RED. In the first 24 h of 2-hourly slots (#21), GitHub ran 3 of about 12 slots, about every 6 h. Data was 75% GREEN, 25% AMBER and 0% RED, and mornings were 100% GREEN | SS measures through a weekend, then records the result and closes K18, or proposes hourly slots if a gap passes 12 h |
 
 ### Fixed on 30 Sep 2026
 
