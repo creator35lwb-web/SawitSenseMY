@@ -2,16 +2,14 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 1 October 2026 (v0.3.12 check; CI maintenance) · SS (Claude Code)
+**Last updated:** 2 October 2026 (v0.3.13 check; first day of the 2-hourly schedule) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261001_SS_v0.3.13-ci-maintenance.md`.
-> 2. After Alton merges [#23](https://github.com/creator35lwb-web/SawitSenseMY/pull/23):
->    - the merge's deploy must succeed with the new actions on Ubuntu 24.04;
->    - then run the scraper once on `main`, to prove checkout v7's push credentials work;
->    - the footer should read v0.3.13.
-> 3. Check the D13 cadence: scheduled scrapes roughly every 2 hours, each followed by a deploy, and the watchdog every 6 hours. None had fired by 10:43 UTC on 1 Oct. Use the unfiltered `gh run list`.
-> 4. D15 (web first, store later) stays Alton's call.
+> 1. Read the newest handoff, `.macp/handoffs/20261002_SS_v0.3.13-verified.md`.
+> 2. Keep measuring D13 over a few days: how many scheduled scrapes GitHub actually runs per day, and the longest gap. Use the unfiltered `gh run list`. Day one: 2 of about 7 slots.
+> 3. Check `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`.
+> 4. Re-run the OSV check on `backend/requirements.lock`: Dependabot only sees the 2 direct Python packages (D17).
+> 5. D15 (web first, store later) stays Alton's call.
 
 ---
 
@@ -20,9 +18,9 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.12 live** (Feedback opens the form); 0.3.13 in [#23](https://github.com/creator35lwb-web/SawitSenseMY/pull/23) (CI maintenance) |
+| Version | **0.3.13 live** (EN, BM and 中文; feedback form; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Being fixed.** Twice-weekday scrapes started a median 4.7 h late, so weekday mornings showed AMBER, then RED (K18). From #21 the sources are checked every 2 hours, every day (D13). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Live site freshness | **Better, still measuring (K18).** The schedule asks for a check every 2 hours (D13). On its first day GitHub ran 2 of about 7 slots, at 01:00 and 06:37 MYT, so the morning starts with fresh data instead of the previous night's. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -71,6 +69,12 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **v0.3.13 is live, checked after #23 merged** (2 Oct, 00:12 UTC).
+  - The merge's deploy succeeded on the new actions and Ubuntu 24.04, with no warnings.
+  - A scraper run on `main` committed and pushed data under checkout v7 (`a32b821..732ea56`), and the deploy it dispatched succeeded.
+  - The live bundle is v0.3.13, with data scraped at 08:15 MYT and no warnings.
+- **First day of the 2-hourly schedule** (#21 merged 1 Oct, 09:49 UTC): GitHub ran scheduled scrapes at 17:00 and 22:37 UTC (01:00 and 06:37 MYT), each followed by a successful deploy. That's 2 of about 7 slots (K18).
+- **Dependencies have no known vulnerabilities** (2 Oct). All 84 locked packages (67 Dart in `pubspec.lock`, 17 Python in `requirements.lock`) were checked against the OSV database: 0 found. Dependabot alerts were off then; they are now on (D17).
 - **v0.3.12 is live, checked after #22 merged.** The deploy succeeded and the live bundle is v0.3.12. On the live site, Feedback → "Price looks wrong" opens the form on docs.google.com with that option selected and the app details `v0.3.12 · en · prices 2026-10-01T13:45:57+08:00`.
 - **v0.3.11 is live** (#21 merged 1 Oct, 09:49 UTC). Its deploy succeeded. The first 2-hourly slots had not fired by 10:26 UTC; the cadence check is pending.
 - **v0.3.10 is live, checked after #20 merged.** The deploy succeeded and the live bundle is v0.3.10. On the live site the page's `lang` is `en`, `ms` and `zh-Hans` for phones set to English, Malay and Chinese once the app starts, and it switches with the menu (K19 fixed).
@@ -100,7 +104,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#23](https://github.com/creator35lwb-web/SawitSenseMY/pull/23) | v0.3.13: workflows on current GitHub action versions (Node 24) and pinned to Ubuntu 24.04 (K20) |
+| [#24](https://github.com/creator35lwb-web/SawitSenseMY/pull/24) | Records only: v0.3.13 verified live; first day of the 2-hourly schedule; OSV check; D17 raised |
 
 ---
 
@@ -109,7 +113,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
 | K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
-| K18 | 🟠 | Weekday mornings show AMBER, then RED, because GitHub starts the twice-daily scrapes about 5 h late. The first `:13` run started 5 h 32 min late | Fix in #21 (D13). SS checks the run cadence after the merge |
+| K18 | 🟡 | GitHub runs scheduled scrapes late and skips many slots. Twice-weekday runs left mornings AMBER or RED. Since #21 (every 2 hours, D13), the first day's runs landed at 01:00 and 06:37 MYT, so mornings are fresh, but only 2 of about 7 slots ran | SS keeps measuring for a few days, then reports whether more is needed |
 
 ### Fixed on 30 Sep 2026
 
@@ -155,14 +159,15 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D13 | **Check the sources every 2 hours, every day,** instead of twice on weekdays. GitHub's delays then matter far less, and weekends stop showing "Out of date" just because MPOC doesn't publish (the CPO card still shows the trading date). Cost: about 12 bot commits and deploys a day instead of 2; still free for a public repo | **Approved** (Alton, 1 Oct). In #21 |
 | D14 | **The feedback button sends nothing (K17).** Make it real: its options open a short, anonymous form that Alton owns (no login needed), and in the Android app "This is helpful" opens the Play Store rating | **Done in #22 (verified live).** Alton created the form on 1 Oct from [`docs/feedback-form.md`](docs/feedback-form.md). SS checked it matches the draft word for word, needs no sign-in and has no email field, and that the app's links select the right option in a real browser |
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
+| D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
 
 ---
 
 ## Backlog
 
-1. CI maintenance (K20): merge #23, then verify the deploy and a scraper push.
-2. Every 2 hours (D13): confirm the run cadence.
+1. Every 2 hours (D13): measure GitHub's actual run count and gaps for a few days (K18).
+2. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
 3. Feedback (D14): live. Alton reads the form's responses; SS picks up anything that needs a fix.
 4. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
 5. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
