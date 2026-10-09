@@ -2,18 +2,16 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 2 October 2026 (session close: D13 day-one measurement) · SS (Claude Code)
+**Last updated:** 9 October 2026 (health check; K18 closed) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261002_SS_session-close.md`.
-> 2. Finish measuring D13 including a weekend: scheduled runs per day, the longest gap, and the share of time GREEN / AMBER / RED (from the data commit times on `main`). Then record the result and close K18, or propose hourly slots if any gap passed 12 h.
->    - Day one: 3 of about 12 slots ran;
->    - 75% GREEN, 25% AMBER, 0% RED;
->    - mornings (06:00–12:00 MYT) 100% GREEN.
-> 3. Check `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`.
-> 4. Re-run the OSV check on `backend/requirements.lock`: Dependabot only sees the 2 direct Python packages (D17).
-> 5. D15 (web first, store later) stays Alton's call.
-
+> 1. Read the newest handoff, `.macp/handoffs/20261009_SS_health-check.md`.
+> 2. Routine checks:
+>    - open issues and PRs;
+>    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
+>    - the OSV check on `backend/requirements.lock` (Dependabot only sees the 2 direct Python packages, D17).
+> 3. MPOB's September OER is due around mid-October: check that the live `oer.month` moves from 8 to 9.
+> 4. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -23,7 +21,7 @@
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
 | Version | **0.3.13 live** (EN, BM and 中文; feedback form; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Much better, still measuring (K18).** The schedule asks for a check every 2 hours (D13). In its first 24 hours GitHub ran 3 of about 12 slots (01:00, 06:37 and 13:28 MYT). Data was GREEN 75% of the time and never RED, against 34% and 41% before. Mornings were 100% GREEN, against 2% before. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Live site freshness | **Good (K18 closed, 9 Oct).** The schedule asks for a check every 2 hours (D13). GitHub runs 3–5 a day. Over 2–9 Oct, weekends included, the data was 87% GREEN, 13% AMBER and 0% RED, and mornings were 100% GREEN. The longest gap was 10.4 h. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -72,6 +70,10 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **Health check, 9 Oct 2026** (repo folder renamed locally to `SawitSenseMY`; same GitHub repo):
+  - Since 2 Oct: 27 scheduled scrapes, all succeeded, each followed by a successful deploy. The watchdog ran 20 times, all passing.
+  - No open issues, PRs, Dependabot alerts or Discussions. The OSV check of all 84 locked packages found 0 vulnerabilities.
+  - The live site is v0.3.13 and answers HTTP 200. Data was 1.6 h old, with the CPO price of 7 Oct (RM 4,524.00) and the OER for Aug 2026. No warnings.
 - **v0.3.13 is live, checked after #23 merged** (2 Oct, 00:12 UTC).
   - The merge's deploy succeeded on the new actions and Ubuntu 24.04, with no warnings.
   - A scraper run on `main` committed and pushed data under checkout v7 (`a32b821..732ea56`), and the deploy it dispatched succeeded.
@@ -107,7 +109,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#24](https://github.com/creator35lwb-web/SawitSenseMY/pull/24) | Records only: v0.3.13 verified live; first day of the 2-hourly schedule; OSV check; D17 raised |
+| [#26](https://github.com/creator35lwb-web/SawitSenseMY/pull/26) | Records only: health check, 9 Oct; K18 closed |
 
 ---
 
@@ -116,7 +118,6 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
 | K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
-| K18 | 🟡 | GitHub runs scheduled scrapes late and skips many slots. Twice-weekday runs left mornings AMBER or RED. Over the 14 days before D13, data was 34% GREEN, 25% AMBER and 41% RED, and mornings were 60% RED. In the first 24 h of 2-hourly slots (#21), GitHub ran 3 of about 12 slots, about every 6 h. Data was 75% GREEN, 25% AMBER and 0% RED, and mornings were 100% GREEN | SS measures through a weekend, then records the result and closes K18, or proposes hourly slots if a gap passes 12 h |
 
 ### Fixed on 30 Sep 2026
 
@@ -139,6 +140,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K16 | The health monitor logged text read from `health.json`, so a crafted file could forge log lines (SonarCloud: 2 vulnerabilities) | #19 |
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
+| K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
 | K20 | Every workflow run warned that its actions target the deprecated Node 20. `ubuntu-latest` moves to Ubuntu 26 from 19 Oct 2026, which could change the scraper's Python or tooling without notice | #23 |
 
 ---
@@ -169,11 +171,10 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 ## Backlog
 
-1. Every 2 hours (D13): measure GitHub's actual run count and gaps for a few days (K18).
-2. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
-3. Feedback (D14): live. Alton reads the form's responses; SS picks up anything that needs a fix.
-4. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
-5. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
+1. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
+2. Feedback (D14): live. Alton reads the form's responses; SS picks up anything that needs a fix.
+3. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
+4. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 
 ---
 
