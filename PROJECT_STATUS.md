@@ -2,10 +2,10 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 9 October 2026 (health check; K18 closed) · SS (Claude Code)
+**Last updated:** 9 October 2026 (v0.3.14 verified live; #28 region names) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261009_SS_health-check.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261009_SS_v0.3.15-region-names.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
@@ -19,7 +19,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.13 live** (EN, BM and 中文; feedback form; checked every 2 hours) |
+| Version | **0.3.14 live** (EN, BM and 中文; feedback form; Share button; checked every 2 hours). 0.3.15 in review (#28) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Good (K18 closed, 9 Oct).** The schedule asks for a check every 2 hours (D13). GitHub runs 3–5 a day. Over 2–9 Oct, weekends included, the data was 87% GREEN, 13% AMBER and 0% RED, and mornings were 100% GREEN. The longest gap was 10.4 h. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
@@ -70,6 +70,10 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **v0.3.14 is live, checked after #27 merged** (9 Oct):
+  - The deploy succeeded, `version.json` reads 0.3.14+16, and the page serves the new link-preview tags.
+  - At 360 px in a real browser, Share sits beside Feedback in EN and 中文 and opens its panel: Copy link, WhatsApp, Facebook, X, LinkedIn, Email.
+  - The same screenshots showed English region names cut off ("East …", "Sara…"); fixed in #28 (K21).
 - **Health check, 9 Oct 2026** (repo folder renamed locally to `SawitSenseMY`; same GitHub repo):
   - Since 2 Oct: 27 scheduled scrapes, all succeeded, each followed by a successful deploy. The watchdog ran 20 times, all passing.
   - No open issues, PRs, Dependabot alerts or Discussions. The OSV check of all 84 locked packages found 0 vulnerabilities.
@@ -109,7 +113,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#26](https://github.com/creator35lwb-web/SawitSenseMY/pull/26) | Records only: health check, 9 Oct; K18 closed |
+| [#28](https://github.com/creator35lwb-web/SawitSenseMY/pull/28) | v0.3.15: region names never cut short on small phones (K21) |
 
 ---
 
@@ -141,6 +145,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
 | K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
+| K21 | At 360 px the region cards cut English names short ("East …", "Sara…"): the name shared its line with the *Indicative* chip | #28 |
 | K20 | Every workflow run warned that its actions target the deprecated Node 20. `ubuntu-latest` moves to Ubuntu 26 from 19 Oct 2026, which could change the scraper's Python or tooling without notice | #23 |
 
 ---
