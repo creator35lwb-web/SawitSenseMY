@@ -14,6 +14,7 @@ import '../l10n/l10n_provider.dart';
 import '../widgets/region_price_card.dart';
 import '../widgets/language_menu.dart';
 import '../widgets/feedback_button.dart';
+import '../widgets/share_button.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
@@ -147,8 +148,13 @@ class DashboardScreen extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // Feedback + Footer
-                const Center(child: FeedbackButton()),
+                // Feedback and Share, then the footer
+                const Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [FeedbackButton(), ShareButton()],
+                ),
                 const SizedBox(height: 8),
                 const AppFooter(),
               ],

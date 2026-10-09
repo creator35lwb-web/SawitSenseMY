@@ -62,6 +62,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
 | **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
+| **Share** | Phones: the phone's own share sheet. Elsewhere: copy link, WhatsApp, Facebook, X, LinkedIn or email. The plain site link, no tracking | Done |
 
 ### Phase 2 (Production) — After Market Fit Confirmed
 

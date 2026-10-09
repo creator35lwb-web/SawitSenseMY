@@ -105,6 +105,15 @@ const Map<String, String> msStrings = {
   'feedback_helpful': 'Ini berguna!',
   'feedback_confusing': 'Sesuatu mengelirukan',
   'feedback_wrong': 'Harga nampak salah',
+  'share_button': 'Kongsi',
+  'share_title': 'Kongsi SawitSense MY',
+  'share_pitch':
+      'SawitSense MY: harga sawit harian percuma untuk pekebun kecil, dalam BM, '
+      'English dan 中文. Setiap angka dipautkan kepada sumbernya.',
+  'share_copy_link': 'Salin pautan',
+  'share_link_copied': 'Pautan disalin',
+  'share_email': 'E-mel',
+  'share_email_subject': 'SawitSense MY · harga sawit harian',
   'feedback_form_note':
       'Membuka Borang Google yang ringkas. Tidak perlu log masuk; jangan '
       'sertakan butiran peribadi.',
