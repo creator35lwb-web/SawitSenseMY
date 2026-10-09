@@ -1,4 +1,6 @@
 // Regional FFB price card widget.
+//
+// Patch: SS (Claude Code), Oct 2026: region names are never cut short.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
@@ -46,41 +48,46 @@ class RegionPriceCard extends ConsumerWidget {
             size: 22,
           ),
         ),
-        title: Row(
-          children: [
-            Flexible(
-              child: Text(
-                regionName,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            if (regionalPrice.isIndicative) ...[
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.deepOrange.shade50,
-                  border: Border.all(
-                      color: Colors.deepOrange.shade300, width: 0.8),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  tr('indicative_chip'),
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.deepOrange.shade800,
-                    letterSpacing: 0.3,
+        // The name has the title line to itself, so it is never cut short on
+        // a small phone ("Saraw…" at 360 px); a long name wraps instead. The
+        // indicative chip sits with the source line below.
+        title: Text(
+          regionName,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (regionalPrice.isIndicative)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrange.shade50,
+                    border: Border.all(
+                        color: Colors.deepOrange.shade300, width: 0.8),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    tr('indicative_chip'),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.deepOrange.shade800,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
+              Text(
+                '${tr('source')}: ${regionalPrice.source}',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
               ),
             ],
-          ],
-        ),
-        subtitle: Text(
-          '${tr('source')}: ${regionalPrice.source}',
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+          ),
         ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
