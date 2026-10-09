@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.15] - 2026-10-09
+
+### Fixed
+- Region names on the price cards are no longer cut short on small phones ("Saraw…", "East …" at 360 px). The name now has its line to itself and the orange "Indicative" label sits beside the source below it (#28)
+
 ## [0.3.14] - 2026-10-09
 
 ### Added
