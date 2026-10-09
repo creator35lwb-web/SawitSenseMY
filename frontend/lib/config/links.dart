@@ -12,6 +12,9 @@ const String adrUrl =
 const String openDataUrl =
     'https://github.com/creator35lwb-web/SawitSenseMY/tree/main/backend/data';
 
+/// The live site. Shared as it is: no tracking parameters.
+const String siteUrl = 'https://creator35lwb-web.github.io/SawitSenseMY/';
+
 /// The feedback form (D14): a Google Form Alton owns. It is anonymous and
 /// needs no sign-in; see docs/feedback-form.md.
 const String feedbackFormUrl =

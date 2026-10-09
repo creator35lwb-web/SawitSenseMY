@@ -104,6 +104,15 @@ const Map<String, String> enStrings = {
   'feedback_helpful': 'This is helpful!',
   'feedback_confusing': 'Something is confusing',
   'feedback_wrong': 'Price looks wrong',
+  'share_button': 'Share',
+  'share_title': 'Share SawitSense MY',
+  'share_pitch':
+      'SawitSense MY: free daily palm oil prices for smallholders, in BM, '
+      'English and 中文. Every figure links to its source.',
+  'share_copy_link': 'Copy link',
+  'share_link_copied': 'Link copied',
+  'share_email': 'Email',
+  'share_email_subject': 'SawitSense MY · daily palm oil prices',
   'feedback_form_note':
       "Opens a short Google Form. No sign-in needed; please don't include "
       'personal details.',

@@ -103,6 +103,14 @@ const Map<String, String> zhStrings = {
   'feedback_helpful': '很有帮助！',
   'feedback_confusing': '有些地方看不懂',
   'feedback_wrong': '价格好像不对',
+  'share_button': '分享',
+  'share_title': '分享 SawitSense MY',
+  'share_pitch': 'SawitSense MY：为小园主提供免费的每日棕油价格，支持 BM、English 和中文，'
+      '每个数字都附有来源链接。',
+  'share_copy_link': '复制链接',
+  'share_link_copied': '链接已复制',
+  'share_email': '电子邮件',
+  'share_email_subject': 'SawitSense MY · 每日棕油价格',
   'feedback_form_note': '将打开一份简短的 Google 表单，无需登录。请勿填写个人资料。',
   'close': '关闭',
 
