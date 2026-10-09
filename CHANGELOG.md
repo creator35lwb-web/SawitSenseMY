@@ -7,6 +7,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.3.14] - 2026-10-09
+
+### Added
+- **Share** button beside Feedback, so readers can pass SawitSense on (#27):
+  - on phones it opens the phone's own share sheet, with WhatsApp and whatever else the reader uses;
+  - elsewhere it shows a panel: copy link, WhatsApp, Facebook, X, LinkedIn or email;
+  - the shared link is the plain site address, with no tracking, and the message is in the reader's language;
+  - there's no Telegram option, because SawitSense has no channel there.
+- Link previews: the page now declares its preview image's size and alt text, its site name and a summary card, so chat apps show a reliable preview (#27)
+
 ## [0.3.13] - 2026-10-01
 
 ### Changed

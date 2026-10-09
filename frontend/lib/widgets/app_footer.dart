@@ -8,7 +8,7 @@ import '../config/links.dart';
 import '../l10n/l10n_provider.dart';
 import '../services/link_opener.dart';
 
-const String appVersion = '0.3.13';
+const String appVersion = '0.3.14';
 
 class AppFooter extends ConsumerWidget {
   const AppFooter({super.key});
