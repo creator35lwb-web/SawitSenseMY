@@ -104,10 +104,14 @@ void main() {
         _dashboard(opened, _FakeNativeShare(isAvailable: false)));
     await _tapShare(tester);
 
-    expect(find.byType(SharePanel), findsOneWidget);
-    expect(find.text('Telegram'), findsNothing);
+    final panel = find.byType(SharePanel);
+    expect(panel, findsOneWidget);
+    Finder inPanel(String text) =>
+        find.descendant(of: panel, matching: find.text(text));
+    expect(inPanel('Telegram'), findsNothing);
+    // The footer has its own "X" and "LinkedIn" chips, so look in the panel.
     for (final name in ['WhatsApp', 'Facebook', 'X', 'LinkedIn', 'Email']) {
-      expect(find.text(name), findsOneWidget, reason: name);
+      expect(inPanel(name), findsOneWidget, reason: name);
     }
 
     String? copied;
