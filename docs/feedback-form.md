@@ -7,6 +7,8 @@ The in-app **Feedback** button opens this Google Form, with the reader's choice 
 - In a real browser, the app's links select the right option.
 - Field IDs: rating `entry.1400080953`, topic `entry.2059050621`, more `entry.1450778564`, app details `entry.1276594150`. The app fills topic and app details (`frontend/lib/config/links.dart`).
 - **If the options' wording changes in the form, change `FeedbackTopic` in `frontend/lib/services/feedback_link.dart` too.** The test `feedback_test.dart` pins the current wording.
+- **Watched daily** (`.github/workflows/feedback_watchdog.yml`, since 17 Oct 2026). It opens the public form without submitting and checks that the form is accepting responses, needs no sign-in, still has the two fields the app fills in, and still offers the app's three options word for word. If not, it opens a `feedback-alert` issue that says what to change. It reads what to expect from the app's own source, so it never needs editing on its own.
+- **End to end:** the first real response arrived on 16 Oct 2026 with the app details filled in (`v0.3.15 · en · prices …`), so the whole path works.
 
 ## Settings
 

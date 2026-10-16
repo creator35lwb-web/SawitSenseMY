@@ -5,13 +5,13 @@
 **Last updated:** 17 October 2026 (health check; v0.3.15 verified live; September OER in) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261017_SS_health-check.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261017_SS_feedback-watchdog.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock` (Dependabot only sees the 2 direct Python packages, D17).
 > 3. MPOB's October OER is due around mid-November: check that the live `oer.month` moves from 9 to 10.
-> 4. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 4. D18 (MPOB updates in the app, a reader's request) awaits Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -70,6 +70,7 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **Feedback works end to end (17 Oct 2026):** the first real response is in Alton's sheet (16 Oct: 4 of 5, "This is helpful", with the app details `v0.3.15 · en · prices …` filled in). From #30, a daily watchdog checks that the form stays open and matches the app.
 - **Health check, 17 Oct 2026:**
   - Since 9 Oct: 30 scheduled scrapes, 31 deploys and 25 watchdog runs, all succeeded.
   - No open issues, PRs, Dependabot alerts or Discussions. The OSV check of the 17 locked Python packages found 0 vulnerabilities.
@@ -110,7 +111,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | Scheduled scrapes | 56 runs since 21 Aug started a median **4.7 h** late (0.6–11.8 h), landing around 13:30 and 22:00 MYT (K18) |
 | Code quality (SonarCloud, `main`) | Quality gate passed. The 1 bug and 4 vulnerabilities found in older code are fixed in #19 (K14–K16) |
 | Tests | Backend 93 and frontend 70, all passing (with #19) |
-| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 33 page views from 5 visitors in the 14 days to 17 Oct (3 in the 14 days to 1 Oct). Feedback arrives through the Google Form (D14), which Alton reads |
+| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 33 page views from 5 visitors in the 14 days to 17 Oct (3 in the 14 days to 1 Oct). Feedback arrives through the Google Form (D14), which Alton reads: 1 response by 17 Oct |
 
 ---
 
@@ -118,7 +119,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#29](https://github.com/creator35lwb-web/SawitSenseMY/pull/29) | Records only: health check, 17 Oct; v0.3.15 verified live; September OER |
+| [#30](https://github.com/creator35lwb-web/SawitSenseMY/pull/30) | Daily feedback form watchdog (no app change) |
 
 ---
 
@@ -176,13 +177,14 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
 | D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
+| D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Open. Alton's call** |
 
 ---
 
 ## Backlog
 
 1. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
-2. Feedback (D14): live. Alton reads the form's responses; SS picks up anything that needs a fix.
+2. Feedback (D14): live, and watched daily (#30). Alton reads the form's responses; SS picks up anything that needs a fix. The first one became D18.
 3. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
 4. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 
