@@ -114,6 +114,14 @@ const Map<String, String> zhStrings = {
   'feedback_form_note': '将打开一份简短的 Google 表单，无需登录。请勿填写个人资料。',
   'close': '关闭',
 
+  // MPOB 最新消息（D18）
+  'mpob_updates_title': 'MPOB 最新消息',
+  'mpob_updates_oer': '这些价格采用 MPOB {month}的出油率。',
+  'mpob_updates_oer_since': '这些价格采用 MPOB {month}的出油率，于{date}更新。',
+  'mpob_news': '棕油新闻',
+  'mpob_press': 'MPOB 新闻稿',
+  'mpob_links_note': '以上链接为 MPOB 网站，内容为英文和马来文。',
+
   // Footer
   'footer_open_source': '开源',
   'footer_open_data': '开放数据',

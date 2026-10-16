@@ -5,6 +5,7 @@
 //
 // Patch: SS (Claude Code), Sep 2026 — honest "unavailable" state instead of
 // demo prices; tappable CPO source and "How is this calculated?".
+// Patch: SS (Claude Code), Oct 2026 — "Latest from MPOB" card (D18).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +19,7 @@ import '../widgets/share_button.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
+import '../widgets/mpob_updates_card.dart';
 import '../widgets/price_method_sheet.dart';
 import '../widgets/source_link.dart';
 import '../widgets/unavailable_notice.dart';
@@ -145,6 +147,11 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+
+                const SizedBox(height: 8),
+
+                // Which MPOB OER month is in these prices, and MPOB's news
+                MpobUpdatesCard(oer: snapshot.oer),
 
                 const SizedBox(height: 16),
 
