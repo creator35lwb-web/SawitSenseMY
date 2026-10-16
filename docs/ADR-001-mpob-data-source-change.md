@@ -148,3 +148,9 @@ Tracked separately; this ADR explicitly does NOT authorize Track B.
 - **Verifiable sources (#10).** The payload publishes
   `ffb.indicative_share_factor` and `oer.source_page_url`, so anyone can
   redo the sum and check the OER on MPOB's public page.
+- **When the OER month arrived (#31, D18).** `oer.in_app_since` is the date
+  (YYYY-MM-DD, Malaysian time) the current OER month first appeared in
+  SawitSense. A new month is dated on the run that first sees it, and the
+  date is kept until the next month arrives. A carried-forward block keeps
+  its date. September 2026, which arrived before the field existed, is dated
+  12 Oct 2026 from its first data commit (533bd08). `null` means unknown.

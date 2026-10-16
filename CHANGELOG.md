@@ -7,9 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [0.3.16] - 2026-10-17
 
 ### Added
+- **Latest from MPOB** card on the dashboard, from the first reader feedback (D18, #31):
+  - it says which MPOB OER month is in today's prices, and when it arrived, e.g. "These prices use MPOB's OER for Sep 2026, added on 12 Oct";
+  - it links to MPOB's own pages: its daily palm oil news round-up and its press releases. SawitSense links to the news rather than copying it;
+  - in EN, BM and 中文.
+- The scraper records `oer.in_app_since`, the date each OER month first appeared in SawitSense, and keeps it until the next month arrives. September 2026 is dated 12 Oct, from its first data commit (#31)
 - A daily feedback form watchdog. It opens the public form, without submitting, and checks that it is accepting responses, needs no sign-in, and still matches what the Feedback button sends (field IDs and option wording). If not, it opens a `feedback-alert` issue saying what to change. No change to the app (#30)
 
 ## [0.3.15] - 2026-10-09

@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import pytest
 
-from run_scraper import build_payload, decide_payload, indicative_price_1pct  # noqa: E402
+from run_scraper import build_payload, decide_payload, indicative_price_1pct, oer_in_app_since  # noqa: E402
 from scrapers.mpoc_cpo import MPOCDailyCPO
 from scrapers.mpob_oer import OERSnapshot, StateOER
 
@@ -183,6 +183,43 @@ class TestKeepLastGoodData:
         maker = TestBuildPayload()
         payload = decide_payload(maker._make_cpo(), maker._make_oer(), False, None, self.PREVIOUS)
         assert "carried_forward" not in payload["oer"]
+
+
+class TestOerInAppSince:
+    """D18: the app says which MPOB OER month is in the prices, and since when."""
+
+    def _decide(self, previous):
+        maker = TestBuildPayload()
+        return decide_payload(maker._make_cpo(), maker._make_oer(), False, None, previous)
+
+    def test_a_new_month_is_dated_today_in_malaysia(self):
+        payload = self._decide({"oer": {"year": 2026, "month": 3, "in_app_since": "2026-04-14"}})
+        # scraped_at is MYT (+08:00), so the date is Malaysia's even on a UTC runner.
+        assert payload["scraped_at"].endswith("+08:00")
+        assert payload["oer"]["in_app_since"] == payload["scraped_at"][:10]
+
+    def test_the_same_month_keeps_its_date(self):
+        payload = self._decide({"oer": {"year": 2026, "month": 4, "in_app_since": "2026-05-13"}})
+        assert payload["oer"]["in_app_since"] == "2026-05-13"
+
+    def test_the_first_snapshot_is_dated_today(self):
+        payload = self._decide(None)
+        assert payload["oer"]["in_app_since"] == payload["scraped_at"][:10]
+
+    def test_an_unknown_date_stays_unknown_rather_than_guessed(self):
+        assert self._decide({"oer": {"year": 2026, "month": 4}})["oer"]["in_app_since"] is None
+
+    def test_september_2026_is_dated_from_the_data_history(self):
+        # Its first data commit on main is 533bd08, 12 Oct 2026.
+        september = {"year": 2026, "month": 9}
+        assert oer_in_app_since(september, dict(september), "2026-10-18") == "2026-10-12"
+
+    def test_a_carried_forward_oer_keeps_its_date(self):
+        previous = {**TestKeepLastGoodData.PREVIOUS,
+                    "oer": {**TestKeepLastGoodData.PREVIOUS["oer"], "in_app_since": "2026-05-13"}}
+        payload = decide_payload(TestBuildPayload()._make_cpo(), None, False, None, previous)
+        assert payload["oer"]["carried_forward"] is True
+        assert payload["oer"]["in_app_since"] == "2026-05-13"
 
 
 class TestMainKeepsLastSnapshot:

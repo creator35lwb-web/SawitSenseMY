@@ -110,8 +110,17 @@ class OerInfo {
   final String source;
   /// Public MPOB page showing these figures (not the JSON API).
   final String? sourcePageUrl;
+  /// When this month's figures first appeared in SawitSense (YYYY-MM-DD,
+  /// Malaysian time), or null if unknown (D18).
+  final String? inAppSince;
 
-  const OerInfo({this.year, this.month, this.source = '', this.sourcePageUrl});
+  const OerInfo({
+    this.year,
+    this.month,
+    this.source = '',
+    this.sourcePageUrl,
+    this.inAppSince,
+  });
 
   factory OerInfo.fromJson(Map<String, dynamic> json) {
     return OerInfo(
@@ -119,6 +128,7 @@ class OerInfo {
       month: (json['month'] as num?)?.toInt(),
       source: json['source'] as String? ?? '',
       sourcePageUrl: json['source_page_url'] as String?,
+      inAppSince: json['in_app_since'] as String?,
     );
   }
 }

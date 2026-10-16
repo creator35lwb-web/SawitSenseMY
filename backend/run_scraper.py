@@ -20,6 +20,9 @@ Recovery patch:  QQ (Perplexity), May 2026 \u2014 under Alton's authority (part 
 Patch:           SS (Claude Code), Sep 2026 \u2014 data-quality `warnings` in the payload;
                  Firestore retired (JSON only); a failed source never replaces
                  the last good data (K7, see decide_payload)
+Patch:           SS (Claude Code), Oct 2026 \u2014 `oer.in_app_since`, the date each
+                 OER month first appeared, so the app can say what is new
+                 from MPOB (D18)
 """
 
 import logging
@@ -240,6 +243,24 @@ def _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer: Optional[di
     return warnings
 
 
+# The date each OER month first appeared in SawitSense, for the month that
+# arrived before the scraper recorded it (D18). From the data commits on main:
+# September 2026 first appears in 533bd08, on 12 Oct 2026 at 13:49 MYT.
+OER_IN_APP_SINCE_BEFORE_TRACKING = {(2026, 9): "2026-10-12"}
+
+
+def oer_in_app_since(oer: dict, last_oer: Optional[dict], today: str) -> Optional[str]:
+    """The date (YYYY-MM-DD, MYT) this OER month first appeared in SawitSense.
+
+    A new month is dated today; the same month keeps the date it already has.
+    None means the date is unknown, and the app then leaves it out.
+    """
+    period = (oer.get("year"), oer.get("month"))
+    if not last_oer or (last_oer.get("year"), last_oer.get("month")) != period:
+        return today
+    return last_oer.get("in_app_since") or OER_IN_APP_SINCE_BEFORE_TRACKING.get(period)
+
+
 def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Optional[dict]) -> Optional[dict]:
     """The payload to publish this run, or None to keep the last good snapshot.
 
@@ -249,11 +270,18 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
       honestly, instead of the site losing its prices until the next good run.
     - OER missing this run: carry the previous `oer` block forward, marked
       `carried_forward`, with a warning.
+
+    A fresh `oer` block also records `in_app_since` (D18).
     """
     if cpo_obs is None and fallback_obs is None:
         return None
-    previous_oer = (previous or {}).get("oer") if oer_snap is None else None
-    return build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer=previous_oer)
+    last_oer = (previous or {}).get("oer")
+    payload = build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs,
+                            previous_oer=last_oer if oer_snap is None else None)
+    if oer_snap is not None:
+        # scraped_at is in MYT, so its first 10 characters are today's MYT date.
+        payload["oer"]["in_app_since"] = oer_in_app_since(payload["oer"], last_oer, payload["scraped_at"][:10])
+    return payload
 
 
 def main() -> int:

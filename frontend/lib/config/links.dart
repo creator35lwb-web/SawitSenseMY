@@ -23,3 +23,9 @@ const String feedbackFormUrl =
 /// The form's fields the app fills in, from its pre-filled link.
 const String feedbackTopicField = 'entry.2059050621';
 const String feedbackAppDetailsField = 'entry.1276594150';
+
+/// MPOB's daily round-up of palm oil news from the Malaysian press, and
+/// MPOB's own press releases: the "Latest from MPOB" card links to both
+/// (D18). SawitSense links to them and never copies the news itself.
+const String mpobNewsUrl = 'https://mpob.gov.my/current-news/';
+const String mpobPressUrl = 'https://mpob.gov.my/press-release/';
