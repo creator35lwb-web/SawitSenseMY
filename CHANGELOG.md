@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Added
+- A daily feedback form watchdog. It opens the public form, without submitting, and checks that it is accepting responses, needs no sign-in, and still matches what the Feedback button sends (field IDs and option wording). If not, it opens a `feedback-alert` issue saying what to change. No change to the app (#30)
+
 ## [0.3.15] - 2026-10-09
 
 ### Fixed

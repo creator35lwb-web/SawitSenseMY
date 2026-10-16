@@ -1,0 +1,74 @@
+# Feedback form watchdog.
+#
+# Opens the public feedback form the way a reader's browser does and checks
+# that it is accepting responses, needs no sign-in, and still matches what
+# the app's Feedback button sends (backend/monitor/feedback_form.py). It never
+# submits: a test response would land in Alton's sheet as feedback.
+#
+# Author: SS (Claude Code), Oct 2026
+
+name: Feedback form watchdog
+
+on:
+  schedule:
+    # Daily at 09:41 MYT. The form only changes when Alton edits it, so once
+    # a day is enough, and gentle on Google.
+    - cron: '41 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Check the form against the app
+        # Standard library only, so nothing is installed.
+        run: |
+          cd backend
+          python -m monitor.feedback_form
+
+      - name: Open alert issue if the form no longer matches
+        if: failure()
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'feedback-alert',
+              per_page: 5,
+            });
+            if (existing.data.length > 0) {
+              core.info(`Existing open feedback-alert issue #${existing.data[0].number} — not filing a duplicate.`);
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'The feedback form no longer matches the app',
+              body: [
+                `The feedback form watchdog found a problem: the form may be closed, ask for a sign-in, or have changed so the app's Feedback button no longer fills it in.`,
+                ``,
+                `- What it found: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                `- Form settings and field IDs: docs/feedback-form.md`,
+                ``,
+                `Close this issue once the watchdog passes again.`,
+                ``,
+                `cc @creator35lwb-web`,
+              ].join('\n'),
+              labels: ['feedback-alert', 'bug', 'automated'],
+            });
