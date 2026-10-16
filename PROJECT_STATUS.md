@@ -2,15 +2,15 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 9 October 2026 (v0.3.14 verified live; #28 region names) · SS (Claude Code)
+**Last updated:** 17 October 2026 (health check; v0.3.15 verified live; September OER in) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261009_SS_v0.3.15-region-names.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261017_SS_health-check.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock` (Dependabot only sees the 2 direct Python packages, D17).
-> 3. MPOB's September OER is due around mid-October: check that the live `oer.month` moves from 8 to 9.
+> 3. MPOB's October OER is due around mid-November: check that the live `oer.month` moves from 9 to 10.
 > 4. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
@@ -19,9 +19,9 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.14 live** (EN, BM and 中文; feedback form; Share button; checked every 2 hours). 0.3.15 in review (#28) |
+| Version | **0.3.15 live** (EN, BM and 中文; feedback form; Share button; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Good (K18 closed, 9 Oct).** The schedule asks for a check every 2 hours (D13). GitHub runs 3–5 a day. Over 2–9 Oct, weekends included, the data was 87% GREEN, 13% AMBER and 0% RED, and mornings were 100% GREEN. The longest gap was 10.4 h. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Live site freshness | **Good.** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. Over 9–17 Oct the data was 90% GREEN, 10% AMBER and 0% RED, and mornings (06:00–12:00 MYT) were 98% GREEN. The longest gap was 9.4 h (2–9 Oct: 87% GREEN, longest 10.4 h). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -70,6 +70,11 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **Health check, 17 Oct 2026:**
+  - Since 9 Oct: 30 scheduled scrapes, 31 deploys and 25 watchdog runs, all succeeded.
+  - No open issues, PRs, Dependabot alerts or Discussions. The OSV check of the 17 locked Python packages found 0 vulnerabilities.
+  - MPOB's **September OER arrived on 12 Oct** and is live (`oer.month` 9): Malaysia 20.26%, Sabah 21.25%, Sarawak 19.96%. Each region's fair price is the price per 1% OER (RM 42.96 on 17 Oct) × its OER, and Sabah and Sarawak use their own state figures (K4 still holds).
+- **v0.3.15 is live, checked after #28 merged** (9 Oct): the deploy succeeded, `version.json` reads 0.3.15+17, and at 360 px every region name shows in full. The profile badge (creator35lwb-web#4) reads "live: v0.3.15".
 - **v0.3.14 is live, checked after #27 merged** (9 Oct):
   - The deploy succeeded, `version.json` reads 0.3.14+16, and the page serves the new link-preview tags.
   - At 360 px in a real browser, Share sits beside Feedback in EN and 中文 and opens its panel: Copy link, WhatsApp, Facebook, X, LinkedIn, Email.
@@ -105,7 +110,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | Scheduled scrapes | 56 runs since 21 Aug started a median **4.7 h** late (0.6–11.8 h), landing around 13:30 and 22:00 MYT (K18) |
 | Code quality (SonarCloud, `main`) | Quality gate passed. The 1 bug and 4 vulnerabilities found in older code are fixed in #19 (K14–K16) |
 | Tests | Backend 93 and frontend 70, all passing (with #19) |
-| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 3 page views in 14 days, and the feedback button sends nothing (K17) |
+| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 33 page views from 5 visitors in the 14 days to 17 Oct (3 in the 14 days to 1 Oct). Feedback arrives through the Google Form (D14), which Alton reads |
 
 ---
 
@@ -113,7 +118,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#28](https://github.com/creator35lwb-web/SawitSenseMY/pull/28) | v0.3.15: region names never cut short on small phones (K21) |
+| [#29](https://github.com/creator35lwb-web/SawitSenseMY/pull/29) | Records only: health check, 17 Oct; v0.3.15 verified live; September OER |
 
 ---
 
