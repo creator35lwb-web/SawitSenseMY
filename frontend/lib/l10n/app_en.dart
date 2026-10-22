@@ -38,6 +38,21 @@ const Map<String, String> enStrings = {
   'indicative_banner_learn_more': 'Learn more (ADR-001)',
   'indicative_chip': 'Indicative',
 
+  // MPOB's daily FFB reference price, at the mill gate (D22)
+  'ffb_official_source': 'MPOB daily reference price, {date}',
+  'source_mpob': 'MPOB, at the mill gate',
+  'note_miri_bintulu': 'Miri and Bintulu',
+  'dealer_note':
+      "MPOB's price is at the mill gate. Dealers usually pay less, to cover "
+      'transport and their margin.',
+  'method_link_official': 'Where do these prices come from?',
+  'method_title_official': 'Where these prices come from',
+  'method_official_step1_title': "MPOB's daily reference price",
+  'method_official_step1_body':
+      'MPOB publishes a price per 1% OER for each region on every trading day, '
+      'at the mill gate. SawitSense shows it as MPOB publishes it.',
+  'method_sarawak_note': "MPOB's Sarawak price is for Miri and Bintulu.",
+
   // How the prices are calculated (method sheet), with links to check them
   'method_link': 'How is this calculated?',
   'method_title': 'How these prices are calculated',
@@ -120,6 +135,7 @@ const Map<String, String> enStrings = {
 
   // Latest from MPOB (D18)
   'mpob_updates_title': 'Latest from MPOB',
+  'mpob_ffb_pdf': 'Daily FFB reference prices (PDF)',
   'mpob_news': 'Palm oil news',
   'mpob_press': 'MPOB press releases',
   'mpob_links_note': "On MPOB's website, in English and BM.",

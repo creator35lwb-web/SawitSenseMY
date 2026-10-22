@@ -168,6 +168,16 @@ String localizedMonthYear(int year, int month, AppLocale locale) =>
         ? '$year年$month月'
         : '${_monthName(month, locale)} $year';
 
+/// A date, e.g. "22 Oct 2026" / "22 Okt 2026" / "2026年10月22日", from
+/// "2026-10-22". Returns [isoDate] unchanged if it can't be parsed.
+String localizedDate(String isoDate, AppLocale locale) {
+  final d = DateTime.tryParse(isoDate);
+  if (d == null) return isoDate;
+  return locale == AppLocale.zh
+      ? '${d.year}年${d.month}月${d.day}日'
+      : '${d.day} ${_monthName(d.month, locale)} ${d.year}';
+}
+
 /// A short date for chart labels, e.g. "28 Sep" / "3 Ogo" / "9月28日", from
 /// "2026-09-28". Returns [isoDate] unchanged if it can't be parsed.
 String localizedDayMonth(String isoDate, AppLocale locale) {

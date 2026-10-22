@@ -6,6 +6,8 @@
 // Patch: SS (Claude Code), Sep 2026 — honest "unavailable" state instead of
 // demo prices; tappable CPO source and "How is this calculated?".
 // Patch: SS (Claude Code), Oct 2026 — "Latest from MPOB" card (D18).
+// Patch: SS (Claude Code), Oct 2026 — MPOB's official daily prices, dated and
+// linked to MPOB's PDF (D22).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,7 @@ import '../widgets/language_menu.dart';
 import '../widgets/feedback_button.dart';
 import '../widgets/share_button.dart';
 import '../widgets/app_footer.dart';
+import '../widgets/ffb_source_line.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
 import '../widgets/mpob_updates_card.dart';
@@ -103,6 +106,9 @@ class DashboardScreen extends ConsumerWidget {
                 ),
                 if (snapshot.isIndicative)
                   PriceMethodLink(snapshot: snapshot)
+                else if (snapshot.ffb != null &&
+                    snapshot.ffb!.regions.isNotEmpty)
+                  FfbSourceLine(snapshot: snapshot, ffb: snapshot.ffb!)
                 else
                   const SizedBox(height: 12),
 
@@ -111,7 +117,10 @@ class DashboardScreen extends ConsumerWidget {
                   ...snapshot.ffb!.regions.map(
                     (region) => Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: RegionPriceCard(regionalPrice: region),
+                      child: RegionPriceCard(
+                        regionalPrice: region,
+                        blockDate: snapshot.ffb!.date,
+                      ),
                     ),
                   ),
                 ] else
@@ -150,8 +159,8 @@ class DashboardScreen extends ConsumerWidget {
 
                 const SizedBox(height: 8),
 
-                // Links to MPOB's own news pages
-                const MpobUpdatesCard(),
+                // MPOB's daily price PDF and news pages
+                MpobUpdatesCard(ffbPdfUrl: snapshot.ffb?.sourceUrl),
 
                 const SizedBox(height: 16),
 

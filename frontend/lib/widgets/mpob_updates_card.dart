@@ -1,8 +1,10 @@
-// "Latest from MPOB" (D18): links to MPOB's own news pages.
+// "Latest from MPOB" (D18): links to MPOB's own pages: its daily FFB
+// reference price PDF, its palm oil news round-up and its press releases.
 //
 // A reader asked for the latest MPOB news (feedback, 16 Oct 2026).
 // SawitSense links to MPOB's pages rather than copying the news: the pages
-// stay MPOB's, always current, and never mis-summarised.
+// stay MPOB's, always current, and never mis-summarised. The price PDF is the
+// one today's prices were read from (D22), so readers can check them.
 //
 // Until v0.3.17 the card also said "These prices use MPOB's OER for
 // Sep 2026, added on 12 Oct." Beside a fresh price that read as out of date,
@@ -19,7 +21,11 @@ import '../l10n/l10n_provider.dart';
 import 'source_link.dart';
 
 class MpobUpdatesCard extends ConsumerWidget {
-  const MpobUpdatesCard({super.key});
+  /// MPOB's daily FFB price PDF the prices were read from; this month's
+  /// when the data doesn't give one.
+  final String? ffbPdfUrl;
+
+  const MpobUpdatesCard({super.key, this.ffbPdfUrl});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,6 +56,10 @@ class MpobUpdatesCard extends ConsumerWidget {
             Wrap(
               spacing: 16,
               children: [
+                SourceLink(
+                    label: tr('mpob_ffb_pdf'),
+                    url: ffbPdfUrl ?? mpobFfbPdfUrl(DateTime.now()),
+                    fontSize: 14),
                 SourceLink(
                     label: tr('mpob_news'), url: mpobNewsUrl, fontSize: 14),
                 SourceLink(

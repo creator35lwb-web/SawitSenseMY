@@ -40,6 +40,18 @@ const Map<String, String> zhStrings = {
   'indicative_banner_learn_more': '了解更多（ADR-001）',
   'indicative_chip': '估算',
 
+  // MPOB 每日鲜果串参考价，厂门价（D22）
+  'ffb_official_source': 'MPOB 每日参考价，{date}',
+  'source_mpob': 'MPOB 厂门价',
+  'note_miri_bintulu': '美里和民都鲁',
+  'dealer_note': 'MPOB 的价格是厂门价。收购商通常会付得低一些，以支付运输费和他们的利润。',
+  'method_link_official': '这些价格从哪里来？',
+  'method_title_official': '这些价格的来源',
+  'method_official_step1_title': 'MPOB 每日参考价',
+  'method_official_step1_body':
+      'MPOB 在每个交易日公布各地区每 1% 出油率的厂门价。SawitSense 照 MPOB 公布的价格显示。',
+  'method_sarawak_note': 'MPOB 的砂拉越价格适用于美里和民都鲁。',
+
   // 价格计算方法（说明页），附上可供核对的链接
   'method_link': '这是怎么计算的？',
   'method_title': '这些价格是怎么计算的',
@@ -116,6 +128,7 @@ const Map<String, String> zhStrings = {
 
   // MPOB 最新消息（D18）
   'mpob_updates_title': 'MPOB 最新消息',
+  'mpob_ffb_pdf': '每日鲜果串参考价（PDF）',
   'mpob_news': '棕油新闻',
   'mpob_press': 'MPOB 新闻稿',
   'mpob_links_note': '以上链接为 MPOB 网站，内容为英文和马来文。',

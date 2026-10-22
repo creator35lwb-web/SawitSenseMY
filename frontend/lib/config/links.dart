@@ -29,3 +29,13 @@ const String feedbackAppDetailsField = 'entry.1276594150';
 /// (D18). SawitSense links to them and never copies the news itself.
 const String mpobNewsUrl = 'https://mpob.gov.my/current-news/';
 const String mpobPressUrl = 'https://mpob.gov.my/press-release/';
+
+/// MPOB's daily FFB reference price summary for the month holding [time]
+/// (D22): a public PDF with every trading day so far, by region. The prices
+/// carry the exact link they were read from; this is for when they don't.
+String mpobFfbPdfUrl(DateTime time) {
+  final myt = time.toUtc().add(const Duration(hours: 8));
+  String two(int n) => n.toString().padLeft(2, '0');
+  return 'https://price.mpob.gov.my/pdf/daily/ffb/'
+      '${myt.year}-${two(myt.month)}-${two(myt.day)}';
+}
