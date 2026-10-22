@@ -1,9 +1,14 @@
-// "Latest from MPOB" (D18): which MPOB OER month is in today's prices and
-// when it arrived, with links to MPOB's own news pages.
+// "Latest from MPOB" (D18): links to MPOB's own news pages.
 //
 // A reader asked for the latest MPOB news (feedback, 16 Oct 2026).
 // SawitSense links to MPOB's pages rather than copying the news: the pages
 // stay MPOB's, always current, and never mis-summarised.
+//
+// Until v0.3.17 the card also said "These prices use MPOB's OER for
+// Sep 2026, added on 12 Oct." Beside a fresh price that read as out of date,
+// and it wasn't true: the price per 1% OER comes from MPOC's CPO price alone.
+// MPOB's OER month is shown where it is used, in "How is this calculated?"
+// (D20, K24).
 //
 // Author: SS (Claude Code), Oct 2026
 
@@ -11,37 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/links.dart';
 import '../l10n/l10n_provider.dart';
-import '../models/price_data.dart';
 import 'source_link.dart';
 
 class MpobUpdatesCard extends ConsumerWidget {
-  /// The OER block behind today's prices, or null if there is none.
-  final OerInfo? oer;
-
-  const MpobUpdatesCard({super.key, required this.oer});
-
-  /// "These prices use MPOB's OER for Sep 2026, added on 12 Oct.", without
-  /// the date when it's unknown; null when there is no OER month.
-  static String? oerLine(
-      OerInfo? oer, AppLocale locale, String Function(String) tr) {
-    final year = oer?.year;
-    final month = oer?.month;
-    if (year == null || month == null || month < 1 || month > 12) return null;
-    final monthText = localizedMonthYear(year, month, locale);
-    final since = oer?.inAppSince;
-    if (since == null || DateTime.tryParse(since) == null) {
-      return tr('mpob_updates_oer').replaceAll('{month}', monthText);
-    }
-    return tr('mpob_updates_oer_since')
-        .replaceAll('{month}', monthText)
-        .replaceAll('{date}', localizedDayMonth(since, locale));
-  }
+  const MpobUpdatesCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
     final locale = ref.watch(localeProvider);
-    final line = oerLine(oer, locale, tr);
 
     return Card(
       child: Padding(
@@ -63,11 +46,7 @@ class MpobUpdatesCard extends ConsumerWidget {
                 ),
               ],
             ),
-            if (line != null) ...[
-              const SizedBox(height: 8),
-              Text(line),
-            ],
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 16,
               children: [

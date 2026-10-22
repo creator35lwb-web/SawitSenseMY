@@ -120,9 +120,6 @@ const Map<String, String> enStrings = {
 
   // Latest from MPOB (D18)
   'mpob_updates_title': 'Latest from MPOB',
-  'mpob_updates_oer': "These prices use MPOB's OER for {month}.",
-  'mpob_updates_oer_since':
-      "These prices use MPOB's OER for {month}, added on {date}.",
   'mpob_news': 'Palm oil news',
   'mpob_press': 'MPOB press releases',
   'mpob_links_note': "On MPOB's website, in English and BM.",

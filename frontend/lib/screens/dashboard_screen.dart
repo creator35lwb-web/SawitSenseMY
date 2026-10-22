@@ -150,8 +150,8 @@ class DashboardScreen extends ConsumerWidget {
 
                 const SizedBox(height: 8),
 
-                // Which MPOB OER month is in these prices, and MPOB's news
-                MpobUpdatesCard(oer: snapshot.oer),
+                // Links to MPOB's own news pages
+                const MpobUpdatesCard(),
 
                 const SizedBox(height: 16),
 
