@@ -142,6 +142,25 @@ class TestScraperFlow:
         # The page's own text never reaches the log.
         assert "EVIL" not in errors[0] and "forged" not in errors[0]
 
+    def test_mpocs_own_bot_check_is_named(self, caplog):
+        # 23 Oct 2026: MPOC answered SS's machine with this page, while the
+        # scraper on GitHub still got the prices.
+        page = ("<html><head><title>One moment, please...</title></head>"
+                "<body>Please wait while your request is being verified...</body></html>")
+        scraper = MPOCDailyCPOScraper(max_retries=0, retry_pause=0)
+        with patch.object(scraper.session, "get", return_value=self._mock_response(page)):
+            assert scraper.scrape() is None
+        (error,) = [r.getMessage() for r in caplog.records if r.levelname == "ERROR"]
+        assert error.endswith(f"({len(page)} bytes, 0 tables, looks like a bot check)")
+
+    def test_two_signs_of_the_same_kind_name_it_once(self, caplog):
+        page = "<html>captcha: your request is being verified</html>"
+        scraper = MPOCDailyCPOScraper(max_retries=0, retry_pause=0)
+        with patch.object(scraper.session, "get", return_value=self._mock_response(page)):
+            scraper.scrape()
+        (error,) = [r.getMessage() for r in caplog.records if r.levelname == "ERROR"]
+        assert error.count("a bot check") == 1
+
     def test_network_failure_returns_none(self):
         import requests
         scraper = MPOCDailyCPOScraper(max_retries=1)

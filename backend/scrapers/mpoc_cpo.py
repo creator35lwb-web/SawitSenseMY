@@ -148,6 +148,9 @@ def _find_settlement_table(soup: BeautifulSoup):
 _PAGE_HINTS = (
     ("cloudfront", "a CloudFront error page"),
     ("captcha", "a bot check"),
+    # MPOC's own check, served to SS's machine on 23 Oct 2026: "Please wait
+    # while your request is being verified".
+    ("request is being verified", "a bot check"),
     ("maintenance", "a maintenance notice"),
 )
 
@@ -160,7 +163,7 @@ def _describe_page(soup: BeautifulSoup, html: str) -> str:
     page's own text is never repeated, so the page can't write into the log.
     """
     lower = html.lower()
-    hints = [label for marker, label in _PAGE_HINTS if marker in lower]
+    hints = list(dict.fromkeys(label for marker, label in _PAGE_HINTS if marker in lower))
     described = f"{len(html)} bytes, {len(soup.find_all('table'))} tables"
     return described + (f", looks like {' and '.join(hints)}" if hints else "")
 
