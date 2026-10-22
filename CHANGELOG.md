@@ -7,6 +7,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Security
+- `certifi` 2026.10.19 for the scraper (GHSA-6q48-6c7w-9gw2, published 20 Oct 2026): older versions trusted a root CA whose intermediates' keys were compromised. Found by the OSV check; Dependabot can't read the hash-locked file (#34)
+
+### Fixed
+- When MPOB's servers don't answer, the scraper now finishes well within its 10-minute limit and still publishes MPOC's fresh price, with the last OER kept. On 21 Oct a run timed out and published nothing (K23, #35):
+  - the OER lookup stops after the first month when the API doesn't answer, and gives up connecting in 10 s;
+  - the legacy BEPI attempt waits 10 s at most.
+- A scraper run that times out now raises an alert, like one that fails (K23, #35)
+- When MPOC answers with a page that has no price table, the scraper fetches it again before giving up. A final miss logs the page's size, table count and kind, never its text (K22, #35)
+
 ## [0.3.16] - 2026-10-17
 
 ### Added

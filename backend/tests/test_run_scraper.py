@@ -222,13 +222,43 @@ class TestOerInAppSince:
         assert payload["oer"]["in_app_since"] == "2026-05-13"
 
 
+class TestTimeLimit:
+    """K23: when MPOB doesn't answer, the run still finishes inside the job's 10 minutes."""
+
+    def test_the_legacy_bepi_attempt_gets_a_short_timeout(self, monkeypatch):
+        import run_scraper
+
+        class Stop(Exception):
+            pass
+
+        seen = {}
+
+        class FakeBEPI:
+            def __init__(self, **kwargs):
+                seen.update(kwargs)
+
+            def scrape_all(self):
+                return {"success": False}
+
+        def stop():
+            raise Stop
+
+        monkeypatch.setattr(run_scraper, "MPOBScraper", FakeBEPI)
+        monkeypatch.setattr(run_scraper, "MPOCDailyCPOScraper", stop)
+        with pytest.raises(Stop):
+            run_scraper.main()
+        assert seen["timeout"] == run_scraper.LEGACY_BEPI_TIMEOUT
+        assert run_scraper.LEGACY_BEPI_TIMEOUT <= 10
+
+
 class TestMainKeepsLastSnapshot:
     def test_run_without_cpo_writes_nothing_and_fails(self, monkeypatch):
         import run_scraper
         from types import SimpleNamespace
 
         writes = []
-        monkeypatch.setattr(run_scraper, "MPOBScraper", lambda: SimpleNamespace(scrape_all=lambda: {"success": False}))
+        monkeypatch.setattr(run_scraper, "MPOBScraper",
+                            lambda **kwargs: SimpleNamespace(scrape_all=lambda: {"success": False}))
         monkeypatch.setattr(run_scraper, "MPOCDailyCPOScraper", lambda: SimpleNamespace(scrape=lambda: None))
         monkeypatch.setattr(run_scraper, "MPOBOERScraper", lambda: SimpleNamespace(scrape=lambda: None))
         monkeypatch.setattr(run_scraper, "fetch_cpo_fallback", lambda: None)

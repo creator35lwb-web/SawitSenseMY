@@ -109,13 +109,16 @@ jobs:
           EOF
 
       - name: Open alert issue on failure
-        if: failure()
+        # cancelled() too: a run that hits timeout-minutes is cancelled, not
+        # failed. On 21 Oct 2026 MPOB's servers stopped answering, the run
+        # timed out without publishing, and no alert was raised (K23).
+        if: failure() || cancelled()
         uses: actions/github-script@v9
         with:
           script: |
             const title = `[scraper] SawitSense MPOB scraper failed: ${context.runId}`;
             const body = [
-              `The scheduled SawitSense scraper run \`${context.runId}\` failed.`,
+              `The SawitSense scraper run \`${context.runId}\` failed or ran out of time.`,
               ``,
               `- Workflow: \`${context.workflow}\``,
               `- Triggered by: \`${context.eventName}\``,
@@ -127,7 +130,8 @@ jobs:
               `2. MPOB Prestasi Sawit OER API contract changed (\`scrapers/mpob_oer.py\`).`,
               `3. A data-quality self-check failed (see the run's error annotations).`,
               `4. The data commit could not be pushed, or the deploy could not be dispatched.`,
-              `5. Network/runner outage.`,
+              `5. A source stopped answering and the run hit its 10-minute limit (it shows as cancelled).`,
+              `6. Network/runner outage.`,
               ``,
               `This issue was auto-filed by the workflow's failure-alert step to`,
               `prevent silent decay. Close once the next scheduled run succeeds.`,

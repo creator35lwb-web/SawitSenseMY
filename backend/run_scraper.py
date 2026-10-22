@@ -78,6 +78,11 @@ INDICATIVE_NOTICE = (
     "legal benchmark. Track restoration: ADR-001."
 )
 
+# Seconds to wait for MPOB's legacy BEPI pages. They are expected to fail (a
+# licensee login since May 2026), so when MPOB's server doesn't answer this
+# attempt mustn't use up the job's 10-minute limit (21 Oct 2026, K23).
+LEGACY_BEPI_TIMEOUT = 10
+
 DERIVED_SOURCE_LABEL = "Derived (MPOC CPO \u00d7 MPOB OER)"
 DERIVED_FFB_SOURCE = "SawitSense derived (Path C)"
 
@@ -290,7 +295,7 @@ def main() -> int:
     # --- Step 1: try the legacy BEPI scraper (will fail until MPOB restores) ---
     legacy_payload = None
     try:
-        legacy_payload = MPOBScraper().scrape_all()
+        legacy_payload = MPOBScraper(timeout=LEGACY_BEPI_TIMEOUT).scrape_all()
         if legacy_payload.get("success"):
             # Publishing BEPI's authoritative prices is not wired up (Track B,
             # decision D6), so say plainly what happens instead.

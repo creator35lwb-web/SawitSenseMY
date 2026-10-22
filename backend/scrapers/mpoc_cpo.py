@@ -12,12 +12,15 @@ Reliability: Static HTML, no JS, no auth — high.
 Author: QQ (Perplexity), May 2026 — recovery patch under Alton's authority
 (part of the YSenseAI ecosystem).
 Original SawitSense data layer authored by QQ (Qoder CSO).
+Patch: SS (Claude Code), Oct 2026 — a page that comes back without the price
+table is fetched again, and a final miss logs what the page was (K22).
 """
 
 from __future__ import annotations
 
 import logging
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -141,12 +144,36 @@ def _find_settlement_table(soup: BeautifulSoup):
     return None
 
 
+# Signs of what MPOC served instead of its price page, for the log (K22).
+_PAGE_HINTS = (
+    ("cloudfront", "a CloudFront error page"),
+    ("captcha", "a bot check"),
+    ("maintenance", "a maintenance notice"),
+)
+
+
+def _describe_page(soup: BeautifulSoup, html: str) -> str:
+    """Describe a page that had no price table, for the log.
+
+    Its size, how many tables it has (none suggests an error or block page;
+    some suggests MPOC changed its layout), and any sign of what it was. The
+    page's own text is never repeated, so the page can't write into the log.
+    """
+    lower = html.lower()
+    hints = [label for marker, label in _PAGE_HINTS if marker in lower]
+    described = f"{len(html)} bytes, {len(soup.find_all('table'))} tables"
+    return described + (f", looks like {' and '.join(hints)}" if hints else "")
+
+
 class MPOCDailyCPOScraper:
     """Public daily CPO settlement scraper (MPOC)."""
 
-    def __init__(self, timeout: int = 30, max_retries: int = 2):
+    def __init__(self, timeout: int = 30, max_retries: int = 2, retry_pause: float = 30):
         self.timeout = timeout
         self.max_retries = max_retries
+        # Seconds to wait before fetching again a page that came back without
+        # the price table (K22).
+        self.retry_pause = retry_pause
         self.session = requests.Session()
         self.session.headers.update(DEFAULT_HEADERS)
 
@@ -163,16 +190,33 @@ class MPOCDailyCPOScraper:
         logger.error(f"MPOC fetch failed after {self.max_retries + 1} attempts")
         return None
 
+    def fetch_settlement_table(self):
+        """The settlement-price table from MPOC's page, or None.
+
+        On 22 Oct 2026 MPOC answered once with a page that had no price table,
+        and the next fetch was fine (K22). Such a page is fetched again after a
+        pause; if the table is still missing, the log says what the page was.
+        """
+        for attempt in range(self.max_retries + 1):
+            html = self.fetch_html()
+            if not html:
+                return None
+            soup = BeautifulSoup(html, "html.parser")
+            table = _find_settlement_table(soup)
+            if table:
+                return table
+            if attempt < self.max_retries:
+                logger.warning(
+                    f"MPOC: no settlement-price table on the page (attempt {attempt + 1}); fetching again"
+                )
+                time.sleep(self.retry_pause)
+        logger.error(f"MPOC: settlement-price table not found on page ({_describe_page(soup, html)})")
+        return None
+
     def scrape(self) -> Optional[MPOCDailyCPOSeries]:
         """Return the full recent series + the latest non-null observation."""
-        html = self.fetch_html()
-        if not html:
-            return None
-
-        soup = BeautifulSoup(html, "html.parser")
-        table = _find_settlement_table(soup)
+        table = self.fetch_settlement_table()
         if not table:
-            logger.error("MPOC: settlement-price table not found on page")
             return None
 
         rows = table.find_all("tr")
