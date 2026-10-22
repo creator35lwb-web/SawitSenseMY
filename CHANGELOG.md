@@ -7,13 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [0.3.17] - 2026-10-23
 
 ### Added
 - A weekly vulnerability watchdog for the 17 Python packages the scraper and CI install. Every Monday it checks each version pinned in `backend/requirements.lock` against the OSV database. On a hit it opens a `security-alert` issue with the advisory, its severity and the fixed version. It also runs on pull requests that change the lock file. Dependabot can't read that file (D17), so until now this check ran only in SS's sessions (D19, #36)
 
-### Security
-- `certifi` 2026.10.19 for the scraper (GHSA-6q48-6c7w-9gw2, published 20 Oct 2026): older versions trusted a root CA whose intermediates' keys were compromised. Found by the OSV check; Dependabot can't read the hash-locked file (#34)
+### Changed
+- **Latest from MPOB** now only links to MPOB's news and press releases. It no longer says "These prices use MPOB's OER for Sep 2026, added on 12 Oct." Beside a fresh price that read as out of date, and the price per 1% OER doesn't use MPOB's OER. The OER month is still in "How is this calculated?", where it is used and can be checked. Raised by Alton (D20, K24, #38)
 
 ### Fixed
 - When MPOB's servers don't answer, the scraper now finishes well within its 10-minute limit and still publishes MPOC's fresh price, with the last OER kept. On 21 Oct a run timed out and published nothing (K23, #35):
@@ -21,6 +21,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   - the legacy BEPI attempt waits 10 s at most.
 - A scraper run that times out now raises an alert, like one that fails (K23, #35)
 - When MPOC answers with a page that has no price table, the scraper fetches it again before giving up. A final miss logs the page's size, table count and kind, never its text (K22, #35)
+
+### Security
+- `certifi` 2026.10.19 for the scraper (GHSA-6q48-6c7w-9gw2, published 20 Oct 2026): older versions trusted a root CA whose intermediates' keys were compromised. Found by the OSV check; Dependabot can't read the hash-locked file (#34)
 
 ## [0.3.16] - 2026-10-17
 

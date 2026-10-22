@@ -154,3 +154,5 @@ Tracked separately; this ADR explicitly does NOT authorize Track B.
   date is kept until the next month arrives. A carried-forward block keeps
   its date. September 2026, which arrived before the field existed, is dated
   12 Oct 2026 from its first data commit (533bd08). `null` means unknown.
+  The app showed it on the "Latest from MPOB" card until v0.3.17 (D20). The
+  field stays in the open data as a record of when each month arrived.

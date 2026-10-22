@@ -2,17 +2,18 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (D19 vulnerability watchdog verified on `main` after #36 merged) · SS (Claude Code)
+**Last updated:** 23 October 2026 (v0.3.17 in #38: "Latest from MPOB" without the OER line, D20 and K24; D21 raised) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_d19-verified.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpob-card-oer-line.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
-> 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that the "Latest from MPOB" card shows both.
+> 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that "How is this calculated?" shows October.
 > 4. Check that the first scheduled "Vulnerability watchdog" run (Monday 26 Oct, 10:23 MYT) passed: `gh run list --workflow vulnerability_watchdog.yml`.
-> 5. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 5. After #37 and #38 merge: check v0.3.17 live at 360 px in EN, BM and 中文. The "Latest from MPOB" card shows its two links and note, and no OER month or date.
+> 6. D21 (say exactly what the prices are made from) awaits Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -146,6 +147,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | PR | What it does |
 |----|--------------|
 | [#37](https://github.com/creator35lwb-web/SawitSenseMY/pull/37) | Records only: the D19 vulnerability watchdog verified on `main` |
+| [#38](https://github.com/creator35lwb-web/SawitSenseMY/pull/38) | v0.3.17: "Latest from MPOB" without the OER line (D20, K24). Built on #37's branch, so merge #37 first |
 
 ---
 
@@ -177,6 +179,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
 | K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
+| K24 | The "Latest from MPOB" card said "These prices use MPOB's OER for Sep 2026, added on 12 Oct." Beside a price updated minutes before, the dates read as out of date; in 中文 it said 于10月12日更新, "updated on 12 Oct". And it wasn't true: the price per 1% OER comes from MPOC's CPO price alone, the same in every region. Spotted by Alton (D20) | #38 |
 | K23 | When MPOB's servers stopped answering (21 Oct), a run tried 3 months × 3 attempts at about a minute each, hit the job's 10-minute limit and published nothing, not even MPOC's fresh price. The cancelled run raised no alert | #35 |
 | K22 | MPOC once answered with a page that had no price table (22 Oct, issue #33). The scraper gave up at once, without saying what the page was | #35 |
 | K21 | At 360 px the region cards cut English names short ("East …", "Sara…"): the name shared its line with the *Indicative* chip | #28 |
@@ -206,7 +209,9 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
 | D19 | **A weekly automatic vulnerability check of the Python lock file.** Dependabot reads only the 2 packages named in `requirements.txt`, not the 17 in the hash-locked `requirements.lock` (D17). So SS runs an OSV check each session, which caught the `certifi` advisory (#34) two days after it was published. A small weekly workflow, standard library only, would query OSV for all 17 packages and open a `security-alert` issue on a hit, so a gap between sessions can't hide one | **Done in #36 (verified on `main`, 23 Oct).** Alton approved on 23 Oct. `.github/workflows/vulnerability_watchdog.yml` runs `backend/monitor/vulnerabilities.py` every Monday at 10:23 MYT, and on pull requests that change the lock file. It installs nothing and sends OSV only package names and versions. A hit, or a run that can't finish, opens a `security-alert` issue listing each advisory, its severity and the fixed version |
-| D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Done in #31 (verified live, 17 Oct).** Approved by Alton on 17 Oct. The card links to MPOB's daily palm oil news round-up and its press releases |
+| D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Done in #31 (verified live, 17 Oct).** Approved by Alton on 17 Oct. The card links to MPOB's daily palm oil news round-up and its press releases Its OER line was removed in v0.3.17 (D20, #38). |
+| D20 | **The OER line on "Latest from MPOB".** Alton (23 Oct): "OER for Sep 2026 … added on 12 Oct" may read as outdated or misleading; should the card mention no date? SS checked, and the line was also untrue (K24): the dashboard's prices per 1% OER don't use MPOB's OER. Dropping only the dates would leave an untrue line, so SS recommends removing the sentence. The card keeps MPOB's news links, and the OER month stays in "How is this calculated?", where it is used and can be checked against MPOB's page | **Built in #38** for Alton's review; merging it approves it. The scraper still records `oer.in_app_since` in the open data |
+| D21 | **Say exactly what the prices are made from.** The banner says regional prices "are derived from MPOC daily CPO settlement and MPOB monthly OER", and every region card says "Source: Derived (MPOC CPO × MPOB OER)", in English even in BM and 中文. But the price per 1% OER is the same in every region and comes from MPOC's CPO price alone (CPO × 0.01 × 0.93). MPOB's OER only gives the regional averages in "How is this calculated?". Six identical prices, each labelled with MPOB's regional OER, invite the question why they don't differ. SS recommends that the banner say the prices come from MPOC's daily CPO price, and that each card's source line say "MPOC CPO price" in the reader's language. The new BM and 中文 wording needs a native reader's check | **Open. Alton's call.** SS recommends yes |
 
 ---
 
