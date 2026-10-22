@@ -299,15 +299,21 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
       honestly, instead of the site losing its prices until the next good run.
     - OER missing this run: carry the previous `oer` block forward, marked
       `carried_forward`, with a warning.
-    - MPOB's daily FFB price missing this run: carry the previous `ffb` block
-      forward the same way, so the last official prices stay up with their
-      date (D22).
+    - MPOB's daily FFB price missing this run, or older than the one shown:
+      carry the previous `ffb` block forward the same way, so the last
+      official prices stay up with their date (D22).
 
     A fresh `oer` block also records `in_app_since` (D18).
     """
     if cpo_obs is None and fallback_obs is None:
         return None
     last_oer = (previous or {}).get("oer")
+    last_ffb = (previous or {}).get("ffb") or {}
+    if ffb_obs is not None and not last_ffb.get("is_indicative") and ffb_obs.date_iso < last_ffb.get("date", ""):
+        # Early in a month the scraper may fall back to last month's PDF. Its
+        # prices must never replace newer ones already shown (K7).
+        logger.warning(f"MPOB FFB: read {ffb_obs.date_iso}, older than the {last_ffb['date']} prices shown")
+        ffb_obs = None
     payload = build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs,
                             previous_oer=last_oer if oer_snap is None else None,
                             ffb_obs=ffb_obs,

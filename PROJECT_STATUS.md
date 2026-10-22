@@ -2,10 +2,10 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (v0.4.0 verified live, D22 done, Genesis v1.1; MPOC's bot-check page named in the log, #43) · SS (Claude Code)
+**Last updated:** 23 October 2026 (v0.4.0 verified live, D22 done, Genesis v1.1; MPOB's month start handled, K26, #44) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpoc-bot-check-hint.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpob-month-start.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
@@ -14,7 +14,7 @@
 > 4. Check that the first scheduled "Vulnerability watchdog" run (Monday 26 Oct, 10:23 MYT) passed: `gh run list --workflow vulnerability_watchdog.yml`.
 > 5. MPOB's daily updates, in the first days:
 >    - after MPOB's update each trading day (about noon), the live `ffb.date` should move to that day, with no warnings;
->    - on 1 November, until MPOB publishes November's first price, the run should use October's last prices without an alert.
+>    - on 1 November, until MPOB publishes November's first price, the runs should use October's last prices without an alert. MPOB's server answers 500 for that month until then (K26).
 > 6. A native reader's check of the new BM and 中文 wording for MPOB's price (D22) would be welcome. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
@@ -172,7 +172,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#43](https://github.com/creator35lwb-web/SawitSenseMY/pull/43) | Scraper log: name MPOC's own bot-check page (follow-up to K22) |
+| [#44](https://github.com/creator35lwb-web/SawitSenseMY/pull/44) | MPOB's month start: a 500 early in a month falls back to last month's PDF, and an older read never replaces newer prices (K26) |
 
 ---
 
@@ -204,6 +204,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
 | K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
+| K26 | MPOB's server answers HTTP 500, not 404, for a month it has no prices for yet. The scraper read that as "MPOB is down". From 1 November, until MPOB's first November price, every run would have raised a false alert, though October's prices stayed up. A fix that falls back on any 500 could also have let a passing mid-month error put older prices up in place of newer ones. Found on 23 Oct by asking MPOB's server about November | #44 |
 | K25 | The price per 1% OER was SawitSense's estimate (CPO × 0.01 × 0.93), the same for every region. MPOB's official daily price showed it 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (October 2026), so the Fair Price verdict was too lenient in the Peninsula | #40 (D22) |
 | K10 | If MPOB's BEPI ever served data again, `run_scraper` would log it but still publish indicative values | Superseded by D22 (#40): the prices come from MPOB's daily PDF |
 | K24 | The "Latest from MPOB" card said "These prices use MPOB's OER for Sep 2026, added on 12 Oct." Beside a price updated minutes before, the dates read as out of date; in 中文 it said 于10月12日更新, "updated on 12 Oct". And it wasn't true: the price per 1% OER comes from MPOC's CPO price alone, the same in every region. Spotted by Alton (D20) | #38 |

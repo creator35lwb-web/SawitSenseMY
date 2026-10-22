@@ -11,6 +11,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 - When MPOC serves its own bot check ("Please wait while your request is being verified") instead of prices, the scraper's log now says it "looks like a bot check", not only "0 tables". The page's text is still never logged (follow-up to K22, #43)
+- **The start of each month.** MPOB's server answers HTTP 500 for a month it has no prices for yet, which the scraper took to mean MPOB was down. From 1 November every run would have raised a false alert until MPOB's first November price. Now (K26, #44):
+  - in a month's first 7 days, the scraper uses last month's last prices;
+  - later in a month, a month without prices still raises an alert;
+  - a read older than the prices already shown never replaces them.
 
 ## [0.4.0] - 2026-10-23
 
