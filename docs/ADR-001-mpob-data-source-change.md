@@ -156,3 +156,24 @@ Tracked separately; this ADR explicitly does NOT authorize Track B.
   12 Oct 2026 from its first data commit (533bd08). `null` means unknown.
   The app showed it on the "Latest from MPOB" card until v0.3.17 (D20). The
   field stays in the open data as a record of when each month arrived.
+
+### 2026-10-23: MPOB's daily FFB reference price is public (SS (Claude Code), K25)
+
+- MPOB publishes its "Daily FFB Reference Price Summary by Region (Mill
+  Gate) (RM/1% OER)" as a PDF at
+  `https://price.mpob.gov.my/pdf/daily/ffb/<date>`, with no login. It holds
+  the month to date and is updated each trading day; the copy read on
+  23 Oct was last updated at 12:00 pm on 22 Oct. The site's home page is a
+  login page. MPOB's portal palmoilpedia.mpob.gov.my has also posted monthly
+  regional reference prices.
+- Measured against it over the 15 October 2026 trading days, the Path C
+  estimate (CPO × 0.01 × 0.93) was 5.9–10.8% below MPOB in every Peninsular
+  region on every day, and 0.9–5.6% above in Sabah. In Sarawak it ranged from
+  0.6% below to 4.0% above. The implied factor was about 1.01 in the Peninsula
+  and 0.90–0.92 in East Malaysia, not 0.93.
+- MPOB describes these as daily FFB transaction prices, published as a
+  guide; it doesn't fix FFB prices (parliamentary reply, 12 Mar 2015). They
+  follow each region's market, which an estimate from one national CPO
+  price can't show.
+- PROJECT_STATUS.md, D22 proposes replacing the estimate with MPOB's
+  official price.

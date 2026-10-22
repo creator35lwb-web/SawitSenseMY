@@ -2,18 +2,17 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (v0.3.17 in #38: "Latest from MPOB" without the OER line, D20 and K24; D21 raised) · SS (Claude Code)
+**Last updated:** 23 October 2026 (v0.3.17 verified live; the estimate measured against MPOB's official price, K25; D22 raised, D21 on hold) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpob-card-oer-line.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_estimate-vs-mpob.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
 > 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that "How is this calculated?" shows October.
 > 4. Check that the first scheduled "Vulnerability watchdog" run (Monday 26 Oct, 10:23 MYT) passed: `gh run list --workflow vulnerability_watchdog.yml`.
-> 5. After #37 and #38 merge: check v0.3.17 live at 360 px in EN, BM and 中文. The "Latest from MPOB" card shows its two links and note, and no OER month or date.
-> 6. D21 (say exactly what the prices are made from) awaits Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 5. **D22 awaits Alton:** show MPOB's official daily FFB reference price instead of the estimate (K25). D21 is approved but on hold until D22 is decided. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -21,8 +20,8 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.3.16 live** (EN, BM and 中文; feedback form; Share button; "Latest from MPOB"; checked every 2 hours) |
-| Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
+| Version | **0.3.17 live** (EN, BM and 中文; feedback form; Share button; "Latest from MPOB"; checked every 2 hours) |
+| Data mode | **Indicative, and measurably off (K25).** The price per 1% OER is estimated as MPOC's daily CPO price × 0.01 × 0.93, the same for every region ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). MPOB's official daily FFB reference price by region turned out to be public ([MPOB's daily summary](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-21), found on 23 Oct). Against it, in October 2026 the estimate was 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak. D22 proposes showing MPOB's official price instead. |
 | Live site freshness | **Good, with two incidents (K22, K23).** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. From 17 to 22 Oct the prices were 88% GREEN, 12% AMBER and 0.8% RED. The RED was 68 min on 21 Oct, after a run timed out while MPOB was down (K23). Mornings (06:00–12:00 MYT) were 100% GREEN. 9–17 Oct: 90% GREEN, 0% RED. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only, checked weekly for known vulnerabilities (D19). |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
@@ -72,6 +71,16 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **The estimate measured against MPOB's official price** (23 Oct, K25):
+  - MPOB publishes its "Daily FFB Reference Price Summary by Region (Mill Gate) (RM/1% OER)" as a PDF that needs no login ([October 2026](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-21), last updated 22 Oct, 12:00 pm). MPOB's portal palmoilpedia.mpob.gov.my has also posted monthly regional reference prices (the latest seen: September 2025). ADR-001 (May 2026) believed the daily figures were behind a licensee login; only the old BEPI pages are.
+  - On 21 Oct MPOB's official prices were North 47.75, South 48.12, Central 48.05, East Coast 48.00, Sabah 43.00 and Sarawak 43.42. SawitSense showed 44.33 for every region.
+  - Over the 15 October trading days in `history.json`, the estimate was below MPOB in every Peninsular region on every day: 5.9–10.8% lower, 7.9–8.6% on average. It was 0.9–5.6% above in Sabah (3.0% on average), and 0.6% below to 4.0% above in Sarawak (1.7% on average).
+  - At 20% OER on 21 Oct, that is RM 887/t from SawitSense against RM 962/t from MPOB in the South. A dealer paying RM 850/t gets GREEN ("fair", within 5%) from SawitSense, but is 11.7% below MPOB's mill-gate price.
+  - Why the regions differ: MPOB calls these daily FFB transaction prices, published as a guide; it doesn't fix FFB prices (parliamentary reply, 12 Mar 2015). They follow each region's own market, and East Malaysia runs about RM 4–5 per 1% OER below the Peninsula. The estimate starts from one national CPO price and a fixed factor, so it can't differ by region.
+  - Where 0.93 came from: one dealer receipt (PV-85935, 17 Mar 2026) and a worked example from when CPO was about RM 2,624. It was never checked against MPOB's figures, because they were thought to be private.
+  - Not affected: the CPO price and MPOB's regional OER averages are exact copies of their sources.
+- **v0.3.17 is live, checked after #37 and #38 merged** (23 Oct): the merge's deploy succeeded and `version.json` reads 0.3.17+19. At 360 px the "Latest from MPOB" card shows its two links and note, and no OER month or date, in EN, BM and 中文.
+- **MPOC sometimes shows a bot check** (23 Oct): from SS's machine, MPOC's page came back as "please wait while your request is being verified", with no price table. The scraper's runs on GitHub still read it, but this may be what #33 saw. SS does not try to get past such checks.
 - **The vulnerability watchdog works on `main`, checked after #36 merged** (23 Oct):
   - A manual run (39822585297) found no known vulnerabilities in the 17 packages, in 16 s. The alert step was skipped, as it should be on a pass.
   - GitHub lists the workflow as active, so the weekly schedule is registered. The first scheduled run is Monday 26 Oct, 10:23 MYT.
@@ -146,8 +155,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#37](https://github.com/creator35lwb-web/SawitSenseMY/pull/37) | Records only: the D19 vulnerability watchdog verified on `main` |
-| [#38](https://github.com/creator35lwb-web/SawitSenseMY/pull/38) | v0.3.17: "Latest from MPOB" without the OER line (D20, K24). Built on #37's branch, so merge #37 first |
+| [#39](https://github.com/creator35lwb-web/SawitSenseMY/pull/39) | Records only: v0.3.17 verified; the estimate measured against MPOB's official price (K25); D22 raised |
 
 ---
 
@@ -155,6 +163,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
+| K25 | 🔴 | The main number, the price per 1% OER, is an estimate (CPO × 0.01 × 0.93) that MPOB's official daily price shows to be 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (October 2026). It makes the Fair Price verdict too lenient in the Peninsula: an offer about 12% below MPOB's mill-gate price can show GREEN | D22: show MPOB's official price. Until then, the banner's "use as guidance" stands |
 | K10 | 🟡 | If MPOB's BEPI ever serves data again, `run_scraper` logs it but still publishes indicative values; the authoritative path isn't wired up | Part of Track B (D6). Only needed if Alton goes ahead |
 
 ### Fixed on 30 Sep 2026
@@ -210,8 +219,9 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
 | D19 | **A weekly automatic vulnerability check of the Python lock file.** Dependabot reads only the 2 packages named in `requirements.txt`, not the 17 in the hash-locked `requirements.lock` (D17). So SS runs an OSV check each session, which caught the `certifi` advisory (#34) two days after it was published. A small weekly workflow, standard library only, would query OSV for all 17 packages and open a `security-alert` issue on a hit, so a gap between sessions can't hide one | **Done in #36 (verified on `main`, 23 Oct).** Alton approved on 23 Oct. `.github/workflows/vulnerability_watchdog.yml` runs `backend/monitor/vulnerabilities.py` every Monday at 10:23 MYT, and on pull requests that change the lock file. It installs nothing and sends OSV only package names and versions. A hit, or a run that can't finish, opens a `security-alert` issue listing each advisory, its severity and the fixed version |
 | D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Done in #31 (verified live, 17 Oct).** Approved by Alton on 17 Oct. The card links to MPOB's daily palm oil news round-up and its press releases Its OER line was removed in v0.3.17 (D20, #38). |
-| D20 | **The OER line on "Latest from MPOB".** Alton (23 Oct): "OER for Sep 2026 … added on 12 Oct" may read as outdated or misleading; should the card mention no date? SS checked, and the line was also untrue (K24): the dashboard's prices per 1% OER don't use MPOB's OER. Dropping only the dates would leave an untrue line, so SS recommends removing the sentence. The card keeps MPOB's news links, and the OER month stays in "How is this calculated?", where it is used and can be checked against MPOB's page | **Built in #38** for Alton's review; merging it approves it. The scraper still records `oer.in_app_since` in the open data |
-| D21 | **Say exactly what the prices are made from.** The banner says regional prices "are derived from MPOC daily CPO settlement and MPOB monthly OER", and every region card says "Source: Derived (MPOC CPO × MPOB OER)", in English even in BM and 中文. But the price per 1% OER is the same in every region and comes from MPOC's CPO price alone (CPO × 0.01 × 0.93). MPOB's OER only gives the regional averages in "How is this calculated?". Six identical prices, each labelled with MPOB's regional OER, invite the question why they don't differ. SS recommends that the banner say the prices come from MPOC's daily CPO price, and that each card's source line say "MPOC CPO price" in the reader's language. The new BM and 中文 wording needs a native reader's check | **Open. Alton's call.** SS recommends yes |
+| D20 | **The OER line on "Latest from MPOB".** Alton (23 Oct): "OER for Sep 2026 … added on 12 Oct" may read as outdated or misleading; should the card mention no date? SS checked, and the line was also untrue (K24): the dashboard's prices per 1% OER don't use MPOB's OER. Dropping only the dates would leave an untrue line, so SS recommends removing the sentence. The card keeps MPOB's news links, and the OER month stays in "How is this calculated?", where it is used and can be checked against MPOB's page | **Done in #38 (verified live, 23 Oct).** Alton approved it by merging. The scraper still records `oer.in_app_since` in the open data |
+| D21 | **Say exactly what the prices are made from.** The banner says regional prices "are derived from MPOC daily CPO settlement and MPOB monthly OER", and every region card says "Source: Derived (MPOC CPO × MPOB OER)", in English even in BM and 中文. But the price per 1% OER is the same in every region and comes from MPOC's CPO price alone (CPO × 0.01 × 0.93). MPOB's OER only gives the regional averages in "How is this calculated?". Six identical prices, each labelled with MPOB's regional OER, invite the question why they don't differ. SS recommends that the banner say the prices come from MPOC's daily CPO price, and that each card's source line say "MPOC CPO price" in the reader's language. The new BM and 中文 wording needs a native reader's check | **Approved by Alton (23 Oct), on hold for D22.** If D22 goes ahead, the prices become MPOB's own and the banner and labels change with them. If not, SS builds D21 as approved |
+| D22 | **Show MPOB's official daily FFB reference price instead of the estimate (K25).** MPOB publishes its daily price per 1% OER for each region, at the mill gate, as a public PDF. The scraper would read it after MPOB's daily update and check every figure. The dashboard and the calculator would then show MPOB's regional prices, each with its date and a link to MPOB's PDF, so readers can check them. The 0.93 estimate would be retired; on a day MPOB hasn't published, the last official prices stay with their date (K7). The Fair Price verdict would need a note that dealers' prices sit below the mill-gate price by their transport and margin. MPOB's disclaimer has no reuse terms. The page shows © MPOB, and the PDF lists MPOB staff to contact, so Alton may wish to tell MPOB, or ask first. The new wording in BM and 中文 needs a native reader's check | **Open. Alton's call.** SS recommends yes |
 
 ---
 
