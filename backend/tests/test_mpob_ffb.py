@@ -202,3 +202,40 @@ class TestScraper:
         errors = [r.getMessage() for r in caplog.records if r.levelname == "ERROR"]
         assert errors == [f"MPOB FFB: the answer isn't a PDF ({len(page)} bytes from "
                           "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23)"]
+
+    def test_mpobs_500_for_a_month_without_prices_falls_back_early_in_the_month(self):
+        # 23 Oct 2026: MPOB's server answered 500 for November and December,
+        # months it had no prices for yet. On 1 November that is normal.
+        scraper = MPOBFFBScraper()
+        answers = [_response(500)] * 3 + [_response(content=_pdf())]
+        with patch.object(scraper.session, "get", side_effect=answers) as get:
+            prices = scraper.scrape(today=date(2026, 11, 1))
+        assert prices.date_iso == "2026-10-22"
+        assert get.call_count == 4
+
+    def test_a_500_later_in_a_month_is_an_error_not_last_months_prices(self, caplog):
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", side_effect=[_response(500)] * 3) as get:
+            assert scraper.scrape(today=date(2026, 10, 23)) is None
+        assert get.call_count == 3  # last month's PDF isn't fetched
+        errors = [r.getMessage() for r in caplog.records if r.levelname == "ERROR"]
+        assert errors == ["MPOB FFB: no prices for October 2026 on day 23"]
+
+    def test_a_month_without_prices_later_on_is_an_error_too(self):
+        empty = _pdf(table=[["1", "PH", "PH", "PH", "PH", "PH", "PH"]])
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", return_value=_response(content=empty)) as get:
+            assert scraper.scrape(today=date(2026, 10, 15)) is None
+        assert get.call_count == 1
+
+    def test_a_500_for_both_months_gives_no_prices(self):
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", side_effect=[_response(500)] * 6):
+            assert scraper.scrape(today=date(2026, 11, 1)) is None
+
+    def test_a_server_that_is_down_is_not_a_month_without_prices(self):
+        # 503 means MPOB is down, so last month's PDF isn't tried (K23).
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", side_effect=[_response(503)] * 3) as get:
+            assert scraper.scrape(today=date(2026, 11, 1)) is None
+        assert get.call_count == 3

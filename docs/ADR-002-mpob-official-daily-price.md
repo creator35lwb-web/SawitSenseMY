@@ -31,6 +31,10 @@ SawitSense shows MPOB's own daily price per 1% OER for each region, as MPOB publ
   - Its text sits in a Flate-compressed stream as positioned strings, and the table is rebuilt from their positions.
   - No PDF package joins the hash-locked supply chain.
   - Early in a month, before MPOB's first price, last month's latest prices are used.
+    - MPOB's server answers HTTP 500, not 404, for a month it has no prices for yet. This was seen for November and December on 23 Oct 2026 (K26).
+    - In a month's first 7 days, such a month falls back to last month's PDF. Later in a month it is an error and raises an alert.
+    - A 503, a timeout or a refused connection means MPOB is down, so last month's PDF isn't tried (K23).
+  - A read older than the prices already shown never replaces them; those stay up, with a warning (K7).
 - **Checks.** Anything unexpected rejects the whole document, rather than publishing a misread price:
   - the title, the month, and the column order: North, South, Central, East Coast, Sabah, Sarawak;
   - every cell must be a price or NT/PH;

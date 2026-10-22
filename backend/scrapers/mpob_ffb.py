@@ -223,8 +223,14 @@ def parse_ffb_pdf(pdf: bytes, year: int, month: int, source_url: str) -> Optiona
     )
 
 
+# MPOB's first trading day of a month comes within a few days of the 1st.
+# Until then MPOB has no prices for the month, and last month's last prices
+# are the latest. Later in a month, a month without prices is an error.
+EARLY_IN_MONTH = 7
+
+
 class MPOBFFBScraper:
-    """Reads MPOB's daily FFB summary for this month, or last month's early on the 1st."""
+    """Reads MPOB's daily FFB summary for this month, or last month's early in a month."""
 
     def __init__(self, timeout: int = 30, max_retries: int = 2, connect_timeout: int = 10):
         self.timeout = timeout
@@ -234,39 +240,62 @@ class MPOBFFBScraper:
         self.session.headers.update(DEFAULT_HEADERS)
 
     def fetch(self, day: date):
-        """(url, PDF bytes) for the month holding `day`; bytes are b"" when
-        MPOB has no such document, and None when the request failed."""
+        """(url, PDF bytes) for the month holding `day`.
+
+        The bytes are b"" when MPOB has no document for that month, and None
+        when the request failed. MPOB's server answers 500 for a month it has
+        no prices for yet (seen for November and December 2026 on 23 Oct), so
+        a 500 that persists through every attempt counts as no document.
+        """
         url = FFB_PDF_URL.format(day=day.isoformat())
+        status = None
         for attempt in range(self.max_retries + 1):
             try:
                 resp = self.session.get(url, timeout=(self.connect_timeout, self.timeout))
-                if resp.status_code == 404:
-                    return url, b""
-                resp.raise_for_status()
-                return url, resp.content
             except requests.RequestException as e:
+                status = None
                 logger.warning(f"MPOB FFB fetch attempt {attempt + 1} failed: {e}")
+                continue
+            status = resp.status_code
+            if status == 200:
+                return url, resp.content
+            if status == 404:
+                return url, b""
+            logger.warning(f"MPOB FFB fetch attempt {attempt + 1}: HTTP {status}")
+        if status == 500:
+            return url, b""
         logger.error("MPOB FFB: the daily price summary isn't answering")
         return url, None
 
+    def _read(self, day: date):
+        """("ok", prices) for the month holding `day`; ("empty", None) when
+        MPOB has no prices for it; ("failed", None) when the request or the
+        document failed."""
+        url, pdf = self.fetch(day)
+        if pdf is None:
+            return "failed", None
+        if not pdf:
+            return "empty", None
+        try:
+            prices = parse_ffb_pdf(pdf, day.year, day.month, url)
+        except FFBParseError as e:
+            # Never the document's text, which could forge log lines.
+            logger.exception(f"MPOB FFB: {e} ({len(pdf)} bytes from {url})")
+            return "failed", None
+        return ("ok", prices) if prices else ("empty", None)
+
     def scrape(self, today: Optional[date] = None) -> Optional[FFBDailyPrices]:
         today = today or datetime.now(MYT).date()
-        last_month = today.replace(day=1) - timedelta(days=1)
-        for day in (today, last_month):
-            url, pdf = self.fetch(day)
-            if pdf is None:
-                return None  # the server is down; last month's is on it too (K23)
-            if pdf:
-                try:
-                    prices = parse_ffb_pdf(pdf, day.year, day.month, url)
-                except FFBParseError as e:
-                    # Never the document's text, which could forge log lines.
-                    logger.exception(f"MPOB FFB: {e} ({len(pdf)} bytes from {url})")
-                    return None
-                if prices:
-                    logger.info(f"MPOB FFB {prices.date_iso}: " + ", ".join(
-                        f"{region} {price:.2f}" for region, price in prices.prices.items()))
-                    return prices
-            logger.info(f"MPOB FFB: no prices yet for {day:%B %Y}")
-        logger.error("MPOB FFB: no prices this month or last")
+        status, prices = self._read(today)
+        if status == "empty" and today.day <= EARLY_IN_MONTH:
+            logger.info(f"MPOB FFB: no prices yet for {today:%B %Y}; using last month's last prices")
+            # A server that doesn't answer has failed, so last month's isn't
+            # tried then (K23); only a month without prices falls back.
+            status, prices = self._read(today.replace(day=1) - timedelta(days=1))
+        if status == "ok":
+            logger.info(f"MPOB FFB {prices.date_iso}: " + ", ".join(
+                f"{region} {price:.2f}" for region, price in prices.prices.items()))
+            return prices
+        if status == "empty":
+            logger.error(f"MPOB FFB: no prices for {today:%B %Y} on day {today.day}")
         return None

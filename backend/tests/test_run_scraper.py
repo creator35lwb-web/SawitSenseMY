@@ -284,6 +284,36 @@ class TestKeepLastGoodData:
         assert "carried_forward" not in payload["ffb"]
 
 
+class TestOlderReads:
+    """K7: a read older than the MPOB prices already shown never replaces them.
+    Early in a month the scraper may fall back to last month's PDF."""
+
+    LIVE = {**TestKeepLastGoodData.PREVIOUS, "ffb": {
+        "date": "2026-11-02", "is_indicative": False,
+        "regions": [{"region": "South", "price_1pct_oer": 48.50, "is_indicative": False}],
+    }}
+
+    def test_an_older_read_keeps_the_newer_prices(self):
+        maker = TestBuildPayload()
+        payload = decide_payload(maker._make_cpo(), maker._make_oer(), False, None, self.LIVE,
+                                 ffb_obs=_make_ffb(day="2026-10-30"))
+        assert payload["ffb"]["date"] == "2026-11-02"
+        assert payload["ffb"]["carried_forward"] is True
+        assert any("kept the previous prices (2026-11-02)" in w for w in payload["warnings"])
+
+    def test_the_same_days_prices_read_again_are_published(self):
+        maker = TestBuildPayload()
+        payload = decide_payload(maker._make_cpo(), maker._make_oer(), False, None, self.LIVE,
+                                 ffb_obs=_make_ffb(day="2026-11-02"))
+        assert "carried_forward" not in payload["ffb"]
+
+    def test_the_estimate_from_before_d22_is_always_replaced(self):
+        maker = TestBuildPayload()
+        payload = decide_payload(maker._make_cpo(), maker._make_oer(), False, None,
+                                 TestKeepLastGoodData.BEFORE_D22, ffb_obs=_make_ffb(day="2026-10-20"))
+        assert payload["is_indicative"] is False
+
+
 class TestOerInAppSince:
     """D18: the app says which MPOB OER month is in the prices, and since when."""
 
