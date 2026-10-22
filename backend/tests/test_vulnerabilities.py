@@ -84,8 +84,9 @@ class TestLockedPackages:
 
     def test_a_line_that_is_not_an_exact_pin_fails(self):
         # A range would leave the installed version, and so the check, unknown.
+        lock = _lock("certifi==2026.10.19", "requests>=2.31.0")
         with pytest.raises(ValueError, match="line 6 .* exact pin: requests>=2.31.0"):
-            locked_packages(_lock("certifi==2026.10.19", "requests>=2.31.0"))
+            locked_packages(lock)
 
     def test_a_lock_file_without_pins_fails(self):
         with pytest.raises(ValueError, match="pins no packages"):
@@ -137,8 +138,10 @@ class TestFindVulnerabilities:
         osv, _ = _fake_osv({"certifi==2026.7.22": [GHSA]}, {GHSA: record})
         with patch.object(vulnerabilities, "osv", osv):
             (_, line), = find_vulnerabilities(OLD_PINS)
-        assert chr(10) not in line and chr(13) not in line
-        assert "Bad ::add-mask::x yyy" in line and "y" * 200 not in line
+        assert chr(10) not in line
+        assert chr(13) not in line
+        assert "Bad ::add-mask::x yyy" in line
+        assert "y" * 200 not in line
 
     def test_only_package_names_and_versions_are_sent(self):
         osv, calls = _fake_osv({}, {})
