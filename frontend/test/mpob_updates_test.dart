@@ -1,5 +1,7 @@
-// "Latest from MPOB" (D18): which MPOB OER month is in the prices and when
-// it arrived, in EN, BM and 中文, with links to MPOB's own news pages.
+// "Latest from MPOB" (D18): links to MPOB's own news pages, in EN, BM and
+// 中文. It names no OER month and no date (D20, K24): "Sep 2026, added on
+// 12 Oct" read as out of date beside a fresh price, and the price per 1% OER
+// doesn't use MPOB's OER.
 //
 // Author: SS (Claude Code), Oct 2026
 
@@ -15,24 +17,25 @@ import 'package:sawitsense_my/services/link_opener.dart';
 import 'package:sawitsense_my/services/price_service.dart';
 import 'package:sawitsense_my/widgets/mpob_updates_card.dart';
 
-/// Shaped like backend/data/latest.json.
-Map<String, dynamic> _payload({String? inAppSince}) => {
+/// Shaped like backend/data/latest.json. The `oer` block carries the month
+/// and the date it arrived, which the card must not show.
+Map<String, dynamic> _payload() => {
       'success': true,
       'is_indicative': true,
-      'scraped_at': '2026-10-17T05:01:37+08:00',
+      'scraped_at': '2026-10-23T01:06:04+08:00',
       'cpo': {
-        'date': '2026-10-15',
-        'price_myr_per_tonne': 4619.0,
+        'date': '2026-10-21',
+        'price_myr_per_tonne': 4767.0,
         'source': 'MPOC Daily Palm Oil Prices',
         'source_url': 'https://mpoc.org.my/daily-palm-oil-prices/',
       },
       'ffb': {
-        'date': '2026-10-15',
+        'date': '2026-10-21',
         'is_indicative': true,
         'regions': [
           {
             'region': 'Sabah',
-            'price_1pct_oer': 42.96,
+            'price_1pct_oer': 44.33,
             'indicative_oer_pct': 21.25,
             'is_indicative': true,
           },
@@ -42,7 +45,7 @@ Map<String, dynamic> _payload({String? inAppSince}) => {
         'year': 2026,
         'month': 9,
         'source': 'MPOB Prestasi Sawit (api/oer)',
-        if (inAppSince != null) 'in_app_since': inAppSince,
+        'in_app_since': '2026-10-12',
       },
     };
 
@@ -54,124 +57,82 @@ class _FakePriceService extends PriceService {
   Future<PriceSnapshot?> fetchLatest() async => snapshot;
 }
 
-String Function(String) _trFor(AppLocale locale) =>
-    (key) => stringsFor(locale)[key] ?? key;
+Future<List<Uri>> _pumpDashboard(WidgetTester tester,
+    {AppLocale locale = AppLocale.en}) async {
+  final opened = <Uri>[];
+  await tester.pumpWidget(ProviderScope(
+    overrides: [
+      priceServiceProvider.overrideWithValue(
+          _FakePriceService(PriceSnapshot.fromJson(_payload()))),
+      linkOpenerProvider.overrideWithValue((uri) async {
+        opened.add(uri);
+        return true;
+      }),
+      localeProvider.overrideWith((ref) => LocaleNotifier(initial: locale)),
+    ],
+    child: const MaterialApp(home: DashboardScreen()),
+  ));
+  await tester.pumpAndSettle();
+  return opened;
+}
 
-OerInfo _oer({String? inAppSince}) =>
-    PriceSnapshot.fromJson(_payload(inAppSince: inAppSince)).oer!;
+/// Every text in the card.
+List<String> _cardTexts(WidgetTester tester) => tester
+    .widgetList<Text>(find.descendant(
+        of: find.byType(MpobUpdatesCard), matching: find.byType(Text)))
+    .map((t) => t.data ?? t.textSpan?.toPlainText() ?? '')
+    .toList();
 
 void main() {
-  group('Reading the data', () {
-    test('in_app_since is read when present', () {
-      expect(_oer(inAppSince: '2026-10-12').inAppSince, '2026-10-12');
-    });
-
-    test('a snapshot written before D18 has no date', () {
-      expect(_oer().inAppSince, isNull);
-    });
+  testWidgets('shows the title, the two links and the note', (tester) async {
+    await _pumpDashboard(tester);
+    expect(_cardTexts(tester), [
+      'Latest from MPOB',
+      'Palm oil news',
+      'MPOB press releases',
+      "On MPOB's website, in English and BM.",
+    ]);
   });
 
-  group('The OER line', () {
-    test('English, with the date it arrived', () {
-      expect(
-        MpobUpdatesCard.oerLine(_oer(inAppSince: '2026-10-12'), AppLocale.en,
-            _trFor(AppLocale.en)),
-        "These prices use MPOB's OER for Sep 2026, added on 12 Oct.",
-      );
-    });
-
-    test('BM, with the date it arrived', () {
-      expect(
-        MpobUpdatesCard.oerLine(_oer(inAppSince: '2026-10-12'), AppLocale.ms,
-            _trFor(AppLocale.ms)),
-        'Harga ini menggunakan OER MPOB bagi Sep 2026, ditambah pada 12 Okt.',
-      );
-    });
-
-    test('Chinese, with the date it arrived', () {
-      expect(
-        MpobUpdatesCard.oerLine(_oer(inAppSince: '2026-10-12'), AppLocale.zh,
-            _trFor(AppLocale.zh)),
-        '这些价格采用 MPOB 2026年9月的出油率，于10月12日更新。',
-      );
-    });
-
-    test('an unknown or unreadable date is left out, not guessed', () {
-      for (final since in [null, 'soon']) {
-        expect(
-          MpobUpdatesCard.oerLine(
-              _oer(inAppSince: since), AppLocale.en, _trFor(AppLocale.en)),
-          "These prices use MPOB's OER for Sep 2026.",
-        );
+  for (final locale in AppLocale.values) {
+    testWidgets('names no OER month and no date (${locale.name})',
+        (tester) async {
+      await _pumpDashboard(tester, locale: locale);
+      final texts = _cardTexts(tester);
+      expect(texts, isNotEmpty);
+      for (final text in texts) {
+        expect(text, isNot(contains('OER')));
+        expect(text, isNot(contains('出油率')));
+        expect(text, isNot(matches(RegExp('[0-9]'))));
       }
     });
+  }
 
-    test('no OER month, no line', () {
-      expect(
-          MpobUpdatesCard.oerLine(null, AppLocale.en, _trFor(AppLocale.en)),
-          isNull);
-      expect(
-          MpobUpdatesCard.oerLine(
-              const OerInfo(year: 2026), AppLocale.en, _trFor(AppLocale.en)),
-          isNull);
-    });
-  });
+  testWidgets("the links open MPOB's own news pages", (tester) async {
+    final opened = await _pumpDashboard(tester);
 
-  group('On the dashboard', () {
-    Future<List<Uri>> pumpDashboard(WidgetTester tester,
-        {AppLocale locale = AppLocale.en}) async {
-      final opened = <Uri>[];
-      await tester.pumpWidget(ProviderScope(
-        overrides: [
-          priceServiceProvider.overrideWithValue(_FakePriceService(
-              PriceSnapshot.fromJson(_payload(inAppSince: '2026-10-12')))),
-          linkOpenerProvider.overrideWithValue((uri) async {
-            opened.add(uri);
-            return true;
-          }),
-          localeProvider
-              .overrideWith((ref) => LocaleNotifier(initial: locale)),
-        ],
-        child: const MaterialApp(home: DashboardScreen()),
-      ));
+    for (final label in ['Palm oil news', 'MPOB press releases']) {
+      final link = find.text(label);
+      await tester.ensureVisible(link);
+      await tester.tap(link);
       await tester.pumpAndSettle();
-      return opened;
     }
 
-    testWidgets('says which OER month is in the prices, and since when',
-        (tester) async {
-      await pumpDashboard(tester);
-      expect(find.text('Latest from MPOB'), findsOneWidget);
-      expect(
-          find.text(
-              "These prices use MPOB's OER for Sep 2026, added on 12 Oct."),
-          findsOneWidget);
-    });
+    expect(opened, [Uri.parse(mpobNewsUrl), Uri.parse(mpobPressUrl)]);
+    expect(opened.every((u) => u.host == 'mpob.gov.my'), isTrue);
+    expect(opened.every((u) => u.scheme == 'https'), isTrue);
+  });
 
-    testWidgets("the links open MPOB's own news pages", (tester) async {
-      final opened = await pumpDashboard(tester);
-
-      for (final label in ['Palm oil news', 'MPOB press releases']) {
-        final link = find.text(label);
-        await tester.ensureVisible(link);
-        await tester.tap(link);
-        await tester.pumpAndSettle();
-      }
-
-      expect(opened, [Uri.parse(mpobNewsUrl), Uri.parse(mpobPressUrl)]);
-      expect(opened.every((u) => u.host == 'mpob.gov.my'), isTrue);
-      expect(opened.every((u) => u.scheme == 'https'), isTrue);
-    });
-
-    testWidgets('in Chinese', (tester) async {
-      await pumpDashboard(tester, locale: AppLocale.zh);
-      expect(find.text('MPOB 最新消息'), findsOneWidget);
-      expect(find.text('这些价格采用 MPOB 2026年9月的出油率，于10月12日更新。'),
-          findsOneWidget);
-      expect(find.text('棕油新闻'), findsOneWidget);
-      // Chinese has no italics; the note stays upright.
-      final note = tester.widget<Text>(find.text('以上链接为 MPOB 网站，内容为英文和马来文。'));
-      expect(note.style?.fontStyle, FontStyle.normal);
-    });
+  testWidgets('in Chinese', (tester) async {
+    await _pumpDashboard(tester, locale: AppLocale.zh);
+    expect(_cardTexts(tester), [
+      'MPOB 最新消息',
+      '棕油新闻',
+      'MPOB 新闻稿',
+      '以上链接为 MPOB 网站，内容为英文和马来文。',
+    ]);
+    // Chinese has no italics; the note stays upright.
+    final note = tester.widget<Text>(find.text('以上链接为 MPOB 网站，内容为英文和马来文。'));
+    expect(note.style?.fontStyle, FontStyle.normal);
   });
 }

@@ -121,9 +121,6 @@ const Map<String, String> msStrings = {
 
   // Terkini daripada MPOB (D18)
   'mpob_updates_title': 'Terkini daripada MPOB',
-  'mpob_updates_oer': 'Harga ini menggunakan OER MPOB bagi {month}.',
-  'mpob_updates_oer_since':
-      'Harga ini menggunakan OER MPOB bagi {month}, ditambah pada {date}.',
   'mpob_news': 'Berita sawit',
   'mpob_press': 'Kenyataan media MPOB',
   'mpob_links_note': 'Di laman web MPOB, dalam BM dan bahasa Inggeris.',
