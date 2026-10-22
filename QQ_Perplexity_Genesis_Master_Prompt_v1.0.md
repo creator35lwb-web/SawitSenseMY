@@ -4,7 +4,7 @@
 **Project: SawitSenseMY | Date: 21 May 2026**
 **Reports to: Alton (Founder, Human Orchestrator)**
 
-> **Status (30 Sep 2026): PAUSED.** Alton stopped the Perplexity Computer subscription; QQ (Perplexity) may be reactivated if needed. The active agent is SS (Claude Code). See [SS_Claude_Code_Genesis_Master_Prompt_v1.0.md](./SS_Claude_Code_Genesis_Master_Prompt_v1.0.md).
+> **Status (30 Sep 2026): PAUSED.** Alton stopped the Perplexity Computer subscription; QQ (Perplexity) may be reactivated if needed. The active agent is SS (Claude Code). See [SS_Claude_Code_Genesis_Master_Prompt_v1.1.md](./SS_Claude_Code_Genesis_Master_Prompt_v1.1.md).
 
 ---
 

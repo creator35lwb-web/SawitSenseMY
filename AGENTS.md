@@ -2,7 +2,7 @@
 
 ## Active Agent
 
-**SS (Claude Code)**, CTO & Lead Maintainer, is the only active agent and reports to Alton (Founder, Human Orchestrator). See `SS_Claude_Code_Genesis_Master_Prompt_v1.0.md`; the full registry is in `.macp/agents.json`.
+**SS (Claude Code)**, CTO & Lead Maintainer, is the only active agent and reports to Alton (Founder, Human Orchestrator). See `SS_Claude_Code_Genesis_Master_Prompt_v1.1.md`; the full registry is in `.macp/agents.json`.
 
 ## Session Protocol
 

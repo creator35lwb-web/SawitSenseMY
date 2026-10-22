@@ -251,7 +251,7 @@ Headless Chrome's plain `--window-size` is clamped to about 500 px wide on Windo
 | Record | Location |
 |--------|----------|
 | Agent registry | [.macp/agents.json](.macp/agents.json) |
-| Active agent's Genesis | [SS_Claude_Code_Genesis_Master_Prompt_v1.0.md](SS_Claude_Code_Genesis_Master_Prompt_v1.0.md) |
+| Active agent's Genesis | [SS_Claude_Code_Genesis_Master_Prompt_v1.1.md](SS_Claude_Code_Genesis_Master_Prompt_v1.1.md) |
 | Earlier Genesis docs | [QQ (Qoder)](QQ_Genesis_Master_Prompt_v1.0.md), [QQ (Perplexity)](QQ_Perplexity_Genesis_Master_Prompt_v1.0.md) |
 | Handoffs | [.macp/handoffs/](.macp/handoffs/), one file each; April–May 2026 are in [.macp/handoffs.json](.macp/handoffs.json) |
 | Reasoning logs | [.macp/reasoning/](.macp/reasoning/) |
