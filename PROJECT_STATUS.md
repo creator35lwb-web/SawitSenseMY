@@ -2,16 +2,17 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 17 October 2026 (v0.3.16 verified live; D18 done) · SS (Claude Code)
+**Last updated:** 22 October 2026 (health check; certifi advisory #34; scraper fixes K22/K23 #35; D19 raised) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261017_SS_v0.3.16-verified.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261022_SS_scraper-resilience.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock` (Dependabot only sees the 2 direct Python packages, D17).
 > 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that the "Latest from MPOB" card shows both.
-> 4. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 4. After #34 and #35 merge: the next scraper runs succeed, `certifi` 2026.10.19 installs, and issue #33 is closed.
+> 5. D19 (a weekly automatic OSV check) awaits Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -21,7 +22,7 @@
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
 | Version | **0.3.16 live** (EN, BM and 中文; feedback form; Share button; "Latest from MPOB"; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
-| Live site freshness | **Good.** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. Over 9–17 Oct the data was 90% GREEN, 10% AMBER and 0% RED, and mornings (06:00–12:00 MYT) were 98% GREEN. The longest gap was 9.4 h (2–9 Oct: 87% GREEN, longest 10.4 h). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Live site freshness | **Good, with two incidents (K22, K23).** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. From 17 to 22 Oct the prices were 88% GREEN, 12% AMBER and 0.8% RED. The RED was 68 min on 21 Oct, after a run timed out while MPOB was down (K23). Mornings (06:00–12:00 MYT) were 100% GREEN. 9–17 Oct: 90% GREEN, 0% RED. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -70,6 +71,16 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **Health check, 22 Oct 2026:**
+  - **Runs since 17 Oct:**
+    - scraper: 2 incidents (below), otherwise all succeeded (108 of 110 since 21 Sep);
+    - deploys: 24 succeeded;
+    - freshness watchdog: 21 passed;
+    - feedback form watchdog: passed daily.
+  - **Incident, 21 Oct 07:31 UTC (K23):** MPOB's servers stopped answering. Each request waited about a minute, and the OER lookup tried 3 months × 3 attempts. The job hit its 10-minute limit and was cancelled, so MPOC's fresh price wasn't published either. The alert only fired on *failure*, so nobody was told. Prices went RED for 68 min until the next run. Fixed in #35.
+  - **Incident, 22 Oct 11:43 UTC (K22, issue #33):** MPOC answered with a page that had no price table. The last good prices stayed live (K7), and the alert fired. The page read normally again by 14:38 UTC, with the same layout. #35 makes the scraper fetch such a page again before giving up, and log what the page was.
+  - **Security:** the OSV check found **GHSA-6q48-6c7w-9gw2 in `certifi` 2026.7.22** (published 20 Oct, rated critical): a trusted root CA whose intermediates' keys were compromised. Dependabot couldn't see it (D17). Fixed in #34 (`certifi` 2026.10.19); 0 vulnerabilities after the bump.
+  - **GitHub Actions was degraded on 22 Oct** (incident from 14:18 UTC), which delayed the scheduled runs and SS's manual run.
 - **v0.3.16 is live, checked after #31 merged** (17 Oct):
   - The merge's deploy succeeded, and `version.json` reads 0.3.16+18.
   - A manual scraper run (38979439698, the same job as the 2-hourly one) wrote `oer.in_app_since: "2026-10-12"`, with no warnings. The deploy it dispatched put that live.
@@ -125,7 +136,8 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#32](https://github.com/creator35lwb-web/SawitSenseMY/pull/32) | Records only: v0.3.16 verified live; D18 done |
+| [#34](https://github.com/creator35lwb-web/SawitSenseMY/pull/34) | Security: `certifi` 2026.10.19 (GHSA-6q48-6c7w-9gw2). Merge first |
+| [#35](https://github.com/creator35lwb-web/SawitSenseMY/pull/35) | Scraper: finish in time when MPOB is down, alert on a timed-out run (K23); fetch MPOC's page again when it has no price table (K22, closes #33) |
 
 ---
 
@@ -157,6 +169,8 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
 | K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
+| K23 | When MPOB's servers stopped answering (21 Oct), a run tried 3 months × 3 attempts at about a minute each, hit the job's 10-minute limit and published nothing, not even MPOC's fresh price. The cancelled run raised no alert | #35 |
+| K22 | MPOC once answered with a page that had no price table (22 Oct, issue #33). The scraper gave up at once, without saying what the page was | #35 |
 | K21 | At 360 px the region cards cut English names short ("East …", "Sara…"): the name shared its line with the *Indicative* chip | #28 |
 | K20 | Every workflow run warned that its actions target the deprecated Node 20. `ubuntu-latest` moves to Ubuntu 26 from 19 Oct 2026, which could change the scraper's Python or tooling without notice | #23 |
 
@@ -183,6 +197,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
 | D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
+| D19 | **A weekly automatic vulnerability check of the Python lock file.** Dependabot reads only the 2 packages named in `requirements.txt`, not the 17 in the hash-locked `requirements.lock` (D17). So SS runs an OSV check each session, which caught the `certifi` advisory (#34) two days after it was published. A small weekly workflow, standard library only, would query OSV for all 17 packages and open a `security-alert` issue on a hit, so a gap between sessions can't hide one | **Open. Alton's call.** SS recommends yes |
 | D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Done in #31 (verified live, 17 Oct).** Approved by Alton on 17 Oct. The card links to MPOB's daily palm oil news round-up and its press releases |
 
 ---
