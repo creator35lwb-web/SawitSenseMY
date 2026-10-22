@@ -318,26 +318,26 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
     return payload
 
 
-def main() -> int:
-    logger.info(f"SawitSense scraper starting at {datetime.now(MYT).isoformat()}")
-
-    # --- Step 1: try the legacy BEPI scraper (will fail until MPOB restores) ---
-    legacy_payload = None
+def _try_legacy_bepi() -> bool:
+    """Step 1: the legacy BEPI scraper. It is expected to fail, and its data
+    isn't used: the prices come from MPOB's daily FFB summary (D22)."""
     try:
         legacy_payload = MPOBScraper(timeout=LEGACY_BEPI_TIMEOUT).scrape_all()
-        if legacy_payload.get("success"):
-            # The prices come from MPOB's daily FFB summary (D22), so say plainly
-            # that this source isn't used.
-            logger.warning(
-                "Legacy MPOB BEPI returned data. It isn't used: the prices come from "
-                "MPOB's daily FFB reference price summary (D22)."
-            )
+        ok = bool(legacy_payload and legacy_payload.get("success"))
     except Exception as e:  # never crash on legacy path
         logger.info(f"Legacy BEPI scrape error (expected): {e}")
+        return False
+    if ok:
+        logger.warning(
+            "Legacy MPOB BEPI returned data. It isn't used: the prices come from "
+            "MPOB's daily FFB reference price summary (D22)."
+        )
+    return ok
 
-    legacy_ok = bool(legacy_payload and legacy_payload.get("success"))
 
-    # --- Step 2: primary public sources ---
+def _scrape_public_sources():
+    """Step 2: MPOC's daily CPO price, MPOB's monthly OER and MPOB's daily
+    FFB reference price. Each is None when its source failed."""
     cpo_obs = MPOCDailyCPOScraper().scrape()
     cpo_latest = cpo_obs.latest if cpo_obs else None
     if cpo_latest:
@@ -354,6 +354,14 @@ def main() -> int:
     ffb_obs = MPOBFFBScraper().scrape()
     if ffb_obs is None:
         logger.warning("MPOB daily FFB reference price unavailable this run")
+    return cpo_latest, oer_snap, ffb_obs
+
+
+def main() -> int:
+    logger.info(f"SawitSense scraper starting at {datetime.now(MYT).isoformat()}")
+
+    legacy_ok = _try_legacy_bepi()
+    cpo_latest, oer_snap, ffb_obs = _scrape_public_sources()
 
     # --- Step 3: Commodities-API CPO fallback if MPOC failed AND we have a key ---
     fallback_cpo = None

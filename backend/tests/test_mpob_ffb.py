@@ -106,45 +106,53 @@ class TestAnythingUnexpectedIsRejected:
             parse_ffb_pdf(b"<html>Please log in</html>", 2026, 10, URL)
 
     def test_another_document(self):
+        pdf = _pdf(title="MPOB DAILY CPO PRICES")
         with pytest.raises(FFBParseError, match="title"):
-            parse_ffb_pdf(_pdf(title="MPOB DAILY CPO PRICES"), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
     def test_another_month(self):
+        pdf = _pdf()
         with pytest.raises(FFBParseError, match="SEPTEMBER 2026"):
-            parse_ffb_pdf(_pdf(), 2026, 9, URL)
+            parse_ffb_pdf(pdf, 2026, 9, URL)
 
     def test_columns_in_another_order(self):
         header = [HEADER[0], HEADER[2], HEADER[1], *HEADER[3:]]
+        pdf = _pdf(header=header)
         with pytest.raises(FFBParseError, match="columns"):
-            parse_ffb_pdf(_pdf(header=header), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
     @pytest.mark.parametrize("cell", ["47.8", "4782", "-", "47.82*", ""])
     def test_a_cell_that_is_not_a_price(self, cell):
         table = OCTOBER[:5] + [["22", cell, "48.20", "48.12", "48.08", "43.06", "43.49"]]
+        pdf = _pdf(table=table)
         with pytest.raises(FFBParseError):
-            parse_ffb_pdf(_pdf(table=table), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
     def test_an_implausible_price(self):
         table = OCTOBER[:5] + [["22", "478.20", "48.20", "48.12", "48.08", "43.06", "43.49"]]
+        pdf = _pdf(table=table)
         with pytest.raises(FFBParseError, match="implausible"):
-            parse_ffb_pdf(_pdf(table=table), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
     def test_a_missing_cell(self):
         table = OCTOBER[:5] + [["22", "47.82", "48.20", "48.12", "48.08", "43.06"]]
+        pdf = _pdf(table=table)
         with pytest.raises(FFBParseError, match="day 22"):
-            parse_ffb_pdf(_pdf(table=table), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
     @pytest.mark.parametrize("day", ["21", "31"])
     def test_days_out_of_order_or_not_in_the_month(self, day):
         table = OCTOBER[:5] + [[day, "47.82", "48.20", "48.12", "48.08", "43.06", "43.49"]]
         month = "NOVEMBER 2026" if day == "31" else "OCTOBER 2026"
+        pdf = _pdf(table=table, month=month)
         with pytest.raises(FFBParseError, match="unexpected row"):
-            parse_ffb_pdf(_pdf(table=table, month=month), 2026, 11 if day == "31" else 10, URL)
+            parse_ffb_pdf(pdf, 2026, 11 if day == "31" else 10, URL)
 
     def test_a_region_without_any_price_this_month(self):
         table = [["2", "46.31", "46.80", "46.57", "46.50", "41.26", "PH"]]
+        pdf = _pdf(table=table)
         with pytest.raises(FFBParseError, match="some regions"):
-            parse_ffb_pdf(_pdf(table=table), 2026, 10, URL)
+            parse_ffb_pdf(pdf, 2026, 10, URL)
 
 
 def _response(status=200, content=b""):

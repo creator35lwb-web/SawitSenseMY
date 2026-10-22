@@ -244,8 +244,8 @@ class MPOBFFBScraper:
                     return url, b""
                 resp.raise_for_status()
                 return url, resp.content
-            except requests.RequestException:
-                logger.warning(f"MPOB FFB fetch attempt {attempt + 1} failed", exc_info=True)
+            except requests.RequestException as e:
+                logger.warning(f"MPOB FFB fetch attempt {attempt + 1} failed: {e}")
         logger.error("MPOB FFB: the daily price summary isn't answering")
         return url, None
 
