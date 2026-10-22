@@ -16,6 +16,11 @@ class RegionalPrice {
   final double? indicativeOerPct;
   /// Indicative fair price per tonne when paired with the indicative OER.
   final double? indicativeFairPricePerTonne;
+  /// MPOB's monthly average OER % for the region (`avg_oer_pct` since D22,
+  /// `indicative_oer_pct` before).
+  final double? avgOerPct;
+  /// MPOB's note on the region's price, e.g. "Miri & Bintulu" for Sarawak.
+  final String? note;
 
   const RegionalPrice({
     required this.region,
@@ -25,18 +30,23 @@ class RegionalPrice {
     this.isIndicative = false,
     this.indicativeOerPct,
     this.indicativeFairPricePerTonne,
+    this.avgOerPct,
+    this.note,
   });
 
   factory RegionalPrice.fromJson(Map<String, dynamic> json) {
+    final indicativeOerPct = (json['indicative_oer_pct'] as num?)?.toDouble();
     return RegionalPrice(
       region: json['region'] as String? ?? '',
       date: json['date'] as String? ?? '',
       price1PctOer: (json['price_1pct_oer'] as num?)?.toDouble() ?? 0.0,
       source: json['source'] as String? ?? 'MPOB BEPI',
       isIndicative: json['is_indicative'] as bool? ?? false,
-      indicativeOerPct: (json['indicative_oer_pct'] as num?)?.toDouble(),
+      indicativeOerPct: indicativeOerPct,
       indicativeFairPricePerTonne:
           (json['indicative_fair_price_per_tonne'] as num?)?.toDouble(),
+      avgOerPct: (json['avg_oer_pct'] as num?)?.toDouble() ?? indicativeOerPct,
+      note: json['note'] as String?,
     );
   }
 }
@@ -75,6 +85,12 @@ class FfbPriceData {
   /// The documented factor in Price_1% = CPO x 0.01 x factor (ADR-001).
   /// Published so anyone can redo the sum; null in older payloads.
   final double? indicativeShareFactor;
+  /// MPOB's PDF the prices were read from, so readers can check them (D22).
+  final String? sourceUrl;
+  /// When MPOB last updated that PDF (ISO 8601, Malaysian time).
+  final String? mpobLastUpdate;
+  /// True when MPOB couldn't be read this run and these are the last prices.
+  final bool carriedForward;
 
   const FfbPriceData({
     required this.date,
@@ -83,6 +99,9 @@ class FfbPriceData {
     this.source = 'MPOB BEPI',
     this.isIndicative = false,
     this.indicativeShareFactor,
+    this.sourceUrl,
+    this.mpobLastUpdate,
+    this.carriedForward = false,
   });
 
   factory FfbPriceData.fromJson(Map<String, dynamic> json) {
@@ -98,6 +117,9 @@ class FfbPriceData {
       isIndicative: json['is_indicative'] as bool? ?? false,
       indicativeShareFactor:
           (json['indicative_share_factor'] as num?)?.toDouble(),
+      sourceUrl: json['source_url'] as String?,
+      mpobLastUpdate: json['mpob_last_update'] as String?,
+      carriedForward: json['carried_forward'] as bool? ?? false,
     );
   }
 }

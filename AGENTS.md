@@ -33,9 +33,10 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 
 ## Key Files
 
-- `backend/run_scraper.py`: pipeline orchestrator (Path C, ADR-001)
+- `backend/run_scraper.py`: pipeline orchestrator (ADR-002)
 - `backend/scrapers/mpoc_cpo.py`: daily CPO price (MPOC)
 - `backend/scrapers/mpob_oer.py`: monthly OER by state (MPOB Prestasi Sawit)
+- `backend/scrapers/mpob_ffb.py`: MPOB's daily FFB reference price by region (D22), read from MPOB's public PDF
 - `backend/scrapers/mpob_bepi.py`: core formula plus the legacy MPOB BEPI scraper. This is the math layer; don't refactor it.
 - `backend/writer/json_writer.py`: writes the JSON snapshots the app reads
 - `backend/monitor/`: scraper health check, live-site freshness watchdog, feedback form watchdog, and vulnerability check
@@ -59,7 +60,9 @@ Price/mt = MPOB_Price_1% x Graded_OER%
 
 Do NOT use: `CPO x 0.2? x 0.7?` (rejected — unverifiable constants from unofficial dealer shorthand)
 
-While MPOB's reference price is unavailable, the indicative `CPO x 0.01 x 0.93` (ADR-001) may be used. It must always be labelled `is_indicative: true`.
+`MPOB_Price_1%` is MPOB's daily FFB reference price for the region, at the mill gate, read from MPOB's public PDF (ADR-002).
+
+The indicative `CPO x 0.01 x 0.93` (ADR-001) is retired: against MPOB's price it was 6-11% off in the Peninsula (K25). Never put an estimate in place of MPOB's price. When MPOB can't be read, keep the last official prices with their date (K7).
 
 ## Secrets and Privacy
 

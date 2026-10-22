@@ -1,15 +1,13 @@
-"""SawitSense Scraper Pipeline Orchestrator (v0.3 \u2014 Path C recovery).
+"""SawitSense Scraper Pipeline Orchestrator (v0.4 \u2014 MPOB's official daily price).
 
-Pipeline (post May 2026 MPOB restructure, see docs/ADR-001):
+Pipeline (see docs/ADR-002):
   1. Daily CPO settlement price (RM/tonne)        \u2014 scrapers.mpoc_cpo
   2. Monthly state-level OER % + region averages  \u2014 scrapers.mpob_oer
-  3. Derive an INDICATIVE Price_1%_OER per region using the documented
-     coefficient (see indicative_price_1pct() below) so the existing Flutter
-     Fair Price calculator keeps working. This is clearly labelled
-     `is_indicative: true` and `formula_status: \"INDICATIVE\"` in the output
-     payload so the frontend can show an honest banner.
-  4. (Legacy) Try BEPI scrapers \u2014 currently expected to fail; will reactivate
-     automatically the day MPOB restores anonymous access.
+  3. MPOB's daily FFB reference price per 1% OER for each region, at the
+     mill gate                                    \u2014 scrapers.mpob_ffb
+     Until D22 (Oct 2026) this step was SawitSense's own estimate,
+     CPO x 0.01 x 0.93 (ADR-001), which was 6-11% off in the Peninsula (K25).
+  4. (Legacy) Try BEPI scrapers \u2014 expected to fail, and not used for prices.
   5. (Legacy) Commodities-API CPO fallback if MPOC also fails.
   6. Write the JSON snapshots (backend/data/), which the deploy publishes.
 
@@ -23,17 +21,20 @@ Patch:           SS (Claude Code), Sep 2026 \u2014 data-quality `warnings` in th
 Patch:           SS (Claude Code), Oct 2026 \u2014 `oer.in_app_since`, the date each
                  OER month first appeared, so the app can say what is new
                  from MPOB (D18)
+Patch:           SS (Claude Code), Oct 2026 \u2014 MPOB's official daily FFB
+                 reference price replaces the estimate (D22, K25, ADR-002)
 """
 
 import logging
 import sys
 from dataclasses import asdict
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from monitor.health_check import report_failure, report_success
 from scrapers.commodities_fallback import fetch_cpo_fallback
 from scrapers.mpob_bepi import MPOBScraper, REGIONS
+from scrapers.mpob_ffb import MPOBFFBScraper
 from scrapers.mpob_oer import MPOBOERScraper
 from scrapers.mpoc_cpo import MPOCDailyCPOScraper
 from writer.json_writer import read_latest, write_price_data
@@ -47,57 +48,41 @@ logging.basicConfig(
 logger = logging.getLogger("sawitsense")
 
 
-# Indicative coefficient mapping CPO -> RM per 1% OER, derived from the
-# historical relationship MPOB used to publish: roughly
-#   Price_1%OER \u2248 CPO * 0.01 * dealer_share_factor
-# where dealer_share_factor reflects mill margin + transport + grading buffer.
-# The 0.01 part is exact (OER is in %), the share factor we anchor at 0.93
-# per the project's calibrated review of PV-85935 and the README South-region
-# example (CPO ~RM 2,624, Price_1% ~RM 24.40 => factor \u2248 0.93). This is
-# documented in docs/ADR-001 and surfaced to users as "indicative".
-DEFAULT_INDICATIVE_SHARE_FACTOR = 0.93
-
-
-def indicative_price_1pct(cpo_price: float, share_factor: float = DEFAULT_INDICATIVE_SHARE_FACTOR) -> float:
-    """Derive an indicative RM-per-1%-OER from a CPO settlement price.
-
-    NOT a substitute for the official MPOB FFB Reference Price. Used solely
-    to keep the Fair Price calculator producing a smallholder-protective
-    GREEN/AMBER/RED verdict while we restore the authoritative source.
-    """
-    if cpo_price is None or cpo_price <= 0:
-        return 0.0
-    return round(cpo_price * 0.01 * share_factor, 2)
-
-
-INDICATIVE_NOTICE = (
-    "MPOB's daily FFB Reference Price tables moved behind a licensee "
-    "login (May 2026). Until restored, regional Price_1%OER values "
-    "shown are INDICATIVE \u2014 derived from MPOC daily CPO settlement "
-    "and MPOB Prestasi Sawit monthly OER. Use as guidance, not as a "
-    "legal benchmark. Track restoration: ADR-001."
-)
-
 # Seconds to wait for MPOB's legacy BEPI pages. They are expected to fail (a
 # licensee login since May 2026), so when MPOB's server doesn't answer this
 # attempt mustn't use up the job's 10-minute limit (21 Oct 2026, K23).
 LEGACY_BEPI_TIMEOUT = 10
 
-DERIVED_SOURCE_LABEL = "Derived (MPOC CPO \u00d7 MPOB OER)"
-DERIVED_FFB_SOURCE = "SawitSense derived (Path C)"
+# A payload from before D22 holds SawitSense's own estimate (CPO x 0.01 x
+# 0.93). If MPOB's daily summary can't be read on the first run after the
+# switch, that block is kept, still labelled indicative, until it can (K7).
+CARRIED_ESTIMATE_NOTICE = (
+    "These regional prices are SawitSense's earlier estimate (CPO x 0.01 x 0.93), "
+    "kept until MPOB's daily FFB reference price can be read (D22)."
+)
+
+# A fresh MPOB price this many days old means MPOB has stopped updating its
+# summary; weekends and public holidays alone account for up to about 5.
+MAX_FFB_AGE_DAYS = 6
+# MPOB's price per 1% OER ran at 0.88-1.04 x (CPO x 0.01) in October 2026:
+# about 1.01 in the Peninsula and 0.90-0.92 in East Malaysia. Outside this
+# range a figure is more likely misread than real, so it raises a warning.
+FFB_TO_CPO_RANGE = (0.8, 1.2)
+# MPOB's footnote for its Sarawak column, which the app translates.
+SARAWAK_NOTE = "Miri & Bintulu"
 
 
 def _empty_payload() -> dict:
-    """Initial payload skeleton with all Path C flags set."""
+    """Initial payload skeleton; build_payload() sets the mode from the ffb block."""
     now_iso = datetime.now(MYT).isoformat()
     return {
         "scraped_at": now_iso,
         "updated_at": now_iso,
         "success": False,
-        "data_source_version": "0.3-recovery",
-        "formula_status": "INDICATIVE",
-        "is_indicative": True,
-        "indicative_notice": INDICATIVE_NOTICE,
+        "data_source_version": "0.4-mpob-daily",
+        "formula_status": "OFFICIAL",
+        "is_indicative": False,
+        "indicative_notice": None,
         "cpo": None,
         "ffb": None,
         "oer": None,
@@ -156,48 +141,73 @@ def _resolve_region_oer(region: str, region_avg: dict, oer_block: dict) -> Optio
     return oer_block.get("oer_peninsular")
 
 
-def _derive_ffb_block(payload: dict) -> Optional[dict]:
-    """Build the indicative FFB regional block from the payload's cpo + oer."""
-    cpo_block = payload.get("cpo") or {}
-    cpo_price = cpo_block.get("price_myr_per_tonne")
-    if not cpo_price:
-        return None
-
-    p1 = indicative_price_1pct(cpo_price)
-    oer_block = payload.get("oer") or {}
+def _ffb_dict(ffb_obs, oer_block: Optional[dict]) -> dict:
+    """The payload's ffb block: MPOB's price per 1% OER for each region, at the
+    mill gate (D22), with MPOB's average OER for the region beside it."""
+    oer_block = oer_block or {}
     region_avg = oer_block.get("region_avg") or {}
-
     regions_out = []
     for region in REGIONS:
-        oer_pct = _resolve_region_oer(region, region_avg, oer_block)
-        fair_price = round(p1 * float(oer_pct), 2) if oer_pct else None
-        regions_out.append({
+        entry = {
             "region": region,
-            "price_1pct_oer": p1,
-            "indicative_oer_pct": oer_pct,
-            "indicative_fair_price_per_tonne": fair_price,
-            "source": DERIVED_SOURCE_LABEL,
-            "is_indicative": True,
-        })
-
+            "date": ffb_obs.dates[region],
+            "price_1pct_oer": ffb_obs.prices[region],
+            "avg_oer_pct": _resolve_region_oer(region, region_avg, oer_block),
+            "source": ffb_obs.source,
+            "is_indicative": False,
+        }
+        if region == "Sarawak" and ffb_obs.sarawak_note:
+            entry["note"] = ffb_obs.sarawak_note
+        regions_out.append(entry)
     return {
-        "date": cpo_block.get("date"),
+        "date": ffb_obs.date_iso,
         "regions": regions_out,
-        "cpo_price": cpo_price,
-        # Published so anyone can redo the sum: CPO x 0.01 x share factor.
-        "indicative_share_factor": DEFAULT_INDICATIVE_SHARE_FACTOR,
-        "is_indicative": True,
-        "source": DERIVED_FFB_SOURCE,
+        "unit": "RM per tonne of FFB per 1% OER, at the mill gate",
+        "source": ffb_obs.source,
+        "source_url": ffb_obs.source_url,
+        "mpob_last_update": ffb_obs.last_update,
+        "is_indicative": False,
+        "scraped_at": ffb_obs.scraped_at,
     }
 
 
-def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer: Optional[dict] = None):
+def _set_mode(payload: dict) -> None:
+    """Official, unless the ffb block is an estimate carried forward from before D22."""
+    indicative = bool((payload.get("ffb") or {}).get("is_indicative"))
+    payload["is_indicative"] = indicative
+    payload["formula_status"] = "INDICATIVE" if indicative else "OFFICIAL"
+    payload["indicative_notice"] = CARRIED_ESTIMATE_NOTICE if indicative else None
+
+
+def ffb_quality_warnings(ffb_obs, cpo_price: Optional[float], today: str) -> list:
+    """Checks on a fresh MPOB read: its age, each price against the CPO price,
+    and the Sarawak footnote that the app translates."""
+    warnings = []
+    age = (date.fromisoformat(today) - date.fromisoformat(ffb_obs.date_iso)).days
+    if age > MAX_FFB_AGE_DAYS:
+        warnings.append(f"MPOB's latest daily FFB price is from {ffb_obs.date_iso}, {age} days ago")
+    if cpo_price:
+        low, high = FFB_TO_CPO_RANGE
+        for region, price in ffb_obs.prices.items():
+            ratio = price / (cpo_price * 0.01)
+            if not low <= ratio <= high:
+                warnings.append(
+                    f"MPOB's {region} price, RM {price:.2f} per 1% OER, is {ratio:.0%} of CPO x 0.01 "
+                    f"(CPO RM {cpo_price:.0f}); check it against MPOB's PDF"
+                )
+    if ffb_obs.sarawak_note not in (None, SARAWAK_NOTE):
+        warnings.append(f"MPOB's Sarawak footnote now reads {ffb_obs.sarawak_note!r}; update the app's wording")
+    return warnings
+
+
+def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer: Optional[dict] = None,
+                  ffb_obs=None, previous_ffb: Optional[dict] = None):
     """Compose the SawitSense data payload (matches frontend price_provider).
 
     Behavior is identical to v0.3-recovery initial. Refactored into helpers
     for cognitive-complexity compliance — see SonarCloud python:S3776.
-    `previous_oer` (the last published `oer` block) is carried forward when
-    this run's OER fetch failed; see decide_payload().
+    `previous_oer` and `previous_ffb` (the last published blocks) are carried
+    forward when this run's OER or MPOB FFB fetch failed; see decide_payload().
     """
     payload = _empty_payload()
 
@@ -216,18 +226,25 @@ def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer:
         # the latest available. Keep them, marked, rather than drop regional OER.
         payload["oer"] = {**previous_oer, "carried_forward": True}
 
-    # --- Derived FFB regional indicative benchmark ---
-    ffb = _derive_ffb_block(payload)
-    if ffb is not None:
-        payload["ffb"] = ffb
+    # --- MPOB's official daily FFB reference price (D22) ---
+    if ffb_obs is not None:
+        payload["ffb"] = _ffb_dict(ffb_obs, payload["oer"])
+    elif previous_ffb:
+        # Keep the last prices, with their date, rather than show none (K7).
+        payload["ffb"] = {**previous_ffb, "carried_forward": True}
+    _set_mode(payload)
 
     payload["success"] = bool(payload["cpo"] or payload["ffb"] or payload["oer"])
     payload["legacy_bepi_success"] = bool(legacy_attempt)
-    payload["warnings"] = _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer)
+    payload["warnings"] = _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer, ffb_obs, previous_ffb)
+    if ffb_obs is not None:
+        cpo_price = (payload["cpo"] or {}).get("price_myr_per_tonne")
+        payload["warnings"] += ffb_quality_warnings(ffb_obs, cpo_price, payload["scraped_at"][:10])
     return payload
 
 
-def _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer: Optional[dict] = None) -> list:
+def _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer: Optional[dict] = None,
+                      ffb_obs=None, previous_ffb: Optional[dict] = None) -> list:
     """Data-quality problems for this run. The data is still published; the
     scraper workflow turns a non-empty list into an alert issue."""
     warnings = []
@@ -245,6 +262,12 @@ def _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer: Optional[di
         warnings.append(f"MPOB OER unavailable this run; kept the previous figures ({period})")
     else:
         warnings.append("MPOB OER data unavailable; no regional OER this run")
+    if ffb_obs is None:
+        warnings.append(
+            f"MPOB daily FFB reference price unavailable this run; kept the previous prices "
+            f"({previous_ffb.get('date')})" if previous_ffb
+            else "MPOB daily FFB reference price unavailable; no regional prices this run"
+        )
     return warnings
 
 
@@ -266,7 +289,8 @@ def oer_in_app_since(oer: dict, last_oer: Optional[dict], today: str) -> Optiona
     return last_oer.get("in_app_since") or OER_IN_APP_SINCE_BEFORE_TRACKING.get(period)
 
 
-def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Optional[dict]) -> Optional[dict]:
+def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Optional[dict],
+                   ffb_obs=None) -> Optional[dict]:
     """The payload to publish this run, or None to keep the last good snapshot.
 
     Never replace good data with worse data (K7):
@@ -275,6 +299,9 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
       honestly, instead of the site losing its prices until the next good run.
     - OER missing this run: carry the previous `oer` block forward, marked
       `carried_forward`, with a warning.
+    - MPOB's daily FFB price missing this run: carry the previous `ffb` block
+      forward the same way, so the last official prices stay up with their
+      date (D22).
 
     A fresh `oer` block also records `in_app_since` (D18).
     """
@@ -282,33 +309,35 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
         return None
     last_oer = (previous or {}).get("oer")
     payload = build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs,
-                            previous_oer=last_oer if oer_snap is None else None)
+                            previous_oer=last_oer if oer_snap is None else None,
+                            ffb_obs=ffb_obs,
+                            previous_ffb=(previous or {}).get("ffb") if ffb_obs is None else None)
     if oer_snap is not None:
         # scraped_at is in MYT, so its first 10 characters are today's MYT date.
         payload["oer"]["in_app_since"] = oer_in_app_since(payload["oer"], last_oer, payload["scraped_at"][:10])
     return payload
 
 
-def main() -> int:
-    logger.info(f"SawitSense scraper starting at {datetime.now(MYT).isoformat()}")
-
-    # --- Step 1: try the legacy BEPI scraper (will fail until MPOB restores) ---
-    legacy_payload = None
+def _try_legacy_bepi() -> bool:
+    """Step 1: the legacy BEPI scraper. It is expected to fail, and its data
+    isn't used: the prices come from MPOB's daily FFB summary (D22)."""
     try:
         legacy_payload = MPOBScraper(timeout=LEGACY_BEPI_TIMEOUT).scrape_all()
-        if legacy_payload.get("success"):
-            # Publishing BEPI's authoritative prices is not wired up (Track B,
-            # decision D6), so say plainly what happens instead.
-            logger.warning(
-                "Legacy MPOB BEPI returned data. Publishing it is not wired up yet "
-                "(Track B, D6); this run still publishes indicative values."
-            )
+        ok = bool(legacy_payload and legacy_payload.get("success"))
     except Exception as e:  # never crash on legacy path
         logger.info(f"Legacy BEPI scrape error (expected): {e}")
+        return False
+    if ok:
+        logger.warning(
+            "Legacy MPOB BEPI returned data. It isn't used: the prices come from "
+            "MPOB's daily FFB reference price summary (D22)."
+        )
+    return ok
 
-    legacy_ok = bool(legacy_payload and legacy_payload.get("success"))
 
-    # --- Step 2: primary public sources ---
+def _scrape_public_sources():
+    """Step 2: MPOC's daily CPO price, MPOB's monthly OER and MPOB's daily
+    FFB reference price. Each is None when its source failed."""
     cpo_obs = MPOCDailyCPOScraper().scrape()
     cpo_latest = cpo_obs.latest if cpo_obs else None
     if cpo_latest:
@@ -322,6 +351,18 @@ def main() -> int:
     else:
         logger.warning("MPOB OER scrape returned no data")
 
+    ffb_obs = MPOBFFBScraper().scrape()
+    if ffb_obs is None:
+        logger.warning("MPOB daily FFB reference price unavailable this run")
+    return cpo_latest, oer_snap, ffb_obs
+
+
+def main() -> int:
+    logger.info(f"SawitSense scraper starting at {datetime.now(MYT).isoformat()}")
+
+    legacy_ok = _try_legacy_bepi()
+    cpo_latest, oer_snap, ffb_obs = _scrape_public_sources()
+
     # --- Step 3: Commodities-API CPO fallback if MPOC failed AND we have a key ---
     fallback_cpo = None
     if cpo_latest is None:
@@ -331,7 +372,7 @@ def main() -> int:
             logger.info(f"Commodities-API fallback OK: RM {fallback_cpo.get('price_myr_per_tonne')}/t")
 
     # --- Step 4: assemble payload, never replacing good data with worse ---
-    payload = decide_payload(cpo_latest, oer_snap, legacy_ok, fallback_cpo, read_latest())
+    payload = decide_payload(cpo_latest, oer_snap, legacy_ok, fallback_cpo, read_latest(), ffb_obs=ffb_obs)
 
     if payload is None:
         logger.error(
@@ -351,7 +392,9 @@ def main() -> int:
         return 1
 
     report_success()
-    logger.info("Pipeline complete. Indicative data written. (Legacy authoritative path = pending MPOB restoration.)")
+    ffb = payload.get("ffb") or {}
+    logger.info(f"Pipeline complete. Regional prices: {ffb.get('source', 'none')}, {ffb.get('date', '-')}"
+                + (" (carried forward)" if ffb.get("carried_forward") else ""))
     return 0
 
 

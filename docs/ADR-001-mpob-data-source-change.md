@@ -1,6 +1,6 @@
 # ADR-001: MPOB BEPI Portal Restructure & SawitSense Recovery (Path C)
 
-- **Status:** Accepted (v0.3-recovery)
+- **Status:** Accepted (v0.3-recovery). Its indicative estimate (Track A) is superseded by [ADR-002](ADR-002-mpob-official-daily-price.md) (D22, Oct 2026)
 - **Date:** 2026-05-21
 - **Authors:** QQ (Perplexity), under Alton's authority (part of the YSenseAI ecosystem)
 - **Original SawitSense data layer:** QQ (Qoder CSO)

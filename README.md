@@ -40,7 +40,7 @@ MARKET PRICE (Bursa / MPOB)
 Price/mt = MPOB Price_1% x Graded_OER%
 ```
 
-- **Price_1%** — MPOB publishes a Daily FFB Reference Price at 1% OER, broken down by 6 regions: North, South, Central, East Coast, Sabah, Sarawak
+- **Price_1%** — MPOB publishes a Daily FFB Reference Price at 1% OER, broken down by 6 regions: North, South, Central, East Coast, Sabah, Sarawak ([MPOB's daily PDF](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23), a new one each month). SawitSense shows it as MPOB publishes it ([ADR-002](docs/ADR-002-mpob-official-daily-price.md))
 - **Graded_OER%** — The Oil Extraction Rate your dealer/mill assigns to your FFB (typically 17-22%)
 - **Each 1% OER is worth ~RM 42+/tonne** — this is the hidden lever
 
@@ -57,13 +57,13 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region + CPO spot price (indicative since May 2026) | Done |
+| **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region (MPOB's own daily figure, at the mill gate) + CPO spot price | Done |
 | **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote. GREEN/AMBER/RED verdict. | Done |
 | **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
 | **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
 | **Share** | Phones: the phone's own share sheet. Elsewhere: copy link, WhatsApp, Facebook, X, LinkedIn or email. The plain site link, no tracking | Done |
-| **Latest from MPOB** | Links to MPOB's own news and press releases | Done |
+| **Latest from MPOB** | Links to MPOB's daily FFB reference prices (PDF), its news and its press releases | Done |
 
 ### Phase 2 (Production) — After Market Fit Confirmed
 
@@ -92,9 +92,9 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 ## Data Pipeline
 
 ```
-MPOC Daily Palm Oil Prices (CPO)  +  MPOB Prestasi Sawit (monthly OER by state)
+MPOB daily FFB reference price (PDF)  +  MPOC daily CPO price  +  MPOB monthly OER by state
     -> scraper, every 2 hours (GitHub Actions)
-    -> indicative Price_1% per region (ADR-001), labelled is_indicative
+    -> MPOB's price per 1% OER for each region, as MPOB publishes it (ADR-002)
          |
     backend/data/*.json committed to main
          |
@@ -103,7 +103,7 @@ MPOC Daily Palm Oil Prices (CPO)  +  MPOB Prestasi Sawit (monthly OER by state)
     freshness watchdog: alerts if the live site falls behind main
 ```
 
-Before May 2026 the scraper read the Daily FFB Reference Price from MPOB BEPI directly. That source now requires a licensee login.
+Before May 2026 the scraper read the Daily FFB Reference Price from MPOB BEPI, which now requires a licensee login. From May to October 2026 SawitSense showed its own estimate instead, believing MPOB's price was no longer public. Since v0.4.0 it reads MPOB's public daily PDF (ADR-002).
 
 Every screen with prices shows a data freshness badge, as the ethical framework requires: GREEN (<6h) | AMBER (6-12h) | RED (>12h), with the age in words and the exact update time. When prices can't be loaded, the app says so. It never shows demo prices.
 
@@ -115,10 +115,10 @@ Every figure SawitSense shows can be checked against a public page, or recalcula
 |---|---|
 | CPO settlement price | [MPOC Daily Palm Oil Prices](https://mpoc.org.my/daily-palm-oil-prices/) lists the same price for the same date |
 | Regional OER | [MPOB Prestasi Sawit, OER Performance](https://prestasisawit.mpob.gov.my/en/oer). Choose the month shown in the app |
-| Indicative price per 1% OER | By hand: CPO × 0.01 × 0.93. The method is in [ADR-001](docs/ADR-001-mpob-data-source-change.md) |
+| Price per 1% OER, by region | [MPOB's daily FFB reference price summary](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23) lists the same price for the same day; the app links to the current month's |
 | Every price we've published | [backend/data/](backend/data/): open data, one JSON file per day, plus `history.json`, a 60-day index |
 
-MPOB's official FFB Reference Price requires an MPOB licensee login, so it can't be linked publicly. That is why the app labels its regional prices as indicative. In the app, tap **How is this calculated?** to see the sum with today's figures.
+In the app, tap **Where do these prices come from?** for MPOB's PDF and each region's average OER. MPOB's price is at the mill gate; dealers usually pay less, for transport and their margin.
 
 ---
 

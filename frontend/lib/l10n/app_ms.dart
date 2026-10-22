@@ -39,6 +39,22 @@ const Map<String, String> msStrings = {
   'indicative_banner_learn_more': 'Ketahui lebih lanjut (ADR-001)',
   'indicative_chip': 'Indikatif',
 
+  // Harga panduan harian BTS MPOB, di pintu kilang (D22)
+  'ffb_official_source': 'Harga panduan harian MPOB, {date}',
+  'source_mpob': 'MPOB, di pintu kilang',
+  'note_miri_bintulu': 'Miri dan Bintulu',
+  'dealer_note':
+      'Harga MPOB ialah harga di pintu kilang. Peniaga biasanya membayar kurang, '
+      'untuk menampung kos pengangkutan dan margin mereka.',
+  'method_link_official': 'Dari mana harga ini?',
+  'method_title_official': 'Dari mana harga ini datang',
+  'method_official_step1_title': 'Harga panduan harian MPOB',
+  'method_official_step1_body':
+      'MPOB menerbitkan harga bagi setiap 1% OER untuk setiap wilayah pada setiap '
+      'hari dagangan, di pintu kilang. SawitSense memaparkannya seperti yang '
+      'diterbitkan oleh MPOB.',
+  'method_sarawak_note': 'Harga Sarawak MPOB adalah untuk Miri dan Bintulu.',
+
   // Cara harga dikira (helaian kaedah), dengan pautan untuk menyemaknya
   'method_link': 'Bagaimana ia dikira?',
   'method_title': 'Bagaimana harga ini dikira',
@@ -121,6 +137,7 @@ const Map<String, String> msStrings = {
 
   // Terkini daripada MPOB (D18)
   'mpob_updates_title': 'Terkini daripada MPOB',
+  'mpob_ffb_pdf': 'Harga panduan harian BTS (PDF)',
   'mpob_news': 'Berita sawit',
   'mpob_press': 'Kenyataan media MPOB',
   'mpob_links_note': 'Di laman web MPOB, dalam BM dan bahasa Inggeris.',

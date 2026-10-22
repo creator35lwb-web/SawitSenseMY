@@ -1,5 +1,6 @@
-// "Latest from MPOB" (D18): links to MPOB's own news pages, in EN, BM and
-// 中文. It names no OER month and no date (D20, K24): "Sep 2026, added on
+// "Latest from MPOB" (D18): links to MPOB's own pages (its daily FFB price
+// PDF since D22, and its news), in EN, BM and 中文. It names no OER month and
+// no date (D20, K24): "Sep 2026, added on
 // 12 Oct" read as out of date beside a fresh price, and the price per 1% OER
 // doesn't use MPOB's OER.
 //
@@ -84,10 +85,11 @@ List<String> _cardTexts(WidgetTester tester) => tester
     .toList();
 
 void main() {
-  testWidgets('shows the title, the two links and the note', (tester) async {
+  testWidgets('shows the title, the three links and the note', (tester) async {
     await _pumpDashboard(tester);
     expect(_cardTexts(tester), [
       'Latest from MPOB',
+      'Daily FFB reference prices (PDF)',
       'Palm oil news',
       'MPOB press releases',
       "On MPOB's website, in English and BM.",
@@ -108,18 +110,25 @@ void main() {
     });
   }
 
-  testWidgets("the links open MPOB's own news pages", (tester) async {
+  testWidgets("the links open MPOB's own pages", (tester) async {
     final opened = await _pumpDashboard(tester);
 
-    for (final label in ['Palm oil news', 'MPOB press releases']) {
+    for (final label in [
+      'Daily FFB reference prices (PDF)',
+      'Palm oil news',
+      'MPOB press releases',
+    ]) {
       final link = find.text(label);
       await tester.ensureVisible(link);
       await tester.tap(link);
       await tester.pumpAndSettle();
     }
 
-    expect(opened, [Uri.parse(mpobNewsUrl), Uri.parse(mpobPressUrl)]);
-    expect(opened.every((u) => u.host == 'mpob.gov.my'), isTrue);
+    // This snapshot gives no PDF link, so the card links to this month's.
+    expect(opened.first.toString(),
+        startsWith('https://price.mpob.gov.my/pdf/daily/ffb/'));
+    expect(opened.skip(1), [Uri.parse(mpobNewsUrl), Uri.parse(mpobPressUrl)]);
+    expect(opened.every((u) => u.host.endsWith('mpob.gov.my')), isTrue);
     expect(opened.every((u) => u.scheme == 'https'), isTrue);
   });
 
@@ -127,6 +136,7 @@ void main() {
     await _pumpDashboard(tester, locale: AppLocale.zh);
     expect(_cardTexts(tester), [
       'MPOB 最新消息',
+      '每日鲜果串参考价（PDF）',
       '棕油新闻',
       'MPOB 新闻稿',
       '以上链接为 MPOB 网站，内容为英文和马来文。',

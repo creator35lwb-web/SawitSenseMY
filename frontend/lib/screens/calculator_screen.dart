@@ -6,6 +6,8 @@
 // Patch: SS (Claude Code), Sep 2026 — when prices can't be loaded, say so and
 // ask for Price_1% instead of auto-filling demo values; "How is this
 // calculated?" next to the auto-filled price; form errors in every language.
+// Patch: SS (Claude Code), Oct 2026 — the benchmark is MPOB's mill-gate price,
+// so the verdict says a dealer usually pays less (D22).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -166,7 +168,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
               ),
               // Where the auto-filled price comes from, with links to check it.
               priceAsync.maybeWhen(
-                data: (snapshot) => snapshot != null && snapshot.isIndicative
+                data: (snapshot) => snapshot != null && snapshot.ffb != null
                     ? PriceMethodLink(snapshot: snapshot)
                     : const SizedBox(height: 16),
                 orElse: () => const SizedBox(height: 16),
@@ -295,6 +297,11 @@ class _ResultCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
     final locale = ref.watch(localeProvider);
+    // MPOB's own price is the mill-gate price, which a dealer's sits below.
+    final millGate = ref.watch(latestPriceProvider).maybeWhen(
+          data: (s) => s != null && !s.isIndicative && s.ffb != null,
+          orElse: () => false,
+        );
 
     return Card(
       elevation: 4,
@@ -350,6 +357,16 @@ class _ResultCard extends ConsumerWidget {
                     ),
                 textAlign: TextAlign.center,
               ),
+              if (millGate) ...[
+                const SizedBox(height: 8),
+                Text(
+                  tr('dealer_note'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ],
           ],
         ),

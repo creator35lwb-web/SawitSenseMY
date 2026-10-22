@@ -1,6 +1,8 @@
 // Regional FFB price card widget.
 //
 // Patch: SS (Claude Code), Oct 2026: region names are never cut short.
+// Patch: SS (Claude Code), Oct 2026: MPOB's official price says so in the
+// reader's language, with MPOB's note for Sarawak (D22).
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
@@ -9,7 +11,29 @@ import '../l10n/l10n_provider.dart';
 class RegionPriceCard extends ConsumerWidget {
   final RegionalPrice regionalPrice;
 
-  const RegionPriceCard({super.key, required this.regionalPrice});
+  /// The day of the prices shown together. A region priced on another day
+  /// (a holiday there only) shows its own date.
+  final String? blockDate;
+
+  const RegionPriceCard({super.key, required this.regionalPrice, this.blockDate});
+
+  /// "Source: MPOB, at the mill gate · Miri and Bintulu" for MPOB's price;
+  /// the data's own label for an estimate from before D22.
+  String _sourceLine(String Function(String) tr, AppLocale locale) {
+    if (regionalPrice.isIndicative) {
+      return '${tr('source')}: ${regionalPrice.source}';
+    }
+    final note = regionalPrice.note;
+    return [
+      '${tr('source')}: ${tr('source_mpob')}',
+      if (blockDate != null &&
+          regionalPrice.date.isNotEmpty &&
+          regionalPrice.date != blockDate)
+        localizedDate(regionalPrice.date, locale),
+      if (note != null)
+        note == 'Miri & Bintulu' ? tr('note_miri_bintulu') : note,
+    ].join(' · ');
+  }
 
   IconData _regionIcon(String region) {
     switch (region) {
@@ -83,7 +107,7 @@ class RegionPriceCard extends ConsumerWidget {
                   ),
                 ),
               Text(
-                '${tr('source')}: ${regionalPrice.source}',
+                _sourceLine(tr, locale),
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
               ),
             ],

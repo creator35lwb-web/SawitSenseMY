@@ -7,6 +7,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.4.0] - 2026-10-23
+
+### Changed
+- **The prices are MPOB's own.** Each region's price per 1% OER is now MPOB's daily FFB reference price at the mill gate, read from MPOB's public daily PDF (D22, #40).
+  - Until now SawitSense showed its own estimate, CPO × 0.01 × 0.93, the same for every region. Against MPOB's price over October it was 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (K25).
+  - The regions now differ, as MPOB's do, and choosing a region in the calculator changes the price.
+- Each region card says "MPOB, at the mill gate" in the reader's language. Sarawak's adds MPOB's note that its price is for Miri and Bintulu. A region priced on an earlier day (a holiday there only) shows its own date
+- "How is this calculated?" becomes "Where do these prices come from?", with MPOB's PDF and each region's MPOB average OER
+
+### Added
+- Under the prices, a dated link to MPOB's PDF, and a note that dealers usually pay less than the mill-gate price, for transport and their margin. The note also appears beside the Fair Price verdict
+- "Latest from MPOB" links to MPOB's daily FFB reference prices (PDF), the one today's prices were read from (Alton's request)
+- The scraper checks every figure it reads from MPOB. It warns when:
+  - MPOB's latest price is over 6 days old;
+  - a price is far from the CPO price;
+  - MPOB's Sarawak note changes.
+
+  If MPOB can't be read, the last prices stay up with their date
+
+### Removed
+- The CPO × 0.01 × 0.93 estimate (ADR-001's Track A). A snapshot from before the switch stays labelled indicative until MPOB's price replaces it
+
 ## [0.3.17] - 2026-10-23
 
 ### Added
