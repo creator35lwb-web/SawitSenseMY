@@ -261,7 +261,7 @@ class MPOBFFBScraper:
                     prices = parse_ffb_pdf(pdf, day.year, day.month, url)
                 except FFBParseError as e:
                     # Never the document's text, which could forge log lines.
-                    logger.error(f"MPOB FFB: {e} ({len(pdf)} bytes from {url})")
+                    logger.exception(f"MPOB FFB: {e} ({len(pdf)} bytes from {url})")
                     return None
                 if prices:
                     logger.info(f"MPOB FFB {prices.date_iso}: " + ", ".join(
