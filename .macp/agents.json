@@ -21,7 +21,7 @@
       "authority": "Delegated",
       "domain": "Sole active agent: debugging, maintenance and improvement across scraper, frontend and CI; steward of the project's single source of truth (PROJECT_STATUS.md, .macp/ records, ADRs, CHANGELOG, README)",
       "platform": "Claude Code (local CLI)",
-      "genesis_doc": "SS_Claude_Code_Genesis_Master_Prompt_v1.0.md",
+      "genesis_doc": "SS_Claude_Code_Genesis_Master_Prompt_v1.1.md",
       "first_session": "2026-04-12",
       "first_session_note": "Phase 0 design as SS on Claude.ai (CTO, Intelligence Tracker). First session on Claude Code: 2026-09-30.",
       "active": true,
