@@ -129,7 +129,7 @@ SawitSenseMY/
 +-- backend/               # Python data pipeline
 |   +-- scrapers/          # MPOC CPO, MPOB OER, legacy MPOB BEPI + core formula
 |   +-- writer/            # JSON writer
-|   +-- monitor/           # Health check + live-site freshness watchdog
+|   +-- monitor/           # Health check + watchdogs: live site, feedback form, vulnerabilities
 |   +-- data/              # Published price snapshots (written by the scraper)
 |   +-- tests/             # Unit tests
 |   +-- run_scraper.py     # Pipeline orchestrator

@@ -2,17 +2,17 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 22 October 2026 (health check; certifi advisory #34; scraper fixes K22/K23 #35; D19 raised) · SS (Claude Code)
+**Last updated:** 23 October 2026 (#34 and #35 verified live; D19 weekly vulnerability watchdog #36) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261022_SS_scraper-resilience.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_vulnerability-watchdog.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
->    - the OSV check on `backend/requirements.lock` (Dependabot only sees the 2 direct Python packages, D17).
+>    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
 > 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that the "Latest from MPOB" card shows both.
-> 4. After #34 and #35 merge: the next scraper runs succeed, `certifi` 2026.10.19 installs, and issue #33 is closed.
-> 5. D19 (a weekly automatic OSV check) awaits Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 4. After #36 merges: run "Vulnerability watchdog" once by hand (`gh workflow run vulnerability_watchdog.yml`) and confirm it passes on GitHub. Its first scheduled run is Monday 26 Oct, 10:23 MYT.
+> 5. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -23,7 +23,7 @@
 | Version | **0.3.16 live** (EN, BM and 中文; feedback form; Share button; "Latest from MPOB"; checked every 2 hours) |
 | Data mode | **Indicative.** Since May 2026 MPOB's Daily FFB Reference Price has been behind a licensee login ([ADR-001](docs/ADR-001-mpob-data-source-change.md)). Regional prices are derived from the MPOC daily CPO price and MPOB's monthly OER. |
 | Live site freshness | **Good, with two incidents (K22, K23).** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. From 17 to 22 Oct the prices were 88% GREEN, 12% AMBER and 0.8% RED. The RED was 68 min on 21 Oct, after a run timed out while MPOB was down (K23). Mornings (06:00–12:00 MYT) were 100% GREEN. 9–17 Oct: 90% GREEN, 0% RED. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
-| Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only. |
+| Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only, checked weekly for known vulnerabilities (D19). |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
 ### Verified in production on 30 Sep 2026
@@ -71,6 +71,11 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **#34 and #35 are live, checked after they merged** (23 Oct):
+  - A manual scraper run on the merged code (39817737419) installed `certifi` 2026.10.19 and finished in 24 s. MPOC and MPOB both answered, so the new retries and time limits weren't needed. Issue #33 closed with #35.
+  - The OSV check of the 17 locked Python packages found 0 vulnerabilities, and there are no Dependabot alerts.
+  - Feedback: with Alton's go-ahead, SS read the sheet. It still holds 1 response, the one from 16 Oct that became D18.
+  - D19 approved and built in #36.
 - **Health check, 22 Oct 2026:**
   - **Runs since 17 Oct:**
     - scraper: 2 incidents (below), otherwise all succeeded (108 of 110 since 21 Sep);
@@ -136,8 +141,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#34](https://github.com/creator35lwb-web/SawitSenseMY/pull/34) | Security: `certifi` 2026.10.19 (GHSA-6q48-6c7w-9gw2). Merge first |
-| [#35](https://github.com/creator35lwb-web/SawitSenseMY/pull/35) | Scraper: finish in time when MPOB is down, alert on a timed-out run (K23); fetch MPOC's page again when it has no price table (K22, closes #33) |
+| [#36](https://github.com/creator35lwb-web/SawitSenseMY/pull/36) | D19: a weekly vulnerability check of the 17 locked Python packages, opening a `security-alert` issue on a hit |
 
 ---
 
@@ -197,15 +201,15 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D15 | **A free Android app on Google Play,** built from the same Flutter code. It gives public ratings and reviews, plus installs, active devices and crash reports from Play Console, without adding any tracking to the app. **Alton:** a Play Console account (US$25 once, ID check, 2-step verification). A personal account must run a closed test with at least 12 testers for 14 days in a row before going public; an organization account with a D-U-N-S number is exempt. **SS:** the Android build via CI, keeping the last prices on the phone (D9 becomes simple in an installed app), a privacy page, the store listing in BM, EN and 中文, and signed builds with the upload key kept only in Actions secrets. The listing must say the app is not affiliated with MPOB or MPOC | **Open.** Alton asked for web vs store pros and cons (1 Oct). SS recommends **web first**: the live web app is good enough for now. Start the feedback loop with the form (D14) and Discussions (D16), then revisit the store when feedback shows demand, recruiting the 12 testers through it |
 | D17 | **Turn on Dependabot alerts.** GitHub then warns when a locked package gets a known vulnerability. Alerts only, with no automatic PRs: SS handles any alert through a normal PR, because the hash-locked files need a careful update. Free for public repos | **Done** (Alton approved, 2 Oct). Alerts are on and automatic fix PRs are off; 0 open alerts. GitHub watches all 67 Dart packages and the 8 workflow actions, but only the 2 Python packages named in `requirements.txt`: it can't read the hash-locked `requirements.lock`. SS covers all 17 Python packages with an OSV check each session; 0 found on 2 Oct |
 | D16 | **GitHub Discussions** for ideas and questions from the public, partners and developers. It needs a GitHub account, so it complements rather than replaces a channel for smallholders | **Done** (Alton approved, 1 Oct). Discussions are on with GitHub's default categories (Announcements, General, Ideas, Polls, Q&A, Show and tell), linked from the README |
-| D19 | **A weekly automatic vulnerability check of the Python lock file.** Dependabot reads only the 2 packages named in `requirements.txt`, not the 17 in the hash-locked `requirements.lock` (D17). So SS runs an OSV check each session, which caught the `certifi` advisory (#34) two days after it was published. A small weekly workflow, standard library only, would query OSV for all 17 packages and open a `security-alert` issue on a hit, so a gap between sessions can't hide one | **Open. Alton's call.** SS recommends yes |
+| D19 | **A weekly automatic vulnerability check of the Python lock file.** Dependabot reads only the 2 packages named in `requirements.txt`, not the 17 in the hash-locked `requirements.lock` (D17). So SS runs an OSV check each session, which caught the `certifi` advisory (#34) two days after it was published. A small weekly workflow, standard library only, would query OSV for all 17 packages and open a `security-alert` issue on a hit, so a gap between sessions can't hide one | **Done in #36** (Alton approved, 23 Oct). `.github/workflows/vulnerability_watchdog.yml` runs `backend/monitor/vulnerabilities.py` every Monday at 10:23 MYT, and on pull requests that change the lock file. It installs nothing and sends OSV only package names and versions. A hit, or a run that can't finish, opens a `security-alert` issue listing each advisory, its severity and the fixed version |
 | D18 | **MPOB updates in the app.** The first feedback (16 Oct) asked for "the latest MPOB news" to keep Sawit information up to date. SS recommends the small version: a "What's new from MPOB" line on the dashboard that says when MPOB's data in the app last changed (e.g. "September OER, released 12 Oct, is now in the prices"), plus a link to MPOB's own announcements page. SawitSense would not copy or summarise news articles: that needs checking for accuracy, raises copyright questions, and adds a source that can break | **Done in #31 (verified live, 17 Oct).** Approved by Alton on 17 Oct. The card links to MPOB's daily palm oil news round-up and its press releases |
 
 ---
 
 ## Backlog
 
-1. Security: handle any Dependabot alert in a normal PR, and run the OSV check on `requirements.lock` each session (D17).
-2. Feedback (D14): live, and watched daily (#30). Alton reads the form's responses; SS picks up anything that needs a fix. The first one became D18.
+1. Security: handle any Dependabot alert or `security-alert` issue in a normal PR. The vulnerability watchdog checks `requirements.lock` weekly (D19), and SS runs the same check each session (D17).
+2. Feedback (D14): live, and watched daily (#30). Alton reads the form's responses; SS picks up anything that needs a fix. The first one became D18. SS reads the sheet only when Alton says yes; on 23 Oct it still held that one response.
 3. A Google Play app (D15): web first, revisit when feedback shows demand. It includes keeping the last prices on the phone (D9).
 4. Optional: fold in better Chinese or Malay wording whenever a native reader suggests it. Each change is one line in `frontend/lib/l10n/`.
 

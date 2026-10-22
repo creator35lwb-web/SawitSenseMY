@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+- A weekly vulnerability watchdog for the 17 Python packages the scraper and CI install. Every Monday it checks each version pinned in `backend/requirements.lock` against the OSV database. On a hit it opens a `security-alert` issue with the advisory, its severity and the fixed version. It also runs on pull requests that change the lock file. Dependabot can't read that file (D17), so until now this check ran only in SS's sessions (D19, #36)
+
 ### Security
 - `certifi` 2026.10.19 for the scraper (GHSA-6q48-6c7w-9gw2, published 20 Oct 2026): older versions trusted a root CA whose intermediates' keys were compromised. Found by the OSV check; Dependabot can't read the hash-locked file (#34)
 
