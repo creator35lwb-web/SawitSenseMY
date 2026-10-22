@@ -110,9 +110,37 @@ class TestScraperFlow:
         assert series.latest.price_myr_per_tonne == pytest.approx(4583.0)
 
     def test_no_table_returns_none(self):
-        scraper = MPOCDailyCPOScraper()
+        scraper = MPOCDailyCPOScraper(retry_pause=0)
         with patch.object(scraper.session, "get", return_value=self._mock_response("<html><body>no tables</body></html>")):
             assert scraper.scrape() is None
+
+    def test_page_without_the_table_is_fetched_again(self):
+        # K22, 22 Oct 2026: MPOC once answered with a page that had no price
+        # table; the next fetch was fine.
+        scraper = MPOCDailyCPOScraper(retry_pause=7)
+        pages = [self._mock_response("<html><body>no tables</body></html>"),
+                 self._mock_response(self.SAMPLE_HTML)]
+        with patch("scrapers.mpoc_cpo.time.sleep") as sleep:
+            with patch.object(scraper.session, "get", side_effect=pages) as get:
+                series = scraper.scrape()
+        assert series is not None
+        assert series.latest.price_myr_per_tonne == pytest.approx(4583.0)
+        assert get.call_count == 2
+        sleep.assert_called_once_with(7)
+
+    def test_a_final_miss_logs_what_the_page_was_but_not_its_text(self, caplog):
+        newline = chr(10)
+        page = ("<html><head><title>EVIL" + newline + "ERROR forged line</title></head>"
+                "<body>Down for maintenance</body></html>")
+        scraper = MPOCDailyCPOScraper(max_retries=1, retry_pause=0)
+        with patch.object(scraper.session, "get", return_value=self._mock_response(page)):
+            assert scraper.scrape() is None
+        errors = [r.getMessage() for r in caplog.records if r.levelname == "ERROR"]
+        assert len(errors) == 1
+        assert f"{len(page)} bytes, 0 tables" in errors[0]
+        assert "a maintenance notice" in errors[0]
+        # The page's own text never reaches the log.
+        assert "EVIL" not in errors[0] and "forged" not in errors[0]
 
     def test_network_failure_returns_none(self):
         import requests

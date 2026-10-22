@@ -150,3 +150,26 @@ class TestScraperFlow:
         scraper = MPOBOERScraper(max_retries=1)
         with patch.object(scraper.session, "get", side_effect=requests.ConnectionError("boom")):
             assert scraper.scrape(year=2026, month=4) is None
+
+    def test_an_api_that_does_not_answer_is_tried_for_one_month_only(self):
+        # K23, 21 Oct 2026: trying 3 months x 3 attempts against a server that
+        # didn't answer ran past the job's 10-minute limit.
+        import requests
+        scraper = MPOBOERScraper(max_retries=2)
+        with patch.object(scraper.session, "get", side_effect=requests.ConnectTimeout("no answer")) as get:
+            assert scraper.scrape(year=2026, month=9) is None
+        assert get.call_count == 3  # 3 attempts for September, none for earlier months
+
+    def test_connecting_gives_up_in_seconds(self):
+        scraper = MPOBOERScraper()
+        with patch.object(scraper.session, "get", return_value=_resp(SAMPLE_PAYLOAD)) as get:
+            scraper.scrape(year=2026, month=8)
+        assert get.call_args.kwargs["timeout"] == (10, 30)  # (connect, read) seconds
+
+    def test_an_empty_answer_still_falls_back_to_earlier_months(self):
+        # Only a failed request stops the search; MPOB answering with nothing
+        # (JSON null) means the month isn't published yet.
+        scraper = MPOBOERScraper()
+        with patch.object(scraper.session, "get", return_value=_resp(None)) as get:
+            assert scraper.scrape(year=2026, month=9) is None
+        assert get.call_count == 3  # September, August, July

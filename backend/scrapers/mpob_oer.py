@@ -18,6 +18,8 @@ Author: QQ (Perplexity), May 2026 — recovery patch under Alton's authority
 Original SawitSense data layer authored by QQ (Qoder CSO).
 Patch: SS (Claude Code), Sep 2026 — MPOB state codes corrected (Sabah = 13,
 Sarawak = 14) and a cross-check against MPOB's published totals added.
+Patch: SS (Claude Code), Oct 2026 — when MPOB's API doesn't answer, give up
+in seconds and don't try earlier months on the same server (K23).
 """
 
 from __future__ import annotations
@@ -193,19 +195,25 @@ def _cross_check(states: list[StateOER], p0: dict) -> list[str]:
 class MPOBOERScraper:
     """MPOB Prestasi Sawit OER API client."""
 
-    def __init__(self, timeout: int = 30, max_retries: int = 2):
+    def __init__(self, timeout: int = 30, max_retries: int = 2, connect_timeout: int = 10):
         self.timeout = timeout
         self.max_retries = max_retries
+        # A server that doesn't answer at all fails in seconds, not a minute (K23).
+        self.connect_timeout = connect_timeout
         self.session = requests.Session()
         self.session.headers.update(DEFAULT_HEADERS)
 
     def fetch(self, year: int, month: int) -> Optional[dict]:
+        """One month's API response; {} if MPOB returns nothing. None only
+        when the request itself failed after every attempt."""
         params = {"year": str(year), "month": f"{month:02d}"}
         for attempt in range(self.max_retries + 1):
             try:
-                resp = self.session.get(OER_API_URL, params=params, timeout=self.timeout)
+                resp = self.session.get(
+                    OER_API_URL, params=params, timeout=(self.connect_timeout, self.timeout)
+                )
                 resp.raise_for_status()
-                return resp.json()
+                return resp.json() or {}
             except (requests.RequestException, ValueError):
                 logger.warning(
                     f"OER fetch attempt {attempt + 1} failed", exc_info=True
@@ -222,6 +230,10 @@ class MPOBOERScraper:
 
         Default month = "last full month" (MPOB publishes in arrears). If that
         month returns empty, fall back month-by-month for up to 3 months.
+        If the API doesn't answer at all, stop: the earlier months are on the
+        same server. On 21 Oct 2026 trying them anyway (3 months x 3 attempts)
+        ran past the scraper job's 10-minute limit, so even the fresh CPO price
+        was never published (K23).
         Refactored into helpers to satisfy SonarCloud python:S3776.
         """
         if year is None or month is None:
@@ -229,18 +241,19 @@ class MPOBOERScraper:
 
         for back_off in range(3):  # requested month, then 1mo, 2mo earlier
             y, m = _normalize_month(year, month - back_off)
-            snap = self._try_month(y, m)
+            payload = self.fetch(y, m)
+            if payload is None:
+                logger.error("OER scrape: MPOB's OER API is not answering; not trying earlier months")
+                return None
+            snap = self._parse_month(payload, y, m)
             if snap is not None:
                 return snap
 
         logger.error("OER scrape: no usable data in last 3 months")
         return None
 
-    def _try_month(self, year: int, month: int) -> Optional[OERSnapshot]:
-        """Fetch + parse a single month. Returns None when month is empty."""
-        payload = self.fetch(year, month)
-        if not payload:
-            return None
+    def _parse_month(self, payload: dict, year: int, month: int) -> Optional[OERSnapshot]:
+        """Parse one month's API response. Returns None when the month is empty."""
         perf = payload.get("performance_data") or []
         state_rows = payload.get("state_data") or []
         if not perf or not state_rows:
