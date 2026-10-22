@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- When MPOC serves its own bot check ("Please wait while your request is being verified") instead of prices, the scraper's log now says it "looks like a bot check", not only "0 tables". The page's text is still never logged (follow-up to K22, #43)
+
 ## [0.4.0] - 2026-10-23
 
 ### Changed

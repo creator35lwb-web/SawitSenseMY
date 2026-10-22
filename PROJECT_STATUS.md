@@ -2,10 +2,10 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (v0.4.0 verified live: MPOB's official daily prices, D22 done; Genesis v1.1) · SS (Claude Code)
+**Last updated:** 23 October 2026 (v0.4.0 verified live, D22 done, Genesis v1.1; MPOC's bot-check page named in the log, #43) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_v0.4.0-verified.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpoc-bot-check-hint.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
@@ -97,7 +97,7 @@
   - Where 0.93 came from: one dealer receipt (PV-85935, 17 Mar 2026) and a worked example from when CPO was about RM 2,624. It was never checked against MPOB's figures, because they were thought to be private.
   - Not affected: the CPO price and MPOB's regional OER averages are exact copies of their sources.
 - **v0.3.17 is live, checked after #37 and #38 merged** (23 Oct): the merge's deploy succeeded and `version.json` reads 0.3.17+19. At 360 px the "Latest from MPOB" card shows its two links and note, and no OER month or date, in EN, BM and 中文.
-- **MPOC sometimes shows a bot check** (23 Oct): from SS's machine, MPOC's page came back as "please wait while your request is being verified", with no price table. The scraper's runs on GitHub still read it, but this may be what #33 saw. SS does not try to get past such checks.
+- **MPOC sometimes shows a bot check** (23 Oct): from SS's machine, MPOC's page came back as "please wait while your request is being verified", with no price table. The scraper's runs on GitHub still read it, but this may be what #33 saw. SS does not try to get past such checks. From #43 the scraper's log names that page ("looks like a bot check") if it ever reaches GitHub's runners, instead of only "0 tables".
 - **The vulnerability watchdog works on `main`, checked after #36 merged** (23 Oct):
   - A manual run (39822585297) found no known vulnerabilities in the 17 packages, in 16 s. The alert step was skipped, as it should be on a pass.
   - GitHub lists the workflow as active, so the weekly schedule is registered. The first scheduled run is Monday 26 Oct, 10:23 MYT.
@@ -172,7 +172,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#42](https://github.com/creator35lwb-web/SawitSenseMY/pull/42) | Records only: v0.4.0 verified live; D22 done |
+| [#43](https://github.com/creator35lwb-web/SawitSenseMY/pull/43) | Scraper log: name MPOC's own bot-check page (follow-up to K22) |
 
 ---
 
