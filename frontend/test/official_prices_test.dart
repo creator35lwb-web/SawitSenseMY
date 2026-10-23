@@ -203,6 +203,9 @@ void main() {
           findsOneWidget);
       expect(find.text("MPOB's Sarawak price is for Miri and Bintulu."),
           findsOneWidget);
+      // A weekend shows the last trading day's date, and says why (D24).
+      expect(find.textContaining('no new price on Saturdays, Sundays'),
+          findsOneWidget);
       expect(find.text('2. Average OER by region (MPOB), Sep 2026'),
           findsOneWidget);
       expect(find.textContaining('0.93'), findsNothing);

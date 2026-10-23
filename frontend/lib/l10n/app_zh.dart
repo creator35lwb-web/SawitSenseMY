@@ -50,6 +50,8 @@ const Map<String, String> zhStrings = {
   'method_official_step1_title': 'MPOB 每日参考价',
   'method_official_step1_body':
       'MPOB 在每个交易日公布各地区每 1% 出油率的厂门价。SawitSense 照 MPOB 公布的价格显示。',
+  'method_official_timing': 'MPOB 在交易日约中午 12 点公布价格。星期六、星期日和公共假期没有新价格，'
+      '因此 SawitSense 会显示上一个交易日的价格及其日期。',
   'method_sarawak_note': 'MPOB 的砂拉越价格适用于美里和民都鲁。',
 
   // 价格计算方法（说明页），附上可供核对的链接
