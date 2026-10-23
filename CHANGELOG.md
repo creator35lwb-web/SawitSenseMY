@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **MPOB's PDF link carries the date of the prices it backs** (K27). MPOB serves the whole month's summary at any day's address and names every day's file in a month the same. The link used the run's date, so in the morning, before MPOB's noon update, it already had the day's address and kept it after noon. A phone could then open an earlier copy, without the day MPOB had just added. Alton saw the PDF end on 22 Oct while the site showed 23 Oct.
+
 ## [0.4.1] - 2026-10-23
 
 ### Added

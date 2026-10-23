@@ -24,7 +24,7 @@ Author: SS (Claude Code), Oct 2026
 import logging
 import re
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
@@ -293,6 +293,11 @@ class MPOBFFBScraper:
             # tried then (K23); only a month without prices falls back.
             status, prices = self._read(today.replace(day=1) - timedelta(days=1))
         if status == "ok":
+            # The link carries the prices' own date. MPOB serves the whole
+            # month at any day's address, so a link dated by the run would
+            # stay the same while MPOB adds a day at noon, and a phone could
+            # show an earlier copy of it.
+            prices = replace(prices, source_url=FFB_PDF_URL.format(day=prices.date_iso))
             logger.info(f"MPOB FFB {prices.date_iso}: " + ", ".join(
                 f"{region} {price:.2f}" for region, price in prices.prices.items()))
             return prices
