@@ -94,6 +94,14 @@ const Map<String, String> enStrings = {
   'calc_fair_price': 'Fair Price',
   'calc_verdict': 'Verdict',
   'calc_gap': 'Gap',
+  'calc_mill_gate_value': 'Mill-gate value of your fruit (MPOB)',
+  'calc_oer_step': 'Each 0.25% of OER is worth RM {rm} a tonne at this price.',
+  'calc_target_title': 'Target to negotiate towards',
+  'calc_target': 'RM {rm} a tonne or more',
+  'calc_target_note':
+      'Within {pct}% of the price above, which leaves the dealer room for '
+      "transport and margin. This is SawitSense's guide, not an MPOB figure.",
+  'calc_short_of_target': 'RM {rm} more a tonne would reach the target.',
   'calc_oer_tip': 'Each 1% OER = ~RM 42+/tonne difference',
   'calc_prices_unavailable':
       "Today's prices can't be loaded. Enter the price per 1% OER from your "

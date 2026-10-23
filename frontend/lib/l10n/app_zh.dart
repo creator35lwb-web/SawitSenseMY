@@ -91,6 +91,13 @@ const Map<String, String> zhStrings = {
   'calc_fair_price': '公平价格',
   'calc_verdict': '评估结果',
   'calc_gap': '差距',
+  'calc_mill_gate_value': '您的果串在厂门的价值（MPOB）',
+  'calc_oer_step': '按此价格，出油率每 0.25% 值每公吨 RM {rm}。',
+  'calc_target_title': '议价目标',
+  'calc_target': '每公吨 RM {rm} 或以上',
+  'calc_target_note': '与上方价格相差 {pct}% 以内，为收购商留出运输费和利润的空间。'
+      '这是 SawitSense 的参考，并非 MPOB 的数字。',
+  'calc_short_of_target': '每公吨再多 RM {rm} 即可达到目标。',
   'calc_oer_tip': '出油率每差 1%，每公吨差 RM 42 以上',
   'calc_prices_unavailable':
       '无法加载今日价格。请根据您的收据或 MPOB 通告，输入每 1% 出油率的价格。',

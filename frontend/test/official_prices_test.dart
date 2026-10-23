@@ -229,5 +229,47 @@ void main() {
       expect(find.text('GREEN'), findsOneWidget);
       expect(find.text(enStrings['dealer_note']!), findsOneWidget);
     });
+
+    Future<void> enterReceipt(WidgetTester tester) async {
+      // A reader's receipt: 17.25% OER, RM 750, against MPOB North.
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.at(0), '47.82');
+      await tester.enterText(fields.at(1), '17.25');
+      await tester.enterText(fields.at(2), '750');
+      await _tap(tester, find.text('Calculate'));
+    }
+
+    testWidgets('a target to negotiate towards, labelled as our guide (D23)',
+        (tester) async {
+      await _pump(tester, const CalculatorScreen());
+      await enterReceipt(tester);
+
+      expect(find.text('Mill-gate value of your fruit (MPOB)'), findsOneWidget);
+      expect(find.text('RM 824.90'), findsOneWidget);
+      expect(find.text('47.82 x 17.25% OER'), findsOneWidget);
+      expect(
+          find.text('Each 0.25% of OER is worth RM 11.96 a tonne at this price.'),
+          findsOneWidget);
+      expect(find.text('RM 784 a tonne or more'), findsOneWidget);
+      expect(find.textContaining("SawitSense's guide, not an MPOB figure"),
+          findsOneWidget);
+      expect(find.text('AMBER'), findsOneWidget);
+      expect(find.text('Gap: RM -74.90 (-9.1%)'), findsOneWidget);
+      expect(find.text('RM 34 more a tonne would reach the target.'),
+          findsOneWidget);
+    });
+
+    testWidgets('the target in BM', (tester) async {
+      await _pump(tester, const CalculatorScreen(), locale: AppLocale.ms);
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.at(0), '47.82');
+      await tester.enterText(fields.at(1), '17.25');
+      await tester.enterText(fields.at(2), '750');
+      await _tap(tester, find.text('Kira'));
+
+      expect(find.text('RM 784 setan atau lebih'), findsOneWidget);
+      expect(find.text('Tambahan RM 34 setan akan mencapai sasaran.'),
+          findsOneWidget);
+    });
   });
 }
