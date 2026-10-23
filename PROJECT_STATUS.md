@@ -2,10 +2,10 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (v0.4.0 verified live, D22 done, Genesis v1.1; MPOB's month start handled, K26, #44) · SS (Claude Code)
+**Last updated:** 23 October 2026 (#44 verified; MPOB's first automatic daily update; D23 raised: a negotiable price) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpob-month-start.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_d23-negotiable-price.md`.
 > 2. Routine checks:
 >    - open issues and PRs;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
@@ -15,7 +15,8 @@
 > 5. MPOB's daily updates, in the first days:
 >    - after MPOB's update each trading day (about noon), the live `ffb.date` should move to that day, with no warnings;
 >    - on 1 November, until MPOB publishes November's first price, the runs should use October's last prices without an alert. MPOB's server answers 500 for that month until then (K26).
-> 6. A native reader's check of the new BM and 中文 wording for MPOB's price (D22) would be welcome. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 6. **D23 is open** (a negotiable price for readers). Build only what Alton approves.
+> 7. A native reader's check of the new BM and 中文 wording for MPOB's price (D22) would be welcome. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -74,6 +75,9 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **#44 and MPOB's daily update, checked** (23 Oct):
+  - **#44 on GitHub:** SS ran the scraper by hand on the merged code (39853068658, 28 s). It read MPOB's 22 Oct prices with no warnings, and its deploy succeeded.
+  - **First automatic update:** the scheduled run at 15:24 MYT (39917527743) read MPOB's 23 Oct prices, and its deploy succeeded. Live: North 47.87, South 48.25, Central 48.17, East Coast 48.13, Sabah 43.11, Sarawak 43.53; `OFFICIAL`, no warnings.
 - **v0.4.0 is live, checked after #40 and #41 merged** (23 Oct):
   - **App:** the merge's deploy succeeded, and `version.json` reads 0.4.0+20.
   - **First official scraper run:** SS started one by hand (39848295788), the same job the schedule runs; it took 26 s.
@@ -172,7 +176,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| [#44](https://github.com/creator35lwb-web/SawitSenseMY/pull/44) | MPOB's month start: a 500 early in a month falls back to last month's PDF, and an older read never replaces newer prices (K26) |
+| This PR | Records only: #44 checked, MPOB's first automatic daily update, D23 raised |
 
 ---
 
@@ -241,6 +245,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D20 | **The OER line on "Latest from MPOB".** Alton (23 Oct): "OER for Sep 2026 … added on 12 Oct" may read as outdated or misleading; should the card mention no date? SS checked, and the line was also untrue (K24): the dashboard's prices per 1% OER don't use MPOB's OER. Dropping only the dates would leave an untrue line, so SS recommends removing the sentence. The card keeps MPOB's news links, and the OER month stays in "How is this calculated?", where it is used and can be checked against MPOB's page | **Done in #38 (verified live, 23 Oct).** Alton approved it by merging. The scraper still records `oer.in_app_since` in the open data |
 | D21 | **Say exactly what the prices are made from.** The banner says regional prices "are derived from MPOC daily CPO settlement and MPOB monthly OER", and every region card says "Source: Derived (MPOC CPO × MPOB OER)", in English even in BM and 中文. But the price per 1% OER is the same in every region and comes from MPOC's CPO price alone (CPO × 0.01 × 0.93). MPOB's OER only gives the regional averages in "How is this calculated?". Six identical prices, each labelled with MPOB's regional OER, invite the question why they don't differ. SS recommends that the banner say the prices come from MPOC's daily CPO price, and that each card's source line say "MPOC CPO price" in the reader's language. The new BM and 中文 wording needs a native reader's check | **Superseded by D22 (#40).** With MPOB's own prices the banner no longer shows, and each card says "MPOB, at the mill gate" in the reader's language |
 | D22 | **Show MPOB's official daily FFB reference price instead of the estimate (K25).** MPOB publishes its daily price per 1% OER for each region, at the mill gate, as a public PDF. The scraper would read it after MPOB's daily update and check every figure. The dashboard and the calculator would then show MPOB's regional prices, each with its date and a link to MPOB's PDF, so readers can check them. The 0.93 estimate would be retired; on a day MPOB hasn't published, the last official prices stay with their date (K7). The Fair Price verdict would need a note that dealers' prices sit below the mill-gate price by their transport and margin. MPOB's disclaimer has no reuse terms. The page shows © MPOB, and the PDF lists MPOB staff to contact, so Alton may wish to tell MPOB, or ask first. The new wording in BM and 中文 needs a native reader's check | **Done in #40 (verified live, 23 Oct).** Alton approved on 23 Oct. MPOB's daily PDF is read with the standard library and every figure checked; the estimate is retired. The app links to MPOB's PDF under the prices and, as Alton asked, in "Latest from MPOB". See [ADR-002](docs/ADR-002-mpob-official-daily-price.md) |
+| D23 | **A negotiable price for readers.** Alton (23 Oct, by the feedback form and in chat): MPOB's price is at the mill gate, but smallholders mostly sell to licensed dealers, so readers need a price they can negotiate towards that leaves the dealer a margin. A chat with another AI suggested a fixed dealer margin of RM 45–70 a tonne in the Peninsula and RM 35–55 in Sabah and Sarawak. SS found no published source for any dealer margin: MPOB's two journal articles on dealers (2001, 2009) give no figure, and none was found saying MPOB sets one. A made-up margin shown as "fair" could become a ceiling dealers quote back at readers. SS recommends showing, in the calculator, what can be checked: the mill-gate price for the reader's OER, the gap to the dealer's offer in RM and %, what each 0.25% of OER is worth, and the existing 5% band as an RM target, labelled as SawitSense's guide, not MPOB's. The thresholds stay Alton's call | **Open.** Waiting for Alton |
 
 ---
 
