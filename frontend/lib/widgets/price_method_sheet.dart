@@ -7,7 +7,8 @@
 // as a sum anyone can redo, and why all six regions show the same price.
 //
 // Author: SS (Claude Code), Sep 2026
-// Patch: SS (Claude Code), Oct 2026 — MPOB's official prices (D22).
+// Patch: SS (Claude Code), Oct 2026 — MPOB's official prices (D22); when MPOB
+// publishes, and why a weekend shows the last trading day's date (D24).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,6 +100,10 @@ class PriceMethodSheet extends ConsumerWidget {
               heading('1. ${tr('method_official_step1_title')}, '
                   '${localizedDate(official.date, locale)}'),
               Text(tr('method_official_step1_body')),
+              // On a weekend or holiday the date shown is the last trading
+              // day's, which is MPOB's latest price, not a stale one (D24).
+              const SizedBox(height: 6),
+              Text(tr('method_official_timing')),
               SourceLink(
                 label: tr('mpob_ffb_pdf'),
                 url: official.sourceUrl ?? mpobFfbPdfUrl(DateTime.now()),

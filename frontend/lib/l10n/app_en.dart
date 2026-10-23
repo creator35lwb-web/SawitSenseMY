@@ -51,6 +51,10 @@ const Map<String, String> enStrings = {
   'method_official_step1_body':
       'MPOB publishes a price per 1% OER for each region on every trading day, '
       'at the mill gate. SawitSense shows it as MPOB publishes it.',
+  'method_official_timing':
+      'MPOB publishes at about noon on trading days. There is no new price on '
+      "Saturdays, Sundays or public holidays, so SawitSense shows the last "
+      "trading day's price, with its date.",
   'method_sarawak_note': "MPOB's Sarawak price is for Miri and Bintulu.",
 
   // How the prices are calculated (method sheet), with links to check them

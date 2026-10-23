@@ -53,6 +53,10 @@ const Map<String, String> msStrings = {
       'MPOB menerbitkan harga bagi setiap 1% OER untuk setiap wilayah pada setiap '
       'hari dagangan, di pintu kilang. SawitSense memaparkannya seperti yang '
       'diterbitkan oleh MPOB.',
+  'method_official_timing':
+      'MPOB menerbitkan harga sekitar tengah hari pada hari dagangan. Tiada harga '
+      'baharu pada hari Sabtu, Ahad atau cuti umum, jadi SawitSense memaparkan '
+      'harga hari dagangan terakhir, bersama tarikhnya.',
   'method_sarawak_note': 'Harga Sarawak MPOB adalah untuk Miri dan Bintulu.',
 
   // Cara harga dikira (helaian kaedah), dengan pautan untuk menyemaknya
