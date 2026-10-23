@@ -96,6 +96,15 @@ const Map<String, String> msStrings = {
   'calc_fair_price': 'Harga Adil',
   'calc_verdict': 'Keputusan',
   'calc_gap': 'Jurang',
+  'calc_mill_gate_value': 'Nilai buah anda di pintu kilang (MPOB)',
+  'calc_oer_step': 'Setiap 0.25% OER bernilai RM {rm} setan pada harga ini.',
+  'calc_target_title': 'Sasaran untuk dirunding',
+  'calc_target': 'RM {rm} setan atau lebih',
+  'calc_target_note':
+      'Dalam lingkungan {pct}% daripada harga di atas, yang memberi ruang kepada '
+      'peniaga untuk kos pengangkutan dan margin. Ini panduan SawitSense, '
+      'bukan angka MPOB.',
+  'calc_short_of_target': 'Tambahan RM {rm} setan akan mencapai sasaran.',
   'calc_oer_tip': 'Setiap 1% OER = ~RM 42+/tan perbezaan',
   'calc_prices_unavailable':
       'Harga hari ini tidak dapat dimuatkan. Masukkan harga per 1% OER daripada '

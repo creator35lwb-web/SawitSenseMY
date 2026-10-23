@@ -8,6 +8,9 @@
 // calculated?" next to the auto-filled price; form errors in every language.
 // Patch: SS (Claude Code), Oct 2026 — the benchmark is MPOB's mill-gate price,
 // so the verdict says a dealer usually pays less (D22).
+// Patch: SS (Claude Code), Oct 2026 — a target to negotiate towards, from the
+// verdict's green band rather than a made-up dealer margin, and what each
+// 0.25% of OER is worth (D23).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -289,6 +292,16 @@ class _ManualEntryNote extends ConsumerWidget {
   }
 }
 
+/// A number as a receipt would print it: 17.25 stays 17.25, 784.0 is 784.
+String _plain(double value) {
+  final s = value.toStringAsFixed(2);
+  return s.endsWith('.00')
+      ? s.substring(0, s.length - 3)
+      : s.endsWith('0')
+          ? s.substring(0, s.length - 1)
+          : s;
+}
+
 class _ResultCard extends ConsumerWidget {
   final FairPriceResult result;
   const _ResultCard({required this.result});
@@ -310,12 +323,13 @@ class _ResultCard extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // Fair price
+            // Fair price, which with MPOB's price is the mill-gate value
             Text(
-              tr('calc_fair_price'),
+              tr(millGate ? 'calc_mill_gate_value' : 'calc_fair_price'),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Colors.grey.shade600,
                   ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
             Text(
@@ -327,10 +341,46 @@ class _ResultCard extends ConsumerWidget {
             ),
             Text(
               '${result.price1PctOer.toStringAsFixed(2)} x '
-              '${result.gradedOer.toStringAsFixed(1)}% ${tr('oer')}',
+              '${_plain(result.gradedOer)}% ${tr('oer')}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey.shade500,
                   ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              tr('calc_oer_step').replaceAll(
+                  '{rm}', result.valuePerQuarterOer.toStringAsFixed(2)),
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+
+            // Target to negotiate towards: the edge of the green band
+            const Divider(),
+            const SizedBox(height: 12),
+            Text(
+              tr('calc_target_title'),
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              tr('calc_target').replaceAll('{rm}', _plain(result.targetPrice)),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              tr('calc_target_note').replaceAll(
+                  '{pct}', _plain(FairPriceResult.greenBandPct)),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
 
@@ -344,6 +394,17 @@ class _ResultCard extends ConsumerWidget {
                 '${tr('calc_gap')}: RM ${result.gapRm?.toStringAsFixed(2)} (${result.gapPct?.toStringAsFixed(1)}%)',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
+              if (result.shortOfTarget != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  tr('calc_short_of_target')
+                      .replaceAll('{rm}', _plain(result.shortOfTarget!)),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
               const SizedBox(height: 8),
               Text(
                 result.verdict == 'GREEN'

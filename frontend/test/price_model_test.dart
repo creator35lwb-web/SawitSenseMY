@@ -45,6 +45,59 @@ void main() {
     });
   });
 
+  group('Negotiation target (D23)', () {
+    // A reader's receipt: 17.25% OER, RM 750, against MPOB North on 22 Oct.
+    final receipt = FairPriceResult.calculate(
+      price1PctOer: 47.82,
+      gradedOer: 17.25,
+      paidPrice: 750.0,
+    );
+
+    test('a half cent rounds up, as by hand: 47.82 x 17.25 = 824.90', () {
+      expect(receipt.fairPrice, 824.90);
+    });
+
+    test('the target is the green edge, in whole ringgit, rounded up', () {
+      // 95% of 824.90 is 783.66.
+      expect(receipt.targetPrice, 784.0);
+    });
+
+    test('an offer at the target is GREEN', () {
+      final atTarget = FairPriceResult.calculate(
+        price1PctOer: 47.82,
+        gradedOer: 17.25,
+        paidPrice: receipt.targetPrice,
+      );
+      expect(atTarget.verdict, 'GREEN');
+    });
+
+    test('each 0.25% of OER is worth a quarter of the price per 1%', () {
+      expect(receipt.valuePerQuarterOer, 11.96);
+    });
+
+    test('the receipt falls RM 34 short of the target', () {
+      expect(receipt.verdict, 'AMBER');
+      expect(receipt.shortOfTarget, 34.0);
+    });
+
+    test('nothing is short without a paid price', () {
+      final noPaid =
+          FairPriceResult.calculate(price1PctOer: 47.82, gradedOer: 17.25);
+      expect(noPaid.shortOfTarget, isNull);
+    });
+
+    test('nothing is short when GREEN only because of rounding up', () {
+      // 783.70 is within 5% of 824.90, though below the RM 784 target.
+      final green = FairPriceResult.calculate(
+        price1PctOer: 47.82,
+        gradedOer: 17.25,
+        paidPrice: 783.70,
+      );
+      expect(green.verdict, 'GREEN');
+      expect(green.shortOfTarget, isNull);
+    });
+  });
+
   group('Verdict logic', () {
     test('GREEN: paid within 5% of fair', () {
       final result = FairPriceResult.calculate(

@@ -7,9 +7,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [0.4.1] - 2026-10-23
+
+### Added
+- **A target to negotiate towards** in the Fair Price calculator (D23). Smallholders mostly sell to licensed dealers, who pay below MPOB's mill-gate price. No dealer margin is published, so the target isn't a made-up margin:
+  - it is the lowest offer within 5% of the mill-gate price (the verdict's green band), in whole ringgit, labelled as SawitSense's guide, not an MPOB figure;
+  - with a price paid, the calculator says how much more a tonne would reach the target;
+  - it also says what each 0.25% of OER is worth at the price, since grading is where an offer is often lost.
+- With MPOB's price, the result is labelled "Mill-gate value of your fruit (MPOB)" instead of "Fair Price".
 
 ### Fixed
+- The calculator showed a receipt's 17.25% OER as 17.3%; it now shows it as entered. 47.82 × 17.25 now gives RM 824.90, rounded as by hand, not RM 824.89.
 - When MPOC serves its own bot check ("Please wait while your request is being verified") instead of prices, the scraper's log now says it "looks like a bot check", not only "0 tables". The page's text is still never logged (follow-up to K22, #43)
 - **The start of each month.** MPOB's server answers HTTP 500 for a month it has no prices for yet, which the scraper took to mean MPOB was down. From 1 November every run would have raised a false alert until MPOB's first November price. Now (K26, #44):
   - in a month's first 7 days, the scraper uses last month's last prices;

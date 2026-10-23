@@ -208,7 +208,14 @@ class PriceSnapshot {
 
 /// Fair price calculation — mirrors backend calculate_fair_price().
 /// Formula: Price/mt = Price_1% x Graded_OER%
+///
+/// D23: no dealer margin is published, so the negotiation target is the
+/// verdict's own green band, in ringgit, rather than a made-up margin.
 class FairPriceResult {
+  /// An offer within this % of the benchmark is GREEN; the target is its edge.
+  static const greenBandPct = 5.0;
+
+
   final double price1PctOer;
   final double gradedOer;
   final double fairPrice;
@@ -232,8 +239,13 @@ class FairPriceResult {
     required double gradedOer,
     double? paidPrice,
   }) {
-    final fairPrice =
-        double.parse((price1PctOer * gradedOer).toStringAsFixed(2));
+    // In whole cents and hundredths of a percent, so 47.82 × 17.25 = 824.895
+    // rounds to 824.90 as it would by hand, not to binary's 824.89.
+    final fairPrice = ((price1PctOer * 100).round() *
+                (gradedOer * 100).round() /
+                100)
+            .round() /
+        100;
 
     String? verdict;
     double? gapRm;
@@ -243,7 +255,7 @@ class FairPriceResult {
       gapRm = double.parse((paidPrice - fairPrice).toStringAsFixed(2));
       gapPct = double.parse(((gapRm / fairPrice) * 100).toStringAsFixed(2));
 
-      if (gapPct >= -5) {
+      if (gapPct >= -greenBandPct) {
         verdict = 'GREEN';
       } else if (gapPct >= -15) {
         verdict = 'AMBER';
@@ -262,6 +274,21 @@ class FairPriceResult {
       gapPct: gapPct,
     );
   }
+
+  /// The lowest whole-ringgit offer that is still GREEN: the benchmark less
+  /// the green band, rounded to cents and then up.
+  double get targetPrice =>
+      ((fairPrice * (100 - greenBandPct)).round() / 100).ceilToDouble();
+
+  /// What a quarter of a percentage point of OER is worth per tonne.
+  double get valuePerQuarterOer => (price1PctOer * 25).round() / 100;
+
+  /// How far a paid price falls short of the target; null when it doesn't,
+  /// or when it is GREEN only because the target was rounded up.
+  double? get shortOfTarget =>
+      paidPrice != null && verdict != 'GREEN' && paidPrice! < targetPrice
+      ? ((targetPrice - paidPrice!) * 100).round() / 100
+      : null;
 }
 
 /// Historical price entry for chart data.
