@@ -174,6 +174,21 @@ class TestScraper:
         assert url == "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23"
         assert kwargs["timeout"] == (10, 30)
 
+    def test_the_link_carries_the_prices_own_date(self):
+        # Before MPOB's noon update on the 23rd the latest prices are the
+        # 22nd's. A link dated the 23rd would then stay the same after noon,
+        # when MPOB adds the 23rd, and a phone could show the earlier copy.
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", return_value=_response(content=_pdf())):
+            prices = scraper.scrape(today=date(2026, 10, 23))
+        assert prices.source_url == "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-22"
+
+    def test_early_in_a_month_the_link_is_last_months_last_prices(self):
+        scraper = MPOBFFBScraper()
+        with patch.object(scraper.session, "get", side_effect=[_response(404), _response(content=_pdf())]):
+            prices = scraper.scrape(today=date(2026, 11, 1))
+        assert prices.source_url == "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-22"
+
     def test_early_in_a_month_last_months_prices_are_used(self):
         empty_november = _pdf(table=[["1", "PH", "PH", "PH", "PH", "PH", "PH"]], month="NOVEMBER 2026")
         scraper = MPOBFFBScraper()

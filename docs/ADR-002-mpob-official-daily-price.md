@@ -50,6 +50,7 @@ SawitSense shows MPOB's own daily price per 1% OER for each region, as MPOB publ
 - **In the app:**
   - each region card says "MPOB, at the mill gate", in the reader's language. Sarawak's adds "Miri and Bintulu", MPOB's footnote;
   - under the prices, a dated link opens MPOB's PDF, with a note that dealers usually pay less than the mill-gate price, for transport and their margin;
+    - the link's address carries the date of the prices it backs (K27). MPOB serves the whole month's summary at any day's address, and names every day's file in a month the same (`daily_ffb_102026.pdf`). A link dated by the run stayed the same address while MPOB added a day at noon, so a phone could show an earlier copy;
   - "Where do these prices come from?" explains the source;
   - "Latest from MPOB" links to the same PDF;
   - the calculator's verdict keeps its thresholds and shows the dealer note.
@@ -71,7 +72,7 @@ SawitSense shows MPOB's own daily price per 1% OER for each region, as MPOB publ
   ],
   "unit": "RM per tonne of FFB per 1% OER, at the mill gate",
   "source": "MPOB Daily FFB Reference Price (mill gate)",
-  "source_url": "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23",
+  "source_url": "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-22",
   "mpob_last_update": "2026-10-22T12:00:00+08:00",
   "is_indicative": false
 }
