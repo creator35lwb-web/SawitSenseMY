@@ -1,0 +1,237 @@
+{
+  "scraped_at": "2026-10-30T13:39:05.302389+08:00",
+  "updated_at": "2026-10-30T13:39:05.302774+08:00",
+  "success": true,
+  "data_source_version": "0.4-mpob-daily",
+  "formula_status": "OFFICIAL",
+  "is_indicative": false,
+  "indicative_notice": null,
+  "cpo": {
+    "date": "2026-10-29",
+    "date_raw": "29 Oct 26",
+    "price_myr_per_tonne": 4616.0,
+    "source": "MPOC Daily Palm Oil Prices",
+    "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
+    "scraped_at": "2026-10-30T13:39:02.651783+08:00"
+  },
+  "ffb": {
+    "date": "2026-10-30",
+    "regions": [
+      {
+        "region": "North",
+        "date": "2026-10-30",
+        "price_1pct_oer": 47.0,
+        "avg_oer_pct": 19.89,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false
+      },
+      {
+        "region": "South",
+        "date": "2026-10-30",
+        "price_1pct_oer": 47.15,
+        "avg_oer_pct": 20.28,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false
+      },
+      {
+        "region": "Central",
+        "date": "2026-10-30",
+        "price_1pct_oer": 47.13,
+        "avg_oer_pct": 19.66,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false
+      },
+      {
+        "region": "East Coast",
+        "date": "2026-10-30",
+        "price_1pct_oer": 47.01,
+        "avg_oer_pct": 19.87,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false
+      },
+      {
+        "region": "Sabah",
+        "date": "2026-10-30",
+        "price_1pct_oer": 42.17,
+        "avg_oer_pct": 21.25,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false
+      },
+      {
+        "region": "Sarawak",
+        "date": "2026-10-30",
+        "price_1pct_oer": 42.59,
+        "avg_oer_pct": 19.96,
+        "source": "MPOB Daily FFB Reference Price (mill gate)",
+        "is_indicative": false,
+        "note": "Miri & Bintulu"
+      }
+    ],
+    "unit": "RM per tonne of FFB per 1% OER, at the mill gate",
+    "source": "MPOB Daily FFB Reference Price (mill gate)",
+    "source_url": "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-30",
+    "mpob_last_update": "2026-10-30T12:00:00+08:00",
+    "is_indicative": false,
+    "scraped_at": "2026-10-30T13:39:05.300741+08:00"
+  },
+  "oer": {
+    "year": 2026,
+    "month": 9,
+    "oer_malaysia": 20.26,
+    "oer_peninsular": 20.01,
+    "oer_sabah": 21.25,
+    "oer_sarawak": 19.96,
+    "mill_count": 449,
+    "region_avg": {
+      "South": 20.28,
+      "North": 19.89,
+      "East Coast": 19.87,
+      "Central": 19.66,
+      "Sabah": 21.25,
+      "Sarawak": 19.96
+    },
+    "states": [
+      {
+        "state_code": "01",
+        "state_name": "Johor",
+        "region": "South",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.32,
+        "oer_cpko": 46.58,
+        "cpo_proc_tonnes": 336906.38,
+        "ffb_proc_tonnes": 1658081.5
+      },
+      {
+        "state_code": "02",
+        "state_name": "Kedah",
+        "region": "North",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.5,
+        "oer_cpko": 0.0,
+        "cpo_proc_tonnes": 23960.63,
+        "ffb_proc_tonnes": 116909.29
+      },
+      {
+        "state_code": "03",
+        "state_name": "Kelantan",
+        "region": "East Coast",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.87,
+        "oer_cpko": 0.0,
+        "cpo_proc_tonnes": 40051.28,
+        "ffb_proc_tonnes": 191949.81
+      },
+      {
+        "state_code": "04",
+        "state_name": "Melaka",
+        "region": "South",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.84,
+        "oer_cpko": 48.0,
+        "cpo_proc_tonnes": 11314.91,
+        "ffb_proc_tonnes": 54296.2
+      },
+      {
+        "state_code": "05",
+        "state_name": "Negeri Sembilan",
+        "region": "South",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.0,
+        "oer_cpko": 44.0,
+        "cpo_proc_tonnes": 76471.48,
+        "ffb_proc_tonnes": 382340.44
+      },
+      {
+        "state_code": "06",
+        "state_name": "Pahang",
+        "region": "East Coast",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 19.72,
+        "oer_cpko": 47.43,
+        "cpo_proc_tonnes": 335183.22,
+        "ffb_proc_tonnes": 1699778.75
+      },
+      {
+        "state_code": "07",
+        "state_name": "Perak",
+        "region": "North",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 19.8,
+        "oer_cpko": 46.49,
+        "cpo_proc_tonnes": 198123.66,
+        "ffb_proc_tonnes": 1000394.0
+      },
+      {
+        "state_code": "09",
+        "state_name": "Pulau Pinang",
+        "region": "North",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.2,
+        "oer_cpko": 0.0,
+        "cpo_proc_tonnes": 12392.18,
+        "ffb_proc_tonnes": 61358.36
+      },
+      {
+        "state_code": "10",
+        "state_name": "Selangor",
+        "region": "Central",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 19.66,
+        "oer_cpko": 45.79,
+        "cpo_proc_tonnes": 58891.22,
+        "ffb_proc_tonnes": 299525.88
+      },
+      {
+        "state_code": "11",
+        "state_name": "Terengganu",
+        "region": "East Coast",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 20.12,
+        "oer_cpko": 0.0,
+        "cpo_proc_tonnes": 58809.88,
+        "ffb_proc_tonnes": 292359.44
+      },
+      {
+        "state_code": "13",
+        "state_name": "Sabah",
+        "region": "Sabah",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 21.25,
+        "oer_cpko": 46.29,
+        "cpo_proc_tonnes": 457760.25,
+        "ffb_proc_tonnes": 2153861.25
+      },
+      {
+        "state_code": "14",
+        "state_name": "Sarawak",
+        "region": "Sarawak",
+        "year": "2026",
+        "month": "09",
+        "oer_cpo": 19.96,
+        "oer_cpko": 45.25,
+        "cpo_proc_tonnes": 507086.25,
+        "ffb_proc_tonnes": 2540059.5
+      }
+    ],
+    "source": "MPOB Prestasi Sawit (api/oer)",
+    "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
+    "source_page_url": "https://prestasisawit.mpob.gov.my/en/oer",
+    "scraped_at": "2026-10-30T13:39:04.009859+08:00",
+    "in_app_since": "2026-10-12"
+  },
+  "fallback_used": false,
+  "legacy_bepi_attempted": true,
+  "legacy_bepi_success": false,
+  "warnings": []
+}
