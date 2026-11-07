@@ -1,7 +1,7 @@
 {
   "consecutive_failures": 0,
-  "last_success": "2026-11-08T00:23:11.835535+08:00",
+  "last_success": "2026-11-08T05:44:53.751381+08:00",
   "last_failure": "2026-11-07T16:42:42.031658+08:00",
-  "total_runs": 350,
+  "total_runs": 351,
   "last_error": "No CPO price this run; last good snapshot kept"
 }
