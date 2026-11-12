@@ -7,7 +7,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
-## [Unreleased]
+## [0.5.0] - 2026-11-12
+
+### Added
+- **MPOB's price history, by region** (D26). The History tab now opens on MPOB's daily price per 1% OER for a region over the last 30 days, with a chip for each region, a chart, and a table of every trading day with its change from the day before. The CPO history is one tap away. Until now the tab showed MPOC's CPO price only, which ended days before the dashboard's prices whenever MPOC was behind.
+- `history.json` gains `ffb_days`: MPOB's price for each region on each trading day, read from the same monthly PDF as the daily prices. A day MPOB adds or corrects later is picked up on the next run.
 
 ### Changed
 - **A repeat failure is reported again** (D25). Each workflow's alert step skipped filing while an alert issue of its kind was open, so a later failure told nobody. On 10 Nov the scraper failed while the alert from 7 Nov was still open. Now the step adds a comment to the open issue, with the run's link, in all five workflows: scraper, deploy, freshness, feedback form and vulnerability.
