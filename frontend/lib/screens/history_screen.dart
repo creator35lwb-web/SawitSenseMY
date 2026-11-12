@@ -118,28 +118,27 @@ class HistoryScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (available.length > 1) ...[
-            Center(
-              child: SegmentedButton<HistorySeries>(
-                showSelectedIcon: false,
-                // One line each: left to wrap, a label is sized to its
-                // longest word and cut off ("MPOB / price" at 360 px).
-                segments: [
-                  ButtonSegment(
-                    value: HistorySeries.mpob,
-                    label: Text(tr('history_series_mpob'),
-                        maxLines: 1, softWrap: false),
-                  ),
-                  ButtonSegment(
-                    value: HistorySeries.cpo,
-                    label: Text(tr('history_series_cpo'),
-                        maxLines: 1, softWrap: false),
-                  ),
-                ],
-                selected: {series},
-                onSelectionChanged: (selection) => ref
-                    .read(historySeriesProvider.notifier)
-                    .state = selection.first,
-              ),
+            SegmentedButton<HistorySeries>(
+              showSelectedIcon: false,
+              // The full width, half each. Sized to its labels, the switch
+              // cut them off at 360 px ("MPOB pric").
+              expandedInsets: EdgeInsets.zero,
+              segments: [
+                ButtonSegment(
+                  value: HistorySeries.mpob,
+                  label: Text(tr('history_series_mpob'),
+                      maxLines: 1, softWrap: false),
+                ),
+                ButtonSegment(
+                  value: HistorySeries.cpo,
+                  label: Text(tr('history_series_cpo'),
+                      maxLines: 1, softWrap: false),
+                ),
+              ],
+              selected: {series},
+              onSelectionChanged: (selection) => ref
+                  .read(historySeriesProvider.notifier)
+                  .state = selection.first,
             ),
             const SizedBox(height: 16),
           ],
@@ -460,11 +459,15 @@ class _PriceTable extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Table(
-          columnWidths: {
-            0: const FlexColumnWidth(2),
-            1: const FlexColumnWidth(2),
-            if (changeHeader != null) 2: const FlexColumnWidth(1.4),
-          },
+          // With a third column the date gives up some room, so that
+          // "RM per 1% OER" and "Perubahan" don't touch at 360 px.
+          columnWidths: changeHeader == null
+              ? const {0: FlexColumnWidth(2), 1: FlexColumnWidth(2)}
+              : const {
+                  0: FlexColumnWidth(1.6),
+                  1: FlexColumnWidth(2),
+                  2: FlexColumnWidth(1.6),
+                },
           children: [
             TableRow(
               decoration: BoxDecoration(
