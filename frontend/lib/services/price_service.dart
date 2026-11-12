@@ -10,6 +10,8 @@
 //
 // Patch: SS (Claude Code), Sep 2026 — demo data removed; history comes from
 // one small history.json instead of one request per day.
+// Patch: SS (Claude Code), Nov 2026 — MPOB's daily prices by region, from the
+// same history.json (D26).
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -56,13 +58,52 @@ class PriceService {
     return await _fetchHistoryIndex(days) ?? await _fetchHistoryPerDay(days);
   }
 
+  /// MPOB's daily price per 1% OER for each region over the last [days]
+  /// days, oldest first (D26). Empty when history.json can't be read or
+  /// holds none.
+  Future<List<FfbHistoryDay>> fetchFfbHistory({int days = 30}) async {
+    try {
+      final json = await _fetchIndex();
+      if (json == null) return const [];
+      final cutoff =
+          _dateString(DateTime.now().subtract(Duration(days: days - 1)));
+      final history = (json['ffb_days'] as List<dynamic>? ?? const [])
+          .map((d) => FfbHistoryDay.fromJson(d as Map<String, dynamic>))
+          .where((d) => d.prices.isNotEmpty && d.date.compareTo(cutoff) >= 0)
+          .toList();
+      history.sort((a, b) => a.date.compareTo(b.date));
+      return history;
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  Future<Map<String, dynamic>?>? _index;
+
+  /// history.json, or null if it can't be read. The CPO history and MPOB's
+  /// share one request; a failed one is asked for again next time.
+  Future<Map<String, dynamic>?> _fetchIndex() async {
+    final json = await (_index ??= _requestIndex());
+    if (json == null) _index = null;
+    return json;
+  }
+
+  Future<Map<String, dynamic>?> _requestIndex() async {
+    try {
+      final response = await _client.get(Uri.parse('$baseUrl/history.json'));
+      if (response.statusCode != 200) return null;
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Entries from history.json within the last [days] days, or null if the
   /// index can't be read.
   Future<List<HistoricalPrice>?> _fetchHistoryIndex(int days) async {
     try {
-      final response = await _client.get(Uri.parse('$baseUrl/history.json'));
-      if (response.statusCode != 200) return null;
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final json = await _fetchIndex();
+      if (json == null) return null;
       final cutoff =
           _dateString(DateTime.now().subtract(Duration(days: days - 1)));
       final prices = (json['days'] as List<dynamic>? ?? const [])

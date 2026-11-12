@@ -120,7 +120,16 @@ const Map<String, String> enStrings = {
   'validation_number': 'Invalid number',
 
   // History
-  'history_title': 'CPO Price History',
+  'history_title': 'Price History',
+  'history_series_mpob': 'MPOB price',
+  'history_series_cpo': 'CPO price',
+  'history_ffb_subtitle':
+      "MPOB's daily price per 1% OER at the mill gate, last 30 days",
+  'history_col_ffb': 'RM per 1% OER',
+  'history_col_change': 'Change',
+  'history_ffb_note':
+      'MPOB publishes no price on Saturdays, Sundays or public holidays, so '
+      'those days are not listed.',
   'history_subtitle': '30-day CPO spot price trend',
   'history_no_data': 'No historical data available yet',
   'history_col_date': 'Date',

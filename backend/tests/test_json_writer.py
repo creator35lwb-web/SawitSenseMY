@@ -72,3 +72,78 @@ def test_each_snapshot_refreshes_the_history_index(tmp_path, monkeypatch):
     history = json.loads((tmp_path / "history.json").read_text(encoding="utf-8"))
     assert [d["date"] for d in history["days"]] == ["2026-09-28"]
     assert history["days"][0]["cpo_price"] == pytest.approx(4664.0)
+
+
+# --- MPOB's daily prices in history.json (D26) ---
+
+OCT_22 = {"date": "2026-10-22", "prices": {"North": 47.82, "Sabah": 43.06}}
+OCT_23 = {"date": "2026-10-23", "prices": {"North": 47.87, "Sabah": 43.11}}
+
+
+def _history(directory):
+    return json.loads((directory / "history.json").read_text(encoding="utf-8"))
+
+
+def test_history_keeps_mpobs_daily_prices_oldest_first(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    json_writer.write_history(ffb_days=[OCT_23, OCT_22])
+    history = _history(tmp_path)
+    assert history["ffb_days"] == [OCT_22, OCT_23]
+    assert history["ffb_source"] == "MPOB Daily FFB Reference Price (mill gate)"
+
+
+def test_earlier_days_stay_when_a_run_reads_only_new_ones(tmp_path, monkeypatch):
+    # Last month's days are read once; later runs bring only this month's.
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    json_writer.write_history(ffb_days=[OCT_22])
+    json_writer.write_history(ffb_days=[OCT_23])
+    assert _history(tmp_path)["ffb_days"] == [OCT_22, OCT_23]
+
+
+def test_a_run_that_could_not_read_mpob_keeps_the_history(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    json_writer.write_history(ffb_days=[OCT_22, OCT_23])
+    json_writer.write_history()
+    assert _history(tmp_path)["ffb_days"] == [OCT_22, OCT_23]
+
+
+def test_a_day_read_again_replaces_the_earlier_copy(tmp_path, monkeypatch):
+    # MPOB added 26 Oct 2026 a day late; it may also correct a figure.
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    json_writer.write_history(ffb_days=[OCT_22])
+    corrected = {"date": "2026-10-22", "prices": {"North": 47.80, "Sabah": 43.06}}
+    json_writer.write_history(ffb_days=[corrected])
+    assert _history(tmp_path)["ffb_days"] == [corrected]
+
+
+def test_mpobs_history_keeps_only_the_most_recent_days(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    days = [{"date": f"2026-10-{day:02d}", "prices": {"North": 40.0 + day}} for day in range(1, 11)]
+    json_writer.write_history(max_entries=3, ffb_days=days)
+    assert [d["date"] for d in _history(tmp_path)["ffb_days"]] == ["2026-10-08", "2026-10-09", "2026-10-10"]
+
+
+def test_the_cpo_history_is_unchanged_beside_mpobs(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    _write_day(tmp_path, "2026-10-22", 4792.0)
+    json_writer.write_history(ffb_days=[OCT_22])
+    assert _history(tmp_path)["days"] == [{"date": "2026-10-22", "cpo_price": 4792.0}]
+
+
+def test_each_snapshot_passes_mpobs_days_to_the_history(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    json_writer.write_price_data({"cpo": None, "success": True}, ffb_days=[OCT_22])
+    assert _history(tmp_path)["ffb_days"] == [OCT_22]
+
+
+@pytest.mark.parametrize("content", ["{not json", "[]", '{"ffb_days": "none"}', '{"ffb_days": [1, {"date": 5}]}'])
+def test_a_history_file_that_cannot_be_read_starts_again(tmp_path, monkeypatch, content):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    (tmp_path / "history.json").write_text(content, encoding="utf-8")
+    assert json_writer.read_ffb_history() == {}
+
+
+def test_a_history_file_from_before_d26_has_no_mpob_days(tmp_path, monkeypatch):
+    monkeypatch.setattr(json_writer, "JSON_DIR", tmp_path)
+    (tmp_path / "history.json").write_text(json.dumps({"days": []}), encoding="utf-8")
+    assert json_writer.read_ffb_history() == {}

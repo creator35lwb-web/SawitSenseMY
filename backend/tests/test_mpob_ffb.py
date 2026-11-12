@@ -98,6 +98,37 @@ class TestReadingThePdf:
         assert parse_ffb_pdf(_pdf(table=table, month="NOVEMBER 2026"), 2026, 11, URL) is None
 
 
+class TestEveryDayOfTheMonth:
+    """D26: the days behind the price history."""
+
+    def test_every_priced_day_is_kept_oldest_first(self):
+        days = parse_ffb_pdf(_pdf(), 2026, 10, URL).days
+        assert [d["date"] for d in days] == ["2026-10-01", "2026-10-02", "2026-10-21", "2026-10-22"]
+
+    def test_a_day_holds_each_regions_price(self):
+        days = parse_ffb_pdf(_pdf(), 2026, 10, URL).days
+        assert days[0]["prices"] == {"North": 47.25, "South": 47.49, "Central": 47.45,
+                                     "East Coast": 47.33, "Sabah": 41.99, "Sarawak": 42.61}
+
+    def test_a_region_on_holiday_is_left_out_of_that_day(self):
+        table = OCTOBER[:5] + [["22", "47.82", "48.20", "48.12", "48.08", "PH", "PH"]]
+        last = parse_ffb_pdf(_pdf(table=table), 2026, 10, URL).days[-1]
+        assert last["date"] == "2026-10-22"
+        assert sorted(last["prices"]) == ["Central", "East Coast", "North", "South"]
+
+    def test_the_scraper_gives_a_months_days(self):
+        scraper = MPOBFFBScraper(max_retries=0)
+        with patch.object(scraper.session, "get", return_value=_response(content=_pdf())) as get:
+            days = scraper.month_days(date(2026, 10, 31))
+        assert len(days) == 4
+        assert get.call_args.args[0] == "https://price.mpob.gov.my/pdf/daily/ffb/2026-10-31"
+
+    def test_a_month_that_cannot_be_read_gives_no_days(self):
+        scraper = MPOBFFBScraper(max_retries=0)
+        with patch.object(scraper.session, "get", side_effect=requests.ConnectionError("down")):
+            assert scraper.month_days(date(2026, 10, 31)) == []
+
+
 class TestAnythingUnexpectedIsRejected:
     """A misread price is worse than none: the last good prices stay up (K7)."""
 

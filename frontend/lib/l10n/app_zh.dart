@@ -113,7 +113,13 @@ const Map<String, String> zhStrings = {
   'validation_number': '请输入有效的数字',
 
   // History
-  'history_title': '原棕油历史价格',
+  'history_title': '历史价格',
+  'history_series_mpob': 'MPOB 价格',
+  'history_series_cpo': '原棕油价格',
+  'history_ffb_subtitle': 'MPOB 每日每 1% 出油率的厂门价，最近 30 天',
+  'history_col_ffb': '每 1% 出油率（RM）',
+  'history_col_change': '涨跌',
+  'history_ffb_note': 'MPOB 在星期六、星期日和公共假期不公布价格，所以这些日子没有列出。',
   'history_subtitle': '原棕油现货价 30 天走势',
   'history_no_data': '暂无历史数据',
   'history_col_date': '日期',

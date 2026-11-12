@@ -28,5 +28,12 @@ final historyProvider = FutureProvider<List<HistoricalPrice>>((ref) async {
   return service.fetchHistory(days: 30);
 });
 
+/// MPOB's daily price per 1% OER for each region over the last 30 days
+/// (D26); empty when none can be loaded.
+final ffbHistoryProvider = FutureProvider<List<FfbHistoryDay>>((ref) async {
+  final service = ref.read(priceServiceProvider);
+  return service.fetchFfbHistory(days: 30);
+});
+
 /// Calculator state — holds the last calculation result.
 final calculatorResultProvider = StateProvider<FairPriceResult?>((ref) => null);
