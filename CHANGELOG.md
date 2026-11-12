@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+- **A repeat failure is reported again** (D25). Each workflow's alert step skipped filing while an alert issue of its kind was open, so a later failure told nobody. On 10 Nov the scraper failed while the alert from 7 Nov was still open. Now the step adds a comment to the open issue, with the run's link, in all five workflows: scraper, deploy, freshness, feedback form and vulnerability.
+
 ### Fixed
 - **MPOC can no longer hold back MPOB's prices** (K28). A run that couldn't read MPOC's CPO price published nothing, a rule from when the prices were made from CPO. Since v0.4.0 the prices are MPOB's own, but MPOC still decided whether they went out. On 10 Nov MPOC answered with a bot check at 12:04 MYT, and MPOB's prices for the day reached the site 8.5 hours after MPOB's update. Now:
   - a run that read MPOB's prices publishes them, beside the last CPO price and its date (`cpo.carried_forward` in the open data);
