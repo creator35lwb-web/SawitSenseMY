@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T17:43:58.556045+08:00",
+  "generated_at": "2026-11-13T01:15:45.245267+08:00",
   "days": [
     {
       "date": "2026-08-05",
@@ -240,6 +240,340 @@
     {
       "date": "2026-11-11",
       "cpo_price": 4410.0
+    }
+  ],
+  "ffb_unit": "RM per tonne of FFB per 1% OER, at the mill gate",
+  "ffb_source": "MPOB Daily FFB Reference Price (mill gate)",
+  "ffb_days": [
+    {
+      "date": "2026-10-01",
+      "prices": {
+        "North": 47.25,
+        "South": 47.49,
+        "Central": 47.45,
+        "East Coast": 47.33,
+        "Sabah": 41.99,
+        "Sarawak": 42.61
+      }
+    },
+    {
+      "date": "2026-10-02",
+      "prices": {
+        "North": 46.31,
+        "South": 46.8,
+        "Central": 46.57,
+        "East Coast": 46.5,
+        "Sabah": 41.26,
+        "Sarawak": 41.88
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "prices": {
+        "North": 46.36,
+        "South": 46.85,
+        "Central": 46.62,
+        "East Coast": 46.55,
+        "Sabah": 41.31,
+        "Sarawak": 41.93
+      }
+    },
+    {
+      "date": "2026-10-06",
+      "prices": {
+        "North": 46.41,
+        "South": 46.9,
+        "Central": 46.67,
+        "East Coast": 46.6,
+        "Sabah": 41.35,
+        "Sarawak": 41.98
+      }
+    },
+    {
+      "date": "2026-10-07",
+      "prices": {
+        "North": 45.8,
+        "South": 46.13,
+        "Central": 46.07,
+        "East Coast": 45.95,
+        "Sabah": 40.78,
+        "Sarawak": 41.39
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "prices": {
+        "North": 46.09,
+        "South": 46.4,
+        "Central": 46.38,
+        "East Coast": 46.18,
+        "Sabah": 41.04,
+        "Sarawak": 41.67
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "prices": {
+        "North": 46.9,
+        "South": 47.21,
+        "Central": 47.14,
+        "East Coast": 47.03,
+        "Sabah": 41.76,
+        "Sarawak": 42.39
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "prices": {
+        "North": 47.35,
+        "South": 47.58,
+        "Central": 47.51,
+        "East Coast": 47.43,
+        "Sabah": 42.13,
+        "Sarawak": 42.77
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "prices": {
+        "North": 46.63,
+        "South": 46.91,
+        "Central": 46.89,
+        "East Coast": 46.75,
+        "Sabah": 41.49,
+        "Sarawak": 42.11
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "prices": {
+        "North": 47.06,
+        "South": 47.38,
+        "Central": 47.32,
+        "East Coast": 47.21,
+        "Sabah": 42.33,
+        "Sarawak": 42.77
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "prices": {
+        "North": 47.01,
+        "South": 47.33,
+        "Central": 47.27,
+        "East Coast": 47.16,
+        "Sabah": 42.29,
+        "Sarawak": 42.72
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "prices": {
+        "North": 47.66,
+        "South": 48.01,
+        "Central": 47.96,
+        "East Coast": 47.89,
+        "Sabah": 42.9,
+        "Sarawak": 43.32
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "prices": {
+        "North": 47.8,
+        "South": 48.17,
+        "Central": 48.1,
+        "East Coast": 48.06,
+        "Sabah": 43.04,
+        "Sarawak": 43.46
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "prices": {
+        "North": 47.85,
+        "South": 48.22,
+        "Central": 48.15,
+        "East Coast": 48.1,
+        "Sabah": 43.09,
+        "Sarawak": 43.52
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "prices": {
+        "North": 47.75,
+        "South": 48.12,
+        "Central": 48.05,
+        "East Coast": 48.0,
+        "Sabah": 43.0,
+        "Sarawak": 43.42
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "prices": {
+        "North": 47.82,
+        "South": 48.2,
+        "Central": 48.12,
+        "East Coast": 48.08,
+        "Sabah": 43.06,
+        "Sarawak": 43.49
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "prices": {
+        "North": 47.87,
+        "South": 48.25,
+        "Central": 48.17,
+        "East Coast": 48.13,
+        "Sabah": 43.11,
+        "Sarawak": 43.53
+      }
+    },
+    {
+      "date": "2026-10-26",
+      "prices": {
+        "North": 47.92,
+        "South": 48.3,
+        "Central": 48.22,
+        "East Coast": 48.18,
+        "Sabah": 43.16,
+        "Sarawak": 43.58
+      }
+    },
+    {
+      "date": "2026-10-27",
+      "prices": {
+        "North": 47.04,
+        "South": 47.38,
+        "Central": 47.35,
+        "East Coast": 47.25,
+        "Sabah": 42.32,
+        "Sarawak": 42.73
+      }
+    },
+    {
+      "date": "2026-10-28",
+      "prices": {
+        "North": 47.39,
+        "South": 47.53,
+        "Central": 47.46,
+        "East Coast": 47.44,
+        "Sabah": 42.51,
+        "Sarawak": 42.92
+      }
+    },
+    {
+      "date": "2026-10-29",
+      "prices": {
+        "North": 46.81,
+        "South": 47.03,
+        "Central": 46.91,
+        "East Coast": 46.85,
+        "Sabah": 42.0,
+        "Sarawak": 42.42
+      }
+    },
+    {
+      "date": "2026-10-30",
+      "prices": {
+        "North": 47.0,
+        "South": 47.15,
+        "Central": 47.13,
+        "East Coast": 47.01,
+        "Sabah": 42.17,
+        "Sarawak": 42.59
+      }
+    },
+    {
+      "date": "2026-11-02",
+      "prices": {
+        "North": 46.68,
+        "South": 46.85,
+        "Central": 46.82,
+        "East Coast": 46.75,
+        "Sabah": 41.89,
+        "Sarawak": 42.31
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "prices": {
+        "North": 46.36,
+        "South": 46.61,
+        "Central": 46.52,
+        "East Coast": 46.49,
+        "Sabah": 41.64,
+        "Sarawak": 42.05
+      }
+    },
+    {
+      "date": "2026-11-04",
+      "prices": {
+        "North": 45.64,
+        "South": 45.75,
+        "Central": 45.74,
+        "East Coast": 45.72,
+        "Sabah": 40.93,
+        "Sarawak": 41.32
+      }
+    },
+    {
+      "date": "2026-11-05",
+      "prices": {
+        "North": 44.96,
+        "South": 45.13,
+        "Central": 45.08,
+        "East Coast": 44.98,
+        "Sabah": 40.3,
+        "Sarawak": 40.69
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "prices": {
+        "North": 44.38,
+        "South": 44.56,
+        "Central": 44.53,
+        "East Coast": 44.48,
+        "Sabah": 39.8,
+        "Sarawak": 40.17
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "prices": {
+        "North": 43.35,
+        "South": 43.56,
+        "Central": 43.5,
+        "East Coast": 43.48,
+        "Sabah": 38.86,
+        "Sarawak": 39.22
+      }
+    },
+    {
+      "date": "2026-11-11",
+      "prices": {
+        "North": 43.54,
+        "South": 43.8,
+        "Central": 43.69,
+        "East Coast": 43.62,
+        "Sabah": 39.03,
+        "Sarawak": 39.39
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "prices": {
+        "North": 43.7,
+        "South": 43.94,
+        "Central": 43.85,
+        "East Coast": 43.76,
+        "Sabah": 39.17,
+        "Sarawak": 39.53
+      }
     }
   ]
 }
