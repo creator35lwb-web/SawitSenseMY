@@ -121,14 +121,18 @@ class HistoryScreen extends ConsumerWidget {
             Center(
               child: SegmentedButton<HistorySeries>(
                 showSelectedIcon: false,
+                // One line each: left to wrap, a label is sized to its
+                // longest word and cut off ("MPOB / price" at 360 px).
                 segments: [
                   ButtonSegment(
                     value: HistorySeries.mpob,
-                    label: Text(tr('history_series_mpob')),
+                    label: Text(tr('history_series_mpob'),
+                        maxLines: 1, softWrap: false),
                   ),
                   ButtonSegment(
                     value: HistorySeries.cpo,
-                    label: Text(tr('history_series_cpo')),
+                    label: Text(tr('history_series_cpo'),
+                        maxLines: 1, softWrap: false),
                   ),
                 ],
                 selected: {series},

@@ -117,7 +117,7 @@ const Map<String, String> zhStrings = {
   'history_series_mpob': 'MPOB 价格',
   'history_series_cpo': '原棕油价格',
   'history_ffb_subtitle': 'MPOB 每日每 1% 出油率的厂门价，最近 30 天',
-  'history_col_ffb': '每 1% 出油率（RM）',
+  'history_col_ffb': '每 1% 出油率',
   'history_col_change': '涨跌',
   'history_ffb_note': 'MPOB 在星期六、星期日和公共假期不公布价格，所以这些日子没有列出。',
   'history_subtitle': '原棕油现货价 30 天走势',
