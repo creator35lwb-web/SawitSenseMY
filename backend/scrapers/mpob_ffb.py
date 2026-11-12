@@ -84,6 +84,10 @@ class FFBDailyPrices:
     sarawak_note: Optional[str] = None  # MPOB's footnote, e.g. "Miri & Bintulu"
     source: str = SOURCE
     scraped_at: str = field(default_factory=lambda: datetime.now(MYT).isoformat())
+    # Every day of the month that has a price, oldest first, for the price
+    # history (D26): [{"date": "2026-10-22", "prices": {"North": 47.82, ...}}].
+    # A region on holiday that day is left out of the day's prices.
+    days: list = field(default_factory=list)
 
 
 def _content_streams(pdf: bytes):
@@ -192,7 +196,7 @@ def parse_ffb_pdf(pdf: bytes, year: int, month: int, source_url: str) -> Optiona
     if not pdf.startswith(b"%PDF"):
         raise FFBParseError("the answer isn't a PDF")
     rows = pdf_rows(pdf)
-    prices, dates, last_day = {}, {}, 0
+    prices, dates, days, last_day = {}, {}, [], 0
     for row in _table(rows, year, month):
         day = int(row[0])
         try:
@@ -202,11 +206,15 @@ def parse_ffb_pdf(pdf: bytes, year: int, month: int, source_url: str) -> Optiona
         if len(row) != 1 + len(COLUMNS) or day <= last_day or day_iso is None:
             raise FFBParseError(f"an unexpected row for day {row[0]}")
         last_day = day
+        priced = {}
         for (_, region), cell in zip(COLUMNS, row[1:]):
             value = _check_cell(cell, day)
             if value is not None:
-                prices[region] = value
+                priced[region] = value
                 dates[region] = day_iso
+        prices.update(priced)
+        if priced:
+            days.append({"date": day_iso, "prices": priced})
     if not prices:
         return None
     if len(prices) < len(COLUMNS):
@@ -220,6 +228,7 @@ def parse_ffb_pdf(pdf: bytes, year: int, month: int, source_url: str) -> Optiona
         source_url=source_url,
         last_update=_last_update(rows),
         sarawak_note=_sarawak_note(rows),
+        days=days,
     )
 
 
@@ -304,3 +313,9 @@ class MPOBFFBScraper:
         if status == "empty":
             logger.error(f"MPOB FFB: no prices for {today:%B %Y} on day {today.day}")
         return None
+
+    def month_days(self, day: date) -> list:
+        """Every priced day of the month holding `day`, oldest first, for the
+        price history (D26). Empty when that month can't be read."""
+        status, prices = self._read(day)
+        return prices.days if status == "ok" else []

@@ -2,21 +2,22 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 12 November 2026 (#51 verified; D25 built; Alton's October sales measured against MPOB's price) · SS (Claude Code)
+**Last updated:** 12 November 2026 (#52 merged; D26 built for v0.5.0: MPOB's price history by region; why dealers' prices differ from MPOB's) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261112_SS_real-sales-and-alerts.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261112_SS_mpob-price-history.md`.
 > 2. Routine checks:
 >    - open issues and PRs. Close an alert issue as soon as its cause is known;
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
-> 3. **D25, after it merges:** it only acts on a second failure while an alert is open, so it can't be shown on demand. When that next happens, the open issue should get an "It happened again" comment with the run's link.
-> 4. **K28:** the fix only acts when MPOC can't be read. When that next happens, the run should still publish MPOB's prices, keep the last CPO price with `cpo.carried_forward: true`, and raise a `scraper-alert` issue that names MPOC.
-> 5. **D26 (approved): a 30-day history of MPOB's price per region, for v0.5.0.** It is the next PR. After it merges, check the History tab live in EN, BM and 中文 at 360 px.
-> 6. **MPOC's CPO price has stood at 5 Nov since 6 Nov.** MPOC's own page ends there (checked 12 Nov). Check that it moves again.
-> 7. MPOB's November OER is due around 10 December. Check that the live `oer.month` moves from 10 to 11 and that `oer.in_app_since` takes that run's date.
-> 8. On 1 December, until MPOB publishes December's first price, the runs should use November's last prices without an alert, as they did on 1 November (K26).
-> 9. **D27, D28 and D29 are new and wait for Alton**, with four questions about his records (in the handoff). D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 3. **D26, after it merges (v0.5.0):**
+>    - run the scraper once by hand (`gh workflow run scraper_cron.yml`). Its log should show one extra request, for October's PDF, and the live `history.json` should have `ffb_days` from 1 Oct. The next run should not ask for October again;
+>    - check the History tab live at 360 px in EN, BM and 中文: it opens on MPOB's price, each region's chip works, and "CPO price" shows the CPO history;
+>    - Alton's read of the new BM and 中文 wording.
+> 4. **D25 and K28** only act when something fails. When an alert next opens, check that a second failure comments on it, and that a run that can't read MPOC still publishes MPOB's prices.
+> 5. MPOB's November OER is due around 10 December. Check that the live `oer.month` moves from 10 to 11 and that `oer.in_app_since` takes that run's date.
+> 6. On 1 December, until MPOB publishes December's first price, the runs should use November's last prices without an alert, as they did on 1 November (K26). The history should then ask for nothing extra: November's days are already in it.
+> 7. **D27, D28, D29 and D30 wait for Alton**, with four questions about his records (in the 12 Nov handoff on real sales). D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -24,7 +25,7 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.4.2 live** (MPOB's official daily FFB reference price; a target to negotiate towards in the calculator, D23; when MPOB publishes, D24; EN, BM and 中文; feedback form; Share button; "Latest from MPOB" with MPOB's PDF; checked every 2 hours) |
+| Version | **0.4.2 live; 0.5.0 in review** (MPOB's price history by region, D26). Live: (MPOB's official daily FFB reference price; a target to negotiate towards in the calculator, D23; when MPOB publishes, D24; EN, BM and 中文; feedback form; Share button; "Latest from MPOB" with MPOB's PDF; checked every 2 hours) |
 | Data mode | **MPOB's official price (since v0.4.0, 23 Oct; D22).** Each region's price per 1% OER is MPOB's daily FFB reference price at the mill gate, read from [MPOB's public PDF](https://price.mpob.gov.my/pdf/daily/ffb/2026-11-11) ([ADR-002](docs/ADR-002-mpob-official-daily-price.md)). The earlier estimate, CPO × 0.01 × 0.93, was 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (K25). |
 | Live site freshness | **Good in late October, weaker in November (K28).** The schedule asks for a check every 2 hours (D13); GitHub ran 3.7 a day. From 24 Oct to 12 Nov the prices were 83% GREEN, 15% AMBER and 1.4% RED; mornings (06:00–12:00 MYT) were 98% GREEN and never RED. Both RED spells (151 min on Sat 7 Nov, 232 min on Tue 10 Nov) came from MPOC answering with a bot check, which stopped the whole run, MPOB's prices included (K28, fixed in #51). 24 Oct – 1 Nov: 92% GREEN, 0% RED. 17–22 Oct: 88% GREEN, 0.8% RED. MPOB's price for each trading day reached the site a median 2.7 h after MPOB's noon update (0.9–8.5 h). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only, checked weekly for known vulnerabilities (D19). |
@@ -75,6 +76,16 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **v0.5.0's History tab, seen before merging** (12 Nov). SS served the PR's `web-preview` build and opened the History tab at 360 px in EN, BM and 中文, with MPOB's days from a dry run of the new scraper code.
+  - The tab opens on MPOB's price for the North: six region chips, the chart from 14 Oct to 11 Nov on whole-ringgit gridlines, and 20 trading days in the table, each with its change. 26 Oct, which MPOB added a day late, is there.
+  - **Found and fixed:** at 360 px the "MPOB price / CPO price" switch wrapped its labels and cut them off; it now spans the width, one line each. In BM the "Perubahan" heading touched its neighbour; the columns were rebalanced. Both were seen again, fixed, in the rebuilt preview.
+  - The dry run, against MPOB and writing to a temp folder: the first run stored 29 days (1 Oct to 11 Nov) and asked for October once; the second asked for November only. `history.json` is about 7 KB.
+- **Why dealers' prices differ from MPOB's** (12 Nov; Alton asked, and whether the app helps a smallholder at all).
+  - **The data is right.** The site's prices equal MPOB's PDF to the cent on every day checked. The difference is real.
+  - **They are prices for two different things.** MPOB's is what a mill pays for fruit at its gate, per 1% of the oil the mill gets from it. A dealer's is for fruit taken at the farm or the ramp, paid at once, before anyone knows its oil. Between the two sit the dealer's transport, handling, risk and profit.
+  - **The OER on the receipt isn't measured.** Each dealer writes one fixed figure. If the mill would grade the fruit lower than that figure, the real gap is smaller than the RM 77 it looks; if higher, larger. The records can't say which.
+  - **Dealers' prices move in RM 10 steps, a day behind.** So the gap widens when MPOB's price rises and narrows when it falls.
+  - **What the app can and can't do with this.** It can't say what a dealer should pay: no margin is published (D23), and one grower's month isn't one. Its verdict called 20 of 21 ordinary sales AMBER, which tells the reader nothing to act on. What the records show it can help with: choosing between dealers on the day (net prices were RM 7 to RM 40 a tonne apart), seeing transport and each dealer's OER figure for what they are, and seeing when the gap has grown. D27, D29 and D30 are how.
 - **Alton's October sales against MPOB's price** (12 Nov). Alton shared his own sales records for October 2026: 23 sales to five dealers in the North region. The records are private and stay out of this repo; these are the figures without names or amounts.
   - **Method:** each sale was set against MPOB's North price for its day (the last trading day's, for the two Saturday sales), times the OER written on the receipt. Where a dealer charged transport separately, it was taken off the price first. 21 sales had an OER on the receipt.
   - **The dealers paid a median RM 77 a tonne (9.2%) below MPOB's mill-gate price** at the receipt's OER. The mean was RM 73 (8.7%), and the range RM 19 to RM 93 (2.4% to 10.7%).
@@ -212,7 +223,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | Scheduled scrapes | 77 runs in 20 days, 3.7 a day against 12 slots; a median 6.4 h apart, 11.0 h at most (K18) |
 | MPOB's price on the site | A median **2.7 h** after MPOB's noon update, over 11 trading days (0.9–8.5 h). The two slowest: 8.5 h on 10 Nov (K28) and 8.0 h on 4 Nov (no scheduled run between 10:15 and 20:01 MYT) |
 | Code quality (SonarCloud, `main`) | Quality gate passed: 0 bugs, 0 vulnerabilities, 0 security hotspots, 5 code smells; reliability, security and maintainability all rated A |
-| Tests | Backend 193, all passing (with the K28 fix). Frontend: about 113 test cases, last run by CI on 23 Oct (#48), all passing |
+| Tests | Backend 227 and frontend 126 test cases, all passing in CI (with D26) |
 | Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 3 page views from 3 visitors in the 14 days to 10 Nov (33 from 5 in the 14 days to 17 Oct), 3 stars, and no Discussions posts. Feedback arrives through the Google Form (D14), which Alton reads: 1 response by 23 Oct |
 
 ---
@@ -221,7 +232,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| This PR | A repeat failure comments on the open alert issue (D25); #51 verified; Alton's October sales against MPOB's price (D27–D29) |
+| This PR | MPOB's price history by region in the History tab (D26, v0.5.0) |
 
 ---
 
@@ -229,7 +240,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
-| — | Low | MPOC's CPO price has stood at 5 Nov since 6 Nov; MPOC's page ends there | Watch; nothing to fix on our side |
+| — | | No open issues. MPOC's CPO price, which stood at 5 Nov from 6 to 11 Nov, moved to 11 Nov on 12 Nov | |
 
 ### Fixed on 30 Sep 2026
 
@@ -294,11 +305,12 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D22 | **Show MPOB's official daily FFB reference price instead of the estimate (K25).** MPOB publishes its daily price per 1% OER for each region, at the mill gate, as a public PDF. The scraper would read it after MPOB's daily update and check every figure. The dashboard and the calculator would then show MPOB's regional prices, each with its date and a link to MPOB's PDF, so readers can check them. The 0.93 estimate would be retired; on a day MPOB hasn't published, the last official prices stay with their date (K7). The Fair Price verdict would need a note that dealers' prices sit below the mill-gate price by their transport and margin. MPOB's disclaimer has no reuse terms. The page shows © MPOB, and the PDF lists MPOB staff to contact, so Alton may wish to tell MPOB, or ask first. The new wording in BM and 中文 needs a native reader's check | **Done in #40 (verified live, 23 Oct).** Alton approved on 23 Oct. MPOB's daily PDF is read with the standard library and every figure checked; the estimate is retired. The app links to MPOB's PDF under the prices and, as Alton asked, in "Latest from MPOB". See [ADR-002](docs/ADR-002-mpob-official-daily-price.md) |
 | D23 | **A negotiable price for readers.** Alton (23 Oct, by the feedback form and in chat): MPOB's price is at the mill gate, but smallholders mostly sell to licensed dealers, so readers need a price they can negotiate towards that leaves the dealer a margin. A chat with another AI suggested a fixed dealer margin of RM 45–70 a tonne in the Peninsula and RM 35–55 in Sabah and Sarawak. SS found no published source for any dealer margin: MPOB's two journal articles on dealers (2001, 2009) give no figure, and none was found saying MPOB sets one. A made-up margin shown as "fair" could become a ceiling dealers quote back at readers. SS recommends showing, in the calculator, what can be checked: the mill-gate price for the reader's OER, the gap to the dealer's offer in RM and %, what each 0.25% of OER is worth, and the existing 5% band as an RM target, labelled as SawitSense's guide, not MPOB's. The thresholds stay Alton's call | **Built for v0.4.1** (Alton approved, 23 Oct): the target, the RM short of it, and the value of each 0.25% of OER, in the calculator. The 5% band is `FairPriceResult.greenBandPct`, shared with the verdict. **Done in #46 (verified live, 23 Oct).** Alton checked the BM and 中文 |
 | D24 | **Say when MPOB publishes.** Alton (23 Oct) noticed that MPOB's PDF isn't updated every day. MPOB adds prices at about noon on trading days, and none on Saturdays, Sundays or public holidays. The method sheet said only "every trading day", so on a Sunday readers would see Friday's date with no reason given. SS recommended a sentence in "Where do these prices come from?" in EN, BM and 中文 | **Done in #48 (verified live, 12 Nov).** Alton approved on 23 Oct. Key `method_official_timing` |
-| D25 | **An open alert hides later failures.** Each alert step skips filing when an issue with its label is already open. #50 (7 Nov) was still open on 10 Nov, so that day's failure, the one that held back MPOB's prices for 8.5 h, told nobody. SS recommends that a repeat failure adds a comment to the open issue, with the run's link, so GitHub notifies Alton again without opening a second issue. It is a few lines in each workflow's alert step | **Built in this PR** (Alton approved, 12 Nov), in all five alert steps: scraper, deploy, freshness, feedback form and vulnerability. A problem that lasts will comment on each run, up to about 4 a day for the scraper |
-| D26 | **A history of MPOB's prices.** The History tab shows MPOC's CPO price only: it ends on 5 Nov while the dashboard shows MPOB's 11 Nov prices, and it has no history of the price readers act on. The dated snapshots are filed under the CPO date, so MPOB's prices for 6 and 10 Nov have no snapshot of their own. MPOB's PDF holds every day of the month for all six regions, so the scraper could write a 30-day history per region from it, with no new source, and the tab could chart the reader's region. New wording would need EN, BM and 中文 | **Approved** (Alton, 12 Nov). Being built for v0.5.0, in the next PR |
+| D25 | **An open alert hides later failures.** Each alert step skips filing when an issue with its label is already open. #50 (7 Nov) was still open on 10 Nov, so that day's failure, the one that held back MPOB's prices for 8.5 h, told nobody. SS recommends that a repeat failure adds a comment to the open issue, with the run's link, so GitHub notifies Alton again without opening a second issue. It is a few lines in each workflow's alert step | **Done in #52** (Alton approved and merged, 12 Nov), in all five alert steps: scraper, deploy, freshness, feedback form and vulnerability. A problem that lasts will comment on each run, up to about 4 a day for the scraper |
+| D26 | **A history of MPOB's prices.** The History tab shows MPOC's CPO price only: it ends on 5 Nov while the dashboard shows MPOB's 11 Nov prices, and it has no history of the price readers act on. The dated snapshots are filed under the CPO date, so MPOB's prices for 6 and 10 Nov have no snapshot of their own. MPOB's PDF holds every day of the month for all six regions, so the scraper could write a 30-day history per region from it, with no new source, and the tab could chart the reader's region. New wording would need EN, BM and 中文 | **Built for v0.5.0, in this PR** (Alton approved, 12 Nov). `history.json` gains `ffb_days`; the History tab opens on MPOB's price for a region, with the CPO history one tap away. Seen at 360 px in the preview build in EN, BM and 中文 |
 | D27 | **Compare offers on equal terms.** Alton's October records show dealers each writing their own fixed OER on the receipt (17.25%, 18%, 18.25%, or none), and one charging transport separately. The calculator takes the receipt's OER as a grade, so two offers can't be compared in it. SS recommends two small additions to the calculator: an optional "transport, RM a tonne" field, taken off the price paid; and a line that turns any offer into one number, the OER it pays for at MPOB's price today (RM 770 ÷ 47.87 = "pays for 16.1% OER"), beside MPOB's average OER for the region. Every figure can be checked, and none is a made-up margin. New wording in EN, BM and 中文 | **Open. Alton's call.** SS recommends yes, after D26 |
 | D28 | **The 5% band against real sales.** With the band at 5%, 1 of Alton's 21 sales was GREEN and the target was reached once. At 10%, 16 of 21 would be GREEN. Widening it would make the app agree with what local dealers pay, but it would also tell every reader that RM 85 a tonne below the mill gate is fair, on the strength of one grower's month in one district. Dealers could quote it back (D23) | **Open. Alton's call.** SS recommends keeping 5% for now, and deciding again once D29 or more growers' records show whether the gap is the same elsewhere |
 | D29 | **A sales journal on the phone.** Alton keeps his sales in a spreadsheet, and SS measured them against MPOB's price by hand. The app could do it: the reader enters each sale (date, tonnes, price, transport, the OER on the receipt), and sees the mill-gate value for that day, the gap, and the month's total. D26's daily history is what makes this possible. It was planned as "local-first" (Architecture Decisions). It needs two decisions: the records would be kept in the phone's browser storage, which `AGENTS.md` now limits to the language choice; and whether a dealer's name may be stored at all, even on the phone. Nothing would leave the phone | **Open. Alton's call.** SS recommends yes, after D27, with no dealer names: a short label the reader picks |
+| D30 | **Measure an offer against the reader's own usual gap.** Alton asked whether the app helps a smallholder when every dealer pays about 9% below MPOB's price. The verdict compares each offer with the mill gate, so it says AMBER every time and gives nothing to act on. No published figure says what a dealer should pay. But a reader's own sales do say what dealers usually pay that reader. With the journal (D29), the calculator could add: "Your last 10 sales were RM 75 a tonne below the mill gate on average. This offer is RM 92 below." That is true for each reader, uses only their figures and MPOB's, and points at the two things they can change: which dealer, and when to ask for more. Nothing leaves the phone | **Open. Alton's call.** SS recommends yes, with D29. The 5% band (D28) could then stay as it is |
 
 ---
 

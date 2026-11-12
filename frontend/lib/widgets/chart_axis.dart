@@ -18,16 +18,25 @@ class PriceAxis {
   const PriceAxis(this.min, this.max, this.interval);
 
   /// Bounds for [values] (non-empty) with at most [maxSteps] gridline steps.
-  factory PriceAxis.fromValues(Iterable<double> values, {int maxSteps = 5}) {
+  ///
+  /// [minStep] is the smallest step worth a gridline: RM 10 for CPO prices
+  /// in the thousands, RM 0.50 for MPOB's price per 1% OER, which moves by
+  /// cents (D26).
+  factory PriceAxis.fromValues(Iterable<double> values,
+      {int maxSteps = 5, double minStep = 10}) {
     final lo = values.reduce(math.min);
     final hi = values.reduce(math.max);
     // A little headroom, so a point that lands exactly on a round number
     // isn't drawn on the border. More than a few % adds an empty gridline.
-    final pad = math.max((hi - lo) * 0.02, 1.0);
-    const steps = [10.0, 20.0, 25.0, 50.0, 100.0, 200.0, 250.0, 500.0, 1000.0];
+    final pad = math.max((hi - lo) * 0.02, minStep / 10);
+    const allSteps = [
+      0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 25.0, 50.0, 100.0, 200.0, 250.0, 500.0,
+      1000.0,
+    ];
+    final steps = allSteps.where((s) => s >= minStep);
     final interval = steps.firstWhere(
       (s) => (hi - lo + 2 * pad) / s <= maxSteps,
-      orElse: () => steps.last,
+      orElse: () => allSteps.last,
     );
     return PriceAxis(
       ((lo - pad) / interval).floorToDouble() * interval,

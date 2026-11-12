@@ -30,9 +30,16 @@ const String feedbackAppDetailsField = 'entry.1276594150';
 const String mpobNewsUrl = 'https://mpob.gov.my/current-news/';
 const String mpobPressUrl = 'https://mpob.gov.my/press-release/';
 
-/// MPOB's daily FFB reference price summary for the month holding [time]
-/// (D22): a public PDF with every trading day so far, by region. The prices
-/// carry the exact link they were read from; this is for when they don't.
+/// MPOB's daily FFB reference price summary for the month holding
+/// [isoDate], e.g. "2026-10-22": a public PDF with every trading day of the
+/// month so far, by region. The History tab links to the month of its
+/// latest day (D26).
+String mpobFfbPdfUrlForDay(String isoDate) =>
+    'https://price.mpob.gov.my/pdf/daily/ffb/$isoDate';
+
+/// The same summary for the month holding [time] in Malaysia (D22). The
+/// prices carry the exact link they were read from; this is for when they
+/// don't.
 String mpobFfbPdfUrl(DateTime time) {
   final myt = time.toUtc().add(const Duration(hours: 8));
   String two(int n) => n.toString().padLeft(2, '0');

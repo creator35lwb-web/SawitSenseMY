@@ -123,7 +123,16 @@ const Map<String, String> msStrings = {
   'validation_number': 'Nombor tidak sah',
 
   // History
-  'history_title': 'Sejarah Harga CPO',
+  'history_title': 'Sejarah Harga',
+  'history_series_mpob': 'Harga MPOB',
+  'history_series_cpo': 'Harga CPO',
+  'history_ffb_subtitle':
+      'Harga harian MPOB per 1% OER di pintu kilang, 30 hari lepas',
+  'history_col_ffb': 'RM per 1% OER',
+  'history_col_change': 'Perubahan',
+  'history_ffb_note':
+      'MPOB tidak menerbitkan harga pada hari Sabtu, Ahad atau cuti umum, jadi '
+      'hari-hari itu tidak disenaraikan.',
   'history_subtitle': 'Trend harga semasa CPO 30 hari',
   'history_no_data': 'Tiada data sejarah tersedia lagi',
   'history_col_date': 'Tarikh',

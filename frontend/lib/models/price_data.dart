@@ -291,6 +291,31 @@ class FairPriceResult {
       : null;
 }
 
+/// One trading day of MPOB's price per 1% OER for each region: an entry of
+/// history.json's `ffb_days` (D26).
+class FfbHistoryDay {
+  final String date;
+
+  /// Region, as the data names it ("North", "East Coast", ...), to RM per 1%
+  /// OER. A region on holiday that day has no entry.
+  final Map<String, double> prices;
+
+  const FfbHistoryDay({required this.date, required this.prices});
+
+  factory FfbHistoryDay.fromJson(Map<String, dynamic> json) {
+    final raw = json['prices'];
+    return FfbHistoryDay(
+      date: json['date'] as String? ?? '',
+      prices: {
+        if (raw is Map)
+          for (final entry in raw.entries)
+            if (entry.value is num)
+              '${entry.key}': (entry.value as num).toDouble(),
+      },
+    );
+  }
+}
+
 /// Historical price entry for chart data.
 class HistoricalPrice {
   final String date;

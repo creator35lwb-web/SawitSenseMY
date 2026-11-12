@@ -25,6 +25,8 @@ Patch:           SS (Claude Code), Oct 2026 \u2014 MPOB's official daily FFB
                  reference price replaces the estimate (D22, K25, ADR-002)
 Patch:           SS (Claude Code), Nov 2026: a run that can't read MPOC still
                  publishes MPOB's prices, beside the last CPO price (K28)
+Patch:           SS (Claude Code), Nov 2026: MPOB's daily prices for each
+                 region go into history.json (D26)
 """
 
 import logging
@@ -39,7 +41,7 @@ from scrapers.mpob_bepi import MPOBScraper, REGIONS
 from scrapers.mpob_ffb import MPOBFFBScraper
 from scrapers.mpob_oer import MPOBOERScraper
 from scrapers.mpoc_cpo import MPOCDailyCPOScraper
-from writer.json_writer import read_latest, write_price_data
+from writer.json_writer import read_ffb_history, read_latest, write_price_data
 
 MYT = timezone(timedelta(hours=8))
 
@@ -382,6 +384,24 @@ def _scrape_public_sources():
     return cpo_latest, oer_snap, ffb_obs
 
 
+def ffb_history_days(ffb_obs, known_dates) -> list:
+    """MPOB's daily prices to add to history.json this run (D26).
+
+    They are the days of the month just read. While the history holds no day
+    of the month before it, that month is read too, once, so the History tab
+    has 30 days from the start and after a gap. A month that can't be read
+    adds nothing and is asked for again on the next run.
+    """
+    if ffb_obs is None:
+        return []
+    days = list(ffb_obs.days)
+    month_before = date(ffb_obs.year, ffb_obs.month, 1) - timedelta(days=1)
+    if not any(day.startswith(month_before.isoformat()[:7]) for day in known_dates):
+        # One attempt: the history can wait, and the job has a time limit (K23).
+        days = MPOBFFBScraper(max_retries=0).month_days(month_before) + days
+    return days
+
+
 def main() -> int:
     logger.info(f"SawitSense scraper starting at {datetime.now(MYT).isoformat()}")
 
@@ -411,7 +431,7 @@ def main() -> int:
     for warning in payload["warnings"]:
         logger.warning(f"Data-quality warning: {warning}")
 
-    written = write_price_data(payload)
+    written = write_price_data(payload, ffb_days=ffb_history_days(ffb_obs, read_ffb_history()))
     if not written:
         logger.error("Failed to write the price data JSON")
         report_failure("Data write failed")

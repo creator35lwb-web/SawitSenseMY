@@ -14,7 +14,9 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from run_scraper import build_payload, decide_payload, ffb_quality_warnings, oer_in_app_since  # noqa: E402
+from run_scraper import (  # noqa: E402
+    build_payload, decide_payload, ffb_history_days, ffb_quality_warnings, oer_in_app_since,
+)
 from scrapers.mpob_ffb import FFBDailyPrices
 from scrapers.mpoc_cpo import MPOCDailyCPO
 from scrapers.mpob_oer import OERSnapshot, StateOER
@@ -429,7 +431,10 @@ class TestMainKeepsLastSnapshot:
         monkeypatch.setattr(run_scraper, "MPOBFFBScraper", lambda: SimpleNamespace(scrape=_make_ffb))
         monkeypatch.setattr(run_scraper, "fetch_cpo_fallback", lambda: None)
         monkeypatch.setattr(run_scraper, "read_latest", lambda: TestKeepLastGoodData.PREVIOUS)
-        monkeypatch.setattr(run_scraper, "write_price_data", lambda payload: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "write_price_data",
+                            lambda payload, ffb_days=None: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "read_ffb_history", lambda: {})
+        monkeypatch.setattr(run_scraper, "ffb_history_days", lambda ffb_obs, known: [])
         monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
         monkeypatch.setattr(run_scraper, "report_success", lambda: {})
 
@@ -452,7 +457,10 @@ class TestMainKeepsLastSnapshot:
         monkeypatch.setattr(run_scraper, "MPOBFFBScraper", lambda: SimpleNamespace(scrape=lambda: None))
         monkeypatch.setattr(run_scraper, "fetch_cpo_fallback", lambda: None)
         monkeypatch.setattr(run_scraper, "read_latest", lambda: TestKeepLastGoodData.PREVIOUS)
-        monkeypatch.setattr(run_scraper, "write_price_data", lambda payload: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "write_price_data",
+                            lambda payload, ffb_days=None: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "read_ffb_history", lambda: {})
+        monkeypatch.setattr(run_scraper, "ffb_history_days", lambda ffb_obs, known: [])
         monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
         monkeypatch.setattr(run_scraper, "report_success", lambda: {})
 
@@ -472,7 +480,10 @@ class TestMainKeepsLastSnapshot:
         monkeypatch.setattr(run_scraper, "MPOBOERScraper", lambda: SimpleNamespace(scrape=maker._make_oer))
         monkeypatch.setattr(run_scraper, "MPOBFFBScraper", lambda: SimpleNamespace(scrape=_make_ffb))
         monkeypatch.setattr(run_scraper, "read_latest", lambda: None)
-        monkeypatch.setattr(run_scraper, "write_price_data", lambda payload: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "write_price_data",
+                            lambda payload, ffb_days=None: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "read_ffb_history", lambda: {})
+        monkeypatch.setattr(run_scraper, "ffb_history_days", lambda ffb_obs, known: [])
         monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
         monkeypatch.setattr(run_scraper, "report_success", lambda: {})
 
@@ -481,3 +492,86 @@ class TestMainKeepsLastSnapshot:
         assert payload["formula_status"] == "OFFICIAL"
         assert payload["ffb"]["regions"][1]["price_1pct_oer"] == pytest.approx(48.20)
         assert payload["warnings"] == []
+
+
+class TestFfbHistoryDays:
+    """D26: MPOB's daily prices for history.json."""
+
+    NOVEMBER = [{"date": "2026-11-10", "prices": {"North": 43.35}},
+                {"date": "2026-11-11", "prices": {"North": 43.54}}]
+    OCTOBER = [{"date": "2026-10-30", "prices": {"North": 47.00}}]
+
+    def _november(self):
+        ffb = _make_ffb(day="2026-11-11")
+        ffb.days = list(self.NOVEMBER)
+        return ffb
+
+    def _scraper(self, monkeypatch, october):
+        import run_scraper
+        from types import SimpleNamespace
+
+        asked = []
+
+        def make(**kwargs):
+            return SimpleNamespace(month_days=lambda day: asked.append((day.isoformat(), kwargs)) or october)
+
+        monkeypatch.setattr(run_scraper, "MPOBFFBScraper", make)
+        return asked
+
+    def test_the_month_just_read_is_added(self, monkeypatch):
+        self._scraper(monkeypatch, [])
+        assert ffb_history_days(self._november(), {"2026-10-30"}) == self.NOVEMBER
+
+    def test_the_month_before_is_read_while_the_history_lacks_it(self, monkeypatch):
+        asked = self._scraper(monkeypatch, self.OCTOBER)
+        days = ffb_history_days(self._november(), set())
+        assert days == self.OCTOBER + self.NOVEMBER
+        # One attempt only: the history can wait for the next run (K23).
+        assert asked == [("2026-10-31", {"max_retries": 0})]
+
+    def test_the_month_before_is_not_read_again_once_it_is_there(self, monkeypatch):
+        asked = self._scraper(monkeypatch, self.OCTOBER)
+        ffb_history_days(self._november(), {"2026-10-01", "2026-11-10"})
+        assert asked == []
+
+    def test_a_month_before_that_cannot_be_read_adds_nothing(self, monkeypatch):
+        self._scraper(monkeypatch, [])
+        assert ffb_history_days(self._november(), set()) == self.NOVEMBER
+
+    def test_january_looks_back_to_december(self, monkeypatch):
+        asked = self._scraper(monkeypatch, [])
+        ffb = _make_ffb(day="2027-01-04")
+        ffb_history_days(ffb, set())
+        assert asked[0][0] == "2026-12-31"
+
+    def test_a_run_that_could_not_read_mpob_adds_nothing(self, monkeypatch):
+        asked = self._scraper(monkeypatch, self.OCTOBER)
+        assert ffb_history_days(None, set()) == []
+        assert asked == []
+
+
+class TestMainWritesTheHistory:
+    def test_a_run_hands_mpobs_days_to_the_writer(self, monkeypatch):
+        import run_scraper
+        from types import SimpleNamespace
+
+        handed = []
+        maker = TestBuildPayload()
+        ffb = _make_ffb()
+        ffb.days = [{"date": ffb.date_iso, "prices": dict(MPOB_22_OCT)}]
+        monkeypatch.setattr(run_scraper, "MPOBScraper",
+                            lambda **kwargs: SimpleNamespace(scrape_all=lambda: {"success": False}))
+        monkeypatch.setattr(run_scraper, "MPOCDailyCPOScraper",
+                            lambda: SimpleNamespace(scrape=lambda: SimpleNamespace(latest=maker._make_cpo())))
+        monkeypatch.setattr(run_scraper, "MPOBOERScraper", lambda: SimpleNamespace(scrape=maker._make_oer))
+        monkeypatch.setattr(run_scraper, "MPOBFFBScraper",
+                            lambda **kwargs: SimpleNamespace(scrape=lambda: ffb, month_days=lambda day: []))
+        monkeypatch.setattr(run_scraper, "read_latest", lambda: None)
+        monkeypatch.setattr(run_scraper, "read_ffb_history", lambda: {})
+        monkeypatch.setattr(run_scraper, "write_price_data",
+                            lambda payload, ffb_days=None: handed.append(ffb_days) or True)
+        monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
+        monkeypatch.setattr(run_scraper, "report_success", lambda: {})
+
+        assert run_scraper.main() == 0
+        assert handed == [ffb.days]
