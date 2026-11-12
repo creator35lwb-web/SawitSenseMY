@@ -23,6 +23,8 @@ Patch:           SS (Claude Code), Oct 2026 \u2014 `oer.in_app_since`, the date 
                  from MPOB (D18)
 Patch:           SS (Claude Code), Oct 2026 \u2014 MPOB's official daily FFB
                  reference price replaces the estimate (D22, K25, ADR-002)
+Patch:           SS (Claude Code), Nov 2026: a run that can't read MPOC still
+                 publishes MPOB's prices, beside the last CPO price (K28)
 """
 
 import logging
@@ -201,13 +203,14 @@ def ffb_quality_warnings(ffb_obs, cpo_price: Optional[float], today: str) -> lis
 
 
 def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer: Optional[dict] = None,
-                  ffb_obs=None, previous_ffb: Optional[dict] = None):
+                  ffb_obs=None, previous_ffb: Optional[dict] = None, previous_cpo: Optional[dict] = None):
     """Compose the SawitSense data payload (matches frontend price_provider).
 
     Behavior is identical to v0.3-recovery initial. Refactored into helpers
     for cognitive-complexity compliance — see SonarCloud python:S3776.
-    `previous_oer` and `previous_ffb` (the last published blocks) are carried
-    forward when this run's OER or MPOB FFB fetch failed; see decide_payload().
+    `previous_oer`, `previous_ffb` and `previous_cpo` (the last published
+    blocks) are carried forward when this run's OER, MPOB FFB or CPO fetch
+    failed; see decide_payload().
     """
     payload = _empty_payload()
 
@@ -217,6 +220,9 @@ def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer:
     elif fallback_obs is not None:
         payload["cpo"] = fallback_obs
         payload["fallback_used"] = True
+    elif previous_cpo:
+        # Keep the last CPO price, with its date, beside MPOB's prices (K28).
+        payload["cpo"] = {**previous_cpo, "carried_forward": True}
 
     # --- OER leg ---
     if oer_snap is not None:
@@ -236,24 +242,31 @@ def build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous_oer:
 
     payload["success"] = bool(payload["cpo"] or payload["ffb"] or payload["oer"])
     payload["legacy_bepi_success"] = bool(legacy_attempt)
-    payload["warnings"] = _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer, ffb_obs, previous_ffb)
+    payload["warnings"] = _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer, ffb_obs, previous_ffb,
+                                            previous_cpo)
     if ffb_obs is not None:
         cpo_price = (payload["cpo"] or {}).get("price_myr_per_tonne")
         payload["warnings"] += ffb_quality_warnings(ffb_obs, cpo_price, payload["scraped_at"][:10])
     return payload
 
 
+def _missing_cpo_warning(fallback_obs, previous_cpo: Optional[dict]) -> str:
+    """What happened to the CPO price on a run that couldn't read MPOC."""
+    if fallback_obs is not None:
+        return "MPOC daily CPO price unavailable; Commodities-API fallback used"
+    if previous_cpo:
+        return f"MPOC daily CPO price unavailable this run; kept the previous price ({previous_cpo.get('date')})"
+    return "MPOC daily CPO price unavailable; no CPO price this run"
+
+
 def _collect_warnings(cpo_obs, oer_snap, fallback_obs, previous_oer: Optional[dict] = None,
-                      ffb_obs=None, previous_ffb: Optional[dict] = None) -> list:
+                      ffb_obs=None, previous_ffb: Optional[dict] = None,
+                      previous_cpo: Optional[dict] = None) -> list:
     """Data-quality problems for this run. The data is still published; the
     scraper workflow turns a non-empty list into an alert issue."""
     warnings = []
     if cpo_obs is None:
-        warnings.append(
-            "MPOC daily CPO price unavailable; Commodities-API fallback used"
-            if fallback_obs is not None
-            else "MPOC daily CPO price unavailable; no CPO price this run"
-        )
+        warnings.append(_missing_cpo_warning(fallback_obs, previous_cpo))
     if oer_snap is not None:
         warnings.extend(oer_snap.warnings)
     elif previous_oer:
@@ -294,9 +307,13 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
     """The payload to publish this run, or None to keep the last good snapshot.
 
     Never replace good data with worse data (K7):
-    - No CPO price this run (MPOC and the fallback both failed): publish
+    - Neither a CPO price nor MPOB's daily FFB price this run: publish
       nothing. The last good snapshot stays live and its freshness badge ages
       honestly, instead of the site losing its prices until the next good run.
+    - No CPO price this run (MPOC and the fallback both failed), but MPOB's
+      prices were read: publish them, and carry the previous `cpo` block
+      forward, marked `carried_forward`, with a warning. The app's prices
+      are MPOB's (D22), so MPOC must not hold them back (K28).
     - OER missing this run: carry the previous `oer` block forward, marked
       `carried_forward`, with a warning.
     - MPOB's daily FFB price missing this run, or older than the one shown:
@@ -305,8 +322,6 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
 
     A fresh `oer` block also records `in_app_since` (D18).
     """
-    if cpo_obs is None and fallback_obs is None:
-        return None
     last_oer = (previous or {}).get("oer")
     last_ffb = (previous or {}).get("ffb") or {}
     if ffb_obs is not None and not last_ffb.get("is_indicative") and ffb_obs.date_iso < last_ffb.get("date", ""):
@@ -314,10 +329,14 @@ def decide_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs, previous: Op
         # prices must never replace newer ones already shown (K7).
         logger.warning(f"MPOB FFB: read {ffb_obs.date_iso}, older than the {last_ffb['date']} prices shown")
         ffb_obs = None
+    no_cpo = cpo_obs is None and fallback_obs is None
+    if no_cpo and ffb_obs is None:
+        return None
     payload = build_payload(cpo_obs, oer_snap, legacy_attempt, fallback_obs,
                             previous_oer=last_oer if oer_snap is None else None,
                             ffb_obs=ffb_obs,
-                            previous_ffb=(previous or {}).get("ffb") if ffb_obs is None else None)
+                            previous_ffb=(previous or {}).get("ffb") if ffb_obs is None else None,
+                            previous_cpo=(previous or {}).get("cpo") if no_cpo else None)
     if oer_snap is not None:
         # scraped_at is in MYT, so its first 10 characters are today's MYT date.
         payload["oer"]["in_app_since"] = oer_in_app_since(payload["oer"], last_oer, payload["scraped_at"][:10])
@@ -382,10 +401,11 @@ def main() -> int:
 
     if payload is None:
         logger.error(
-            "No CPO price this run (MPOC and the Commodities fallback both failed). "
-            "Keeping the last good snapshot; its freshness badge will show its age."
+            "Neither a CPO price (MPOC and the Commodities fallback both failed) nor MPOB's "
+            "daily FFB price this run. Keeping the last good snapshot; its freshness badge "
+            "will show its age."
         )
-        report_failure("No CPO price this run; last good snapshot kept")
+        report_failure("No CPO or MPOB FFB price this run; last good snapshot kept")
         return 1
 
     for warning in payload["warnings"]:

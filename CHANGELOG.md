@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **MPOC can no longer hold back MPOB's prices** (K28). A run that couldn't read MPOC's CPO price published nothing, a rule from when the prices were made from CPO. Since v0.4.0 the prices are MPOB's own, but MPOC still decided whether they went out. On 10 Nov MPOC answered with a bot check at 12:04 MYT, and MPOB's prices for the day reached the site 8.5 hours after MPOB's update. Now:
+  - a run that read MPOB's prices publishes them, beside the last CPO price and its date (`cpo.carried_forward` in the open data);
+  - the run still raises its alert, so MPOC's trouble is reported;
+  - a run that read neither MPOC nor MPOB publishes nothing, as before, and the last good prices stay up (K7).
+
 ## [0.4.2] - 2026-10-23
 
 ### Changed

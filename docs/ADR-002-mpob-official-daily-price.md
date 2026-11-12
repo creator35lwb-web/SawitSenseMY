@@ -46,6 +46,7 @@ SawitSense shows MPOB's own daily price per 1% OER for each region, as MPOB publ
   - MPOB's Sarawak footnote changes.
 - **Per-region dates.** On a holiday in some regions only, those regions keep their earlier price and its own date, and the app shows that date.
 - **When MPOB can't be read** (K7): the last prices stay up, marked `carried_forward`, with their date and a warning. No estimate takes their place.
+- **When MPOC can't be read** (K28, Nov 2026): MPOB's prices are still published. The last CPO price stays beside them, marked `carried_forward`, with its date and a warning. Until then a run with no CPO price published nothing, which on 10 Nov held MPOB's prices back for 8.5 hours. A run that read neither source publishes nothing.
 - **Retired.** The CPO × 0.01 × 0.93 estimate is gone from the scraper. A snapshot from before the switch keeps its "indicative" label until MPOB's price replaces it.
 - **In the app:**
   - each region card says "MPOB, at the mill gate", in the reader's language. Sarawak's adds "Miri and Bintulu", MPOB's footnote;
