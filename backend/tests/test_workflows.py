@@ -5,6 +5,8 @@ Author: SS (Claude Code), Oct 2026
 
 from pathlib import Path
 
+import pytest
+
 WORKFLOWS = Path(__file__).parent.parent.parent / ".github" / "workflows"
 
 
@@ -31,3 +33,23 @@ def test_a_change_to_the_pinned_versions_is_checked_before_it_merges():
     workflow = (WORKFLOWS / "vulnerability_watchdog.yml").read_text(encoding="utf-8")
     pull_request = workflow.split("pull_request:", 1)[1].split("workflow_dispatch:", 1)[0]
     assert "- 'backend/requirements.lock'" in pull_request
+
+
+ALERTING_WORKFLOWS = ("scraper_cron", "deploy_web", "freshness_watchdog", "feedback_watchdog",
+                      "vulnerability_watchdog")
+
+
+@pytest.mark.parametrize("name", ALERTING_WORKFLOWS)
+def test_a_repeat_failure_comments_on_the_open_alert(name):
+    # D25: on 10 Nov 2026 the scraper failed while its alert from 7 Nov was
+    # still open. The step skipped filing, so the failure told nobody.
+    workflow = (WORKFLOWS / f"{name}.yml").read_text(encoding="utf-8")
+    already_open = workflow.split("if (existing.data.length > 0) {", 1)[1].split("return;", 1)[0]
+    assert "github.rest.issues.createComment(" in already_open
+    assert "issue_number: existing.data[0].number" in already_open
+
+
+@pytest.mark.parametrize("name", ALERTING_WORKFLOWS)
+def test_an_alert_step_may_write_to_issues(name):
+    workflow = (WORKFLOWS / f"{name}.yml").read_text(encoding="utf-8")
+    assert "issues: write" in workflow
