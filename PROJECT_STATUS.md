@@ -2,25 +2,19 @@
 
 **This file is the single source of truth for the project's current state.** SS (Claude Code) maintains it and updates it at the end of every working session.
 
-**Last updated:** 23 October 2026 (K27 fix verified; D24 built for v0.4.2: when MPOB publishes) · SS (Claude Code)
+**Last updated:** 12 November 2026 (health check 24 Oct – 12 Nov; K28 fix in review) · SS (Claude Code)
 
 > **Next session starts here:**
-> 1. Read the newest handoff, `.macp/handoffs/20261023_SS_mpob-timing-note.md`.
+> 1. Read the newest handoff, `.macp/handoffs/20261112_SS_health-check.md`.
 > 2. Routine checks:
->    - open issues and PRs;
+>    - open issues and PRs. **#49 and #50 are explained (12 Nov health check) and can be closed, if Alton hasn't yet.** Close an alert issue as soon as its cause is known: while one is open, later failures of the same kind raise no new alert (D25);
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
-> 3. MPOB's October OER is due around mid-November. Check that the live `oer.month` moves from 9 to 10, that `oer.in_app_since` takes that run's date, and that "Where do these prices come from?" shows October.
-> 4. Check that the first scheduled "Vulnerability watchdog" run (Monday 26 Oct, 10:23 MYT) passed: `gh run list --workflow vulnerability_watchdog.yml`.
-> 5. MPOB's daily updates, in the first days:
->    - after MPOB's update each trading day (about noon), the live `ffb.date` should move to that day, with no warnings;
->    - on 1 November, until MPOB publishes November's first price, the runs should use October's last prices without an alert. MPOB's server answers 500 for that month until then (K26).
-> 6. **K27 and D24 over the first weekend and Monday:**
->    - on Saturday 24 and Sunday 25 Oct, the live `ffb.date` should stay 2026-10-23, with `source_url` `.../ffb/2026-10-23` and no warnings. MPOB's PDF has NT on Saturdays and PH on Sundays;
->    - on Monday 26 Oct, the link should stay `.../2026-10-23` until MPOB's noon update, then move to `.../2026-10-26`;
->    - after D24 merges, "Where do these prices come from?" should say when MPOB publishes, in EN, BM and 中文;
->    - if Alton still sees an older PDF on his phone, ask how it opened (in the browser, or as a downloaded file).
-> 7. D15 (web first, store later), D9 and D6 stay Alton's calls.
+> 3. **After the K28 fix merges:** run the scraper once by hand (`gh workflow run scraper_cron.yml`) and check it is green with no warnings. The fix only acts when MPOC can't be read. The next time that happens, the run should still publish MPOB's prices, keep the last CPO price with `cpo.carried_forward: true`, and raise a `scraper-alert` issue that names MPOC.
+> 4. **MPOC's CPO price has stood at 5 Nov since 6 Nov.** MPOC's own page ends there (checked 12 Nov), so this is MPOC's delay, not a scraper fault. Check that it moves again. The History tab is CPO-only, so it ends on 5 Nov too (D26).
+> 5. MPOB's November OER is due around 10 December. Check that the live `oer.month` moves from 10 to 11 and that `oer.in_app_since` takes that run's date.
+> 6. On 1 December, until MPOB publishes December's first price, the runs should use November's last prices without an alert, as they did on 1 November (K26).
+> 7. D25 and D26 are new and wait for Alton. D15 (web first, store later), D9 and D6 stay Alton's calls.
 ---
 
 ## At a glance
@@ -28,9 +22,9 @@
 | | |
 |---|---|
 | Live site | https://creator35lwb-web.github.io/SawitSenseMY/ |
-| Version | **0.4.1 live; 0.4.2 in review** (MPOB's official daily FFB reference price; a target to negotiate towards in the calculator, D23; when MPOB publishes, D24; EN, BM and 中文; feedback form; Share button; "Latest from MPOB" with MPOB's PDF; checked every 2 hours) |
-| Data mode | **MPOB's official price (since v0.4.0, 23 Oct; D22).** Each region's price per 1% OER is MPOB's daily FFB reference price at the mill gate, read from [MPOB's public PDF](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23) ([ADR-002](docs/ADR-002-mpob-official-daily-price.md)). The earlier estimate, CPO × 0.01 × 0.93, was 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (K25). |
-| Live site freshness | **Good, with two incidents (K22, K23).** The schedule asks for a check every 2 hours (D13); GitHub runs 3–5 a day. From 17 to 22 Oct the prices were 88% GREEN, 12% AMBER and 0.8% RED. The RED was 68 min on 21 Oct, after a run timed out while MPOB was down (K23). Mornings (06:00–12:00 MYT) were 100% GREEN. 9–17 Oct: 90% GREEN, 0% RED. The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
+| Version | **0.4.2 live** (MPOB's official daily FFB reference price; a target to negotiate towards in the calculator, D23; when MPOB publishes, D24; EN, BM and 中文; feedback form; Share button; "Latest from MPOB" with MPOB's PDF; checked every 2 hours) |
+| Data mode | **MPOB's official price (since v0.4.0, 23 Oct; D22).** Each region's price per 1% OER is MPOB's daily FFB reference price at the mill gate, read from [MPOB's public PDF](https://price.mpob.gov.my/pdf/daily/ffb/2026-11-11) ([ADR-002](docs/ADR-002-mpob-official-daily-price.md)). The earlier estimate, CPO × 0.01 × 0.93, was 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (K25). |
+| Live site freshness | **Good in late October, weaker in November (K28).** The schedule asks for a check every 2 hours (D13); GitHub ran 3.7 a day. From 24 Oct to 12 Nov the prices were 83% GREEN, 15% AMBER and 1.4% RED; mornings (06:00–12:00 MYT) were 98% GREEN and never RED. Both RED spells (151 min on Sat 7 Nov, 232 min on Tue 10 Nov) came from MPOC answering with a bot check, which stopped the whole run, MPOB's prices included (K28, fix in review). 24 Oct – 1 Nov: 92% GREEN, 0% RED. 17–22 Oct: 88% GREEN, 0.8% RED. MPOB's price for each trading day reached the site a median 2.7 h after MPOB's noon update (0.9–8.5 h). The freshness watchdog checks that the live site matches `main`, and that `main` has had new data within a day. |
 | Data pipeline | The scraper runs every 2 hours, every day (since #21, D13) and dispatches a deploy after each data commit. Supply chain: 17 hash-locked packages, wheels only, checked weekly for known vulnerabilities (D19). |
 | Active agent | SS (Claude Code), the sole active agent. Alton merges every PR. |
 
@@ -79,6 +73,30 @@
   - Deploy `#36823054923` **succeeded under the narrower permissions**, which proves K14 in a real deploy.
   - SonarCloud on `main` now shows **0 bugs and 0 vulnerabilities, rated A** for reliability and security (it was C). The quality gate passes.
   - The page's `lang` was `en` before the app started but `en-US` afterwards, on every phone. Choosing from the menu set it correctly. The startup gap is fixed in #20 (K19).
+- **Health check, 12 Nov 2026** (24 Oct – 12 Nov, 07:50 MYT):
+  - **Live now:** v0.4.2, HTTP 200. `formula_status` is `OFFICIAL` with no warnings. MPOB's prices for 11 Nov on the site equal MPOB's PDF exactly: North 43.54, South 43.80, Central 43.69, East Coast 43.62, Sabah 39.03, Sarawak 39.39.
+  - **Runs since 23 Oct:**
+    - scraper: 75 of 77 succeeded (2 incidents, below);
+    - deploys: 76 of 77 succeeded (1 incident, below);
+    - freshness watchdog 57 of 57, feedback form watchdog 20 of 20, vulnerability watchdog 3 of 3 (the first scheduled run, 26 Oct, passed).
+  - **Incident, Sat 7 Nov 16:41 MYT and Tue 10 Nov 12:04 MYT (K28, issue #50):** MPOC answered with its bot check, and again on both retries 30 s apart. The runs had read MPOB's prices, but with no CPO price they published nothing.
+    - On 10 Nov the run held MPOB's prices for that day at 12:05 MYT. They reached the site at 20:32 MYT, 8.5 h after MPOB's update. The freshness badge was RED for 232 min.
+    - On 7 Nov, a Saturday, no price was held back, but the badge was RED for 151 min.
+    - The 10 Nov failure raised no new alert, because #50 from 7 Nov was still open (D25).
+    - In the other 75 runs MPOC answered normally at the first attempt.
+  - **Incident, 5 Nov 03:42 MYT (issue #49):** GitHub Pages took a deploy and stayed at "updating_pages" for 10 minutes until the action gave up. The build and tests had passed. The next deploy, at 08:51 MYT, succeeded. For those 5 hours the site showed the previous run's data; the prices were the same.
+  - **D24 is live** (v0.4.2, #48): the bundle holds the "about noon on trading days" sentence in EN, BM and 中文.
+  - **K27 and K26 held:**
+    - over the weekends the prices stayed on Friday's date, the link on Friday's address, with no warnings;
+    - on 31 Oct and 1 Nov, MPOB answered 500 for November and the runs used October's last prices without an alert.
+  - **MPOB's days:**
+    - Mon 26 Oct: MPOB's PDF still ended on 23 Oct at 12:38 and 20:51 MYT. MPOB added 26 Oct's price later, and the site moved from 23 Oct to 27 Oct. The October PDF now has a 26 Oct row.
+    - Mon 9 Nov reads PH (public holiday) in MPOB's PDF, as do Sundays 1 and 8 Nov.
+  - **MPOB's October OER arrived on 10 Nov** and is live (`oer.month` 10, `in_app_since` 2026-11-10): Malaysia 20.34%, Peninsular 20.07%, Sabah 21.41%, Sarawak 19.99%.
+  - **MPOC's CPO price is 5 Nov's (RM 4,377.00), unchanged since 6 Nov.** MPOC's own page ends on 5 Nov, so 6, 10 and 11 Nov are not posted yet. MPOB's prices don't depend on it. The History tab is CPO-only, so it ends on 5 Nov; it also lacks 23 and 28 Oct, which MPOC posted together with a later day (D26).
+  - **Security:** 0 Dependabot alerts; the OSV check of the 17 locked Python packages found 0 vulnerabilities. SonarCloud on `main`: gate passed, 0 bugs, 0 vulnerabilities, 0 hotspots, all ratings A.
+  - **Tests:** backend 187 before this PR, 193 with it, all passing; flake8 clean.
+  - **Feedback:** the form watchdog passed daily. SS did not read the response sheet this session; it needs Alton's yes.
 - **K27's fix, checked after #47 merged** (23 Oct, 22:32 MYT): SS ran the scraper by hand on the merged code (39970468176, 28 s). It read MPOB's 23 Oct prices with no warnings and wrote `source_url` `.../ffb/2026-10-23`, the prices' own date; its deploy succeeded.
 - **MPOB's publishing days, read from October's PDF** (23 Oct): every day of the month has a row. Mondays to Fridays have prices, added at about noon ("Last update 12:00 pm"). Saturdays (3, 10, 17 Oct) read NT, no trade, and Sundays (4, 11, 18 Oct) read PH. SawitSense's alert for old prices waits 6 days, so weekends and holidays raise none.
 - **v0.4.1 is live, checked after #45 and #46 merged** (23 Oct):
@@ -168,21 +186,22 @@
 - **Scheduled scrapes ran every weekday through September**, 4–6 hours late under the old `:30` schedule. For example, 29 Sep at 06:01 and 14:54 UTC, and 30 Sep at 05:50 UTC. The `:13` schedule's first run is due 1 Oct, 00:13 UTC.
 ---
 
-## Performance (v0.3.8, measured 1 Oct 2026)
+## Performance (v0.4.2, measured 12 Nov 2026)
 
-Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading the live site.
+Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading the live site, three runs per profile. The 1 Oct figures (v0.3.8) are in brackets.
 
 | Measure | Result |
 |---|---|
-| First visit at 1.6 Mbps / 150 ms (Lighthouse's mobile test) | Launch screen at **0.4 s**; app and prices on screen at **15.2 s** |
-| First visit at 9 Mbps / 60 ms (good 4G) | Launch screen at 0.3 s; app and prices at **4.8 s** |
-| First-visit download | **2.77 MB**: graphics engine (CanvasKit) 1.58 MB, app code 0.85 MB, fonts 0.27 MB, everything else 0.07 MB. Chinese adds about 0.4 MB of font pieces, once |
-| Return visit | About **1 s**, with nothing re-downloaded. GitHub Pages lets browsers reuse files for 10 minutes, then re-checks them |
+| First visit at 1.6 Mbps / 150 ms (Lighthouse's mobile test) | Launch screen at **0.5 s** (0.4); app and prices on screen at **15.5 s** (15.2). Range 14.5–16.0 s |
+| First visit at 9 Mbps / 60 ms (good 4G) | Launch screen at 0.3 s; app and prices at **4.1–4.8 s** (4.8). In one of three runs the first request took 12 s to answer; the other two were normal |
+| First-visit download | **2.91 MB** (2.77): graphics engine (CanvasKit) 1.66 MB, app code 0.90 MB, fonts 0.29 MB, everything else 0.07 MB. Chinese adds about 0.34 MB of font pieces, once |
+| Return visit | **1–2 s**, with nothing re-downloaded. GitHub Pages lets browsers reuse files for 10 minutes, then re-checks them |
 | Offline | Not available: Flutter's service worker only unregisters itself (D9) |
-| Scheduled scrapes | 56 runs since 21 Aug started a median **4.7 h** late (0.6–11.8 h), landing around 13:30 and 22:00 MYT (K18) |
-| Code quality (SonarCloud, `main`) | Quality gate passed. The 1 bug and 4 vulnerabilities found in older code are fixed in #19 (K14–K16) |
-| Tests | Backend 93 and frontend 70, all passing (with #19) |
-| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 33 page views from 5 visitors in the 14 days to 17 Oct (3 in the 14 days to 1 Oct). Feedback arrives through the Google Form (D14), which Alton reads: 1 response by 17 Oct |
+| Scheduled scrapes | 77 runs in 20 days, 3.7 a day against 12 slots; a median 6.4 h apart, 11.0 h at most (K18) |
+| MPOB's price on the site | A median **2.7 h** after MPOB's noon update, over 11 trading days (0.9–8.5 h). The two slowest: 8.5 h on 10 Nov (K28) and 8.0 h on 4 Nov (no scheduled run between 10:15 and 20:01 MYT) |
+| Code quality (SonarCloud, `main`) | Quality gate passed: 0 bugs, 0 vulnerabilities, 0 security hotspots, 5 code smells; reliability, security and maintainability all rated A |
+| Tests | Backend 193, all passing (with the K28 fix). Frontend: about 113 test cases, last run by CI on 23 Oct (#48), all passing |
+| Usage | **Unknown.** The site has no analytics, by design. The GitHub repository had 3 page views from 3 visitors in the 14 days to 10 Nov (33 from 5 in the 14 days to 17 Oct), 3 stars, and no Discussions posts. Feedback arrives through the Google Form (D14), which Alton reads: 1 response by 23 Oct |
 
 ---
 
@@ -190,7 +209,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | PR | What it does |
 |----|--------------|
-| This PR | When MPOB publishes, in "Where do these prices come from?" (D24, v0.4.2); records for #47 |
+| This PR | MPOC can no longer hold back MPOB's prices (K28); health check of 24 Oct – 12 Nov |
 
 ---
 
@@ -198,7 +217,9 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 
 | ID | Severity | Issue | Next step |
 |---|----------|-------|-----------|
-| — | | No open issues | |
+| K28 | Medium | A run that can't read MPOC publishes nothing, MPOB's prices included | Fixed in this PR; see below |
+| — | Low | MPOC's CPO price has stood at 5 Nov since 6 Nov; MPOC's page ends there | Watch; nothing to fix on our side |
+| #49, #50 | Low | Two alert issues are still open; both are explained in the 12 Nov health check. While #50 is open, a new scraper failure raises no alert (D25) | Alton closes them, or tells SS to |
 
 ### Fixed on 30 Sep 2026
 
@@ -222,6 +243,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | K19 | After #19 the page's `lang` was still reset to `en-US` once the app started, for every language. Flutter writes the app's locale to the page, and the app declared none | #20 |
 | K17 | The feedback button said "Thank you for your feedback!" but sent nothing (Firestore was retired in D5) | #22 |
 | K18 | GitHub ran the twice-weekday scrapes hours late, so mornings were 60% RED. With 2-hourly slots, measured over 2–9 Oct: 87% GREEN and 0% RED overall, and 100% GREEN in the mornings | #21 (D13) |
+| K28 | A run with no CPO price published nothing (K7, from when the prices were made from CPO). Since D22 the prices are MPOB's own, yet MPOC still decided whether they went out. MPOC answered with a bot check on 7 and 10 Nov; on 10 Nov MPOB's prices for the day reached the site 8.5 h after MPOB's update. Now a run that read MPOB's prices publishes them, keeps the last CPO price with its date (`cpo.carried_forward`), and still raises the alert | This PR |
 | K27 | MPOB's PDF link used the run's date, not the prices' date. MPOB serves the whole month at any day's address, under one file name per month. So from the morning run the link already had the day's address, and kept it after MPOB added that day at noon. Alton saw the PDF end on 22 Oct while the site showed 23 Oct; MPOB's server itself returned 23 Oct. Now the link's date is the prices' date, so the address changes when MPOB adds a day | #47 (verified, 23 Oct) |
 | K26 | MPOB's server answers HTTP 500, not 404, for a month it has no prices for yet. The scraper read that as "MPOB is down". From 1 November, until MPOB's first November price, every run would have raised a false alert, though October's prices stayed up. A fix that falls back on any 500 could also have let a passing mid-month error put older prices up in place of newer ones. Found on 23 Oct by asking MPOB's server about November | #44 |
 | K25 | The price per 1% OER was SawitSense's estimate (CPO × 0.01 × 0.93), the same for every region. MPOB's official daily price showed it 6–11% too low in Peninsular Malaysia and 1–6% too high in Sabah and Sarawak (October 2026), so the Fair Price verdict was too lenient in the Peninsula | #40 (D22) |
@@ -261,7 +283,9 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 | D21 | **Say exactly what the prices are made from.** The banner says regional prices "are derived from MPOC daily CPO settlement and MPOB monthly OER", and every region card says "Source: Derived (MPOC CPO × MPOB OER)", in English even in BM and 中文. But the price per 1% OER is the same in every region and comes from MPOC's CPO price alone (CPO × 0.01 × 0.93). MPOB's OER only gives the regional averages in "How is this calculated?". Six identical prices, each labelled with MPOB's regional OER, invite the question why they don't differ. SS recommends that the banner say the prices come from MPOC's daily CPO price, and that each card's source line say "MPOC CPO price" in the reader's language. The new BM and 中文 wording needs a native reader's check | **Superseded by D22 (#40).** With MPOB's own prices the banner no longer shows, and each card says "MPOB, at the mill gate" in the reader's language |
 | D22 | **Show MPOB's official daily FFB reference price instead of the estimate (K25).** MPOB publishes its daily price per 1% OER for each region, at the mill gate, as a public PDF. The scraper would read it after MPOB's daily update and check every figure. The dashboard and the calculator would then show MPOB's regional prices, each with its date and a link to MPOB's PDF, so readers can check them. The 0.93 estimate would be retired; on a day MPOB hasn't published, the last official prices stay with their date (K7). The Fair Price verdict would need a note that dealers' prices sit below the mill-gate price by their transport and margin. MPOB's disclaimer has no reuse terms. The page shows © MPOB, and the PDF lists MPOB staff to contact, so Alton may wish to tell MPOB, or ask first. The new wording in BM and 中文 needs a native reader's check | **Done in #40 (verified live, 23 Oct).** Alton approved on 23 Oct. MPOB's daily PDF is read with the standard library and every figure checked; the estimate is retired. The app links to MPOB's PDF under the prices and, as Alton asked, in "Latest from MPOB". See [ADR-002](docs/ADR-002-mpob-official-daily-price.md) |
 | D23 | **A negotiable price for readers.** Alton (23 Oct, by the feedback form and in chat): MPOB's price is at the mill gate, but smallholders mostly sell to licensed dealers, so readers need a price they can negotiate towards that leaves the dealer a margin. A chat with another AI suggested a fixed dealer margin of RM 45–70 a tonne in the Peninsula and RM 35–55 in Sabah and Sarawak. SS found no published source for any dealer margin: MPOB's two journal articles on dealers (2001, 2009) give no figure, and none was found saying MPOB sets one. A made-up margin shown as "fair" could become a ceiling dealers quote back at readers. SS recommends showing, in the calculator, what can be checked: the mill-gate price for the reader's OER, the gap to the dealer's offer in RM and %, what each 0.25% of OER is worth, and the existing 5% band as an RM target, labelled as SawitSense's guide, not MPOB's. The thresholds stay Alton's call | **Built for v0.4.1** (Alton approved, 23 Oct): the target, the RM short of it, and the value of each 0.25% of OER, in the calculator. The 5% band is `FairPriceResult.greenBandPct`, shared with the verdict. **Done in #46 (verified live, 23 Oct).** Alton checked the BM and 中文 |
-| D24 | **Say when MPOB publishes.** Alton (23 Oct) noticed that MPOB's PDF isn't updated every day. MPOB adds prices at about noon on trading days, and none on Saturdays, Sundays or public holidays. The method sheet said only "every trading day", so on a Sunday readers would see Friday's date with no reason given. SS recommended a sentence in "Where do these prices come from?" in EN, BM and 中文 | **Built for v0.4.2** (Alton approved, 23 Oct). Key `method_official_timing` |
+| D24 | **Say when MPOB publishes.** Alton (23 Oct) noticed that MPOB's PDF isn't updated every day. MPOB adds prices at about noon on trading days, and none on Saturdays, Sundays or public holidays. The method sheet said only "every trading day", so on a Sunday readers would see Friday's date with no reason given. SS recommended a sentence in "Where do these prices come from?" in EN, BM and 中文 | **Done in #48 (verified live, 12 Nov).** Alton approved on 23 Oct. Key `method_official_timing` |
+| D25 | **An open alert hides later failures.** Each alert step skips filing when an issue with its label is already open. #50 (7 Nov) was still open on 10 Nov, so that day's failure, the one that held back MPOB's prices for 8.5 h, told nobody. SS recommends that a repeat failure adds a comment to the open issue, with the run's link, so GitHub notifies Alton again without opening a second issue. It is a few lines in each workflow's alert step | **Open. Alton's call.** SS recommends yes |
+| D26 | **A history of MPOB's prices.** The History tab shows MPOC's CPO price only: it ends on 5 Nov while the dashboard shows MPOB's 11 Nov prices, and it has no history of the price readers act on. The dated snapshots are filed under the CPO date, so MPOB's prices for 6 and 10 Nov have no snapshot of their own. MPOB's PDF holds every day of the month for all six regions, so the scraper could write a 30-day history per region from it, with no new source, and the tab could chart the reader's region. New wording would need EN, BM and 中文 | **Open. Alton's call.** SS recommends yes, as the next app change (v0.5.0) |
 
 ---
 

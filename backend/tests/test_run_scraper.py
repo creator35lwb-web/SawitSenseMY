@@ -223,9 +223,44 @@ class TestKeepLastGoodData:
         "regions": [{"region": "South", "price_1pct_oer": 44.33, "is_indicative": True}],
     }}
 
-    def test_no_cpo_keeps_the_last_snapshot(self):
+    def test_no_cpo_and_no_mpob_prices_keep_the_last_snapshot(self):
         oer = TestBuildPayload()._make_oer()
-        assert decide_payload(None, oer, False, None, self.PREVIOUS, ffb_obs=_make_ffb()) is None
+        assert decide_payload(None, oer, False, None, self.PREVIOUS) is None
+
+    def test_mpoc_does_not_hold_back_mpobs_prices(self):
+        # K28: on 10 Nov 2026 MPOC answered with a bot check at 12:04 MYT. The
+        # run had read MPOB's prices for the day but published nothing, and
+        # they reached the site 8.5 hours after MPOB's noon update.
+        payload = decide_payload(None, TestBuildPayload()._make_oer(), False, None, self.PREVIOUS,
+                                 ffb_obs=_make_ffb())
+        assert payload["ffb"]["regions"][1]["price_1pct_oer"] == pytest.approx(48.20)
+        assert "carried_forward" not in payload["ffb"]
+        assert payload["formula_status"] == "OFFICIAL"
+
+    def test_a_missing_cpo_price_is_carried_forward_and_flagged(self):
+        payload = decide_payload(None, TestBuildPayload()._make_oer(), False, None, self.PREVIOUS,
+                                 ffb_obs=_make_ffb())
+        assert payload["cpo"]["carried_forward"] is True
+        assert payload["cpo"]["date"] == "2026-09-28"
+        assert payload["cpo"]["price_myr_per_tonne"] == pytest.approx(4664.0)
+        assert payload["fallback_used"] is False
+        assert any("kept the previous price (2026-09-28)" in w for w in payload["warnings"])
+
+    def test_a_missing_cpo_price_without_history_publishes_mpobs_prices_alone(self):
+        payload = decide_payload(None, TestBuildPayload()._make_oer(), False, None, None, ffb_obs=_make_ffb())
+        assert payload["cpo"] is None
+        assert payload["ffb"]["date"] == _make_ffb().date_iso
+        assert any("no CPO price this run" in w for w in payload["warnings"])
+
+    def test_a_fresh_cpo_price_is_never_marked_carried_forward(self):
+        payload = decide_payload(TestBuildPayload()._make_cpo(), None, False, None, self.PREVIOUS,
+                                 ffb_obs=_make_ffb())
+        assert "carried_forward" not in payload["cpo"]
+
+    def test_no_cpo_and_an_older_mpob_read_keep_the_last_snapshot(self):
+        # Last month's PDF, read early in a month, is nothing new to publish.
+        older = _make_ffb(day="2026-10-20")
+        assert decide_payload(None, None, False, None, self.PREVIOUS, ffb_obs=older) is None
 
     def test_fallback_cpo_still_publishes(self):
         fb = {"date": "2026-09-28", "price_myr_per_tonne": 4600.0, "source": "Commodities-API (fallback)"}
@@ -381,7 +416,31 @@ class TestTimeLimit:
 
 
 class TestMainKeepsLastSnapshot:
-    def test_run_without_cpo_writes_nothing_and_fails(self, monkeypatch):
+    def test_a_run_that_cannot_read_mpoc_still_publishes_mpobs_prices(self, monkeypatch):
+        import run_scraper
+        from types import SimpleNamespace
+
+        writes = []
+        maker = TestBuildPayload()
+        monkeypatch.setattr(run_scraper, "MPOBScraper",
+                            lambda **kwargs: SimpleNamespace(scrape_all=lambda: {"success": False}))
+        monkeypatch.setattr(run_scraper, "MPOCDailyCPOScraper", lambda: SimpleNamespace(scrape=lambda: None))
+        monkeypatch.setattr(run_scraper, "MPOBOERScraper", lambda: SimpleNamespace(scrape=maker._make_oer))
+        monkeypatch.setattr(run_scraper, "MPOBFFBScraper", lambda: SimpleNamespace(scrape=_make_ffb))
+        monkeypatch.setattr(run_scraper, "fetch_cpo_fallback", lambda: None)
+        monkeypatch.setattr(run_scraper, "read_latest", lambda: TestKeepLastGoodData.PREVIOUS)
+        monkeypatch.setattr(run_scraper, "write_price_data", lambda payload: writes.append(payload) or True)
+        monkeypatch.setattr(run_scraper, "report_failure", lambda msg="": {})
+        monkeypatch.setattr(run_scraper, "report_success", lambda: {})
+
+        assert run_scraper.main() == 0
+        (payload,) = writes
+        assert payload["ffb"]["date"] == _make_ffb().date_iso
+        assert payload["cpo"]["date"] == "2026-09-28"
+        # The warning makes the workflow raise its alert, so MPOC's trouble is still reported.
+        assert len(payload["warnings"]) == 1
+
+    def test_run_without_cpo_or_mpob_prices_writes_nothing_and_fails(self, monkeypatch):
         import run_scraper
         from types import SimpleNamespace
 
