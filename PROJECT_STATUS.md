@@ -7,7 +7,7 @@
 > **Next session starts here:**
 > 1. Read the newest handoff, `.macp/handoffs/20261112_SS_health-check.md`.
 > 2. Routine checks:
->    - open issues and PRs. **Close an alert issue as soon as its cause is known:** while one is open, later failures of the same kind raise no new alert (D25);
+>    - open issues and PRs. **#49 and #50 are explained (12 Nov health check) and can be closed, if Alton hasn't yet.** Close an alert issue as soon as its cause is known: while one is open, later failures of the same kind raise no new alert (D25);
 >    - `gh api repos/creator35lwb-web/SawitSenseMY/dependabot/alerts?state=open`;
 >    - the OSV check on `backend/requirements.lock`: `cd backend && python -m monitor.vulnerabilities`, the same check the weekly watchdog runs (D19). Dependabot only sees the 2 direct Python packages (D17).
 > 3. **After the K28 fix merges:** run the scraper once by hand (`gh workflow run scraper_cron.yml`) and check it is green with no warnings. The fix only acts when MPOC can't be read. The next time that happens, the run should still publish MPOB's prices, keep the last CPO price with `cpo.carried_forward: true`, and raise a `scraper-alert` issue that names MPOC.
@@ -219,6 +219,7 @@ Speed was measured on an emulated phone (412 px wide, CPU slowed 4×) loading th
 |---|----------|-------|-----------|
 | K28 | Medium | A run that can't read MPOC publishes nothing, MPOB's prices included | Fixed in this PR; see below |
 | — | Low | MPOC's CPO price has stood at 5 Nov since 6 Nov; MPOC's page ends there | Watch; nothing to fix on our side |
+| #49, #50 | Low | Two alert issues are still open; both are explained in the 12 Nov health check. While #50 is open, a new scraper failure raises no alert (D25) | Alton closes them, or tells SS to |
 
 ### Fixed on 30 Sep 2026
 

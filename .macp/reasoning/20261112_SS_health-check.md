@@ -35,9 +35,9 @@
 - A read of MPOB that is older than the prices shown still counts as no read (K26), so with no CPO price that run publishes nothing too.
 - The app needs no change: it ignores `cpo.carried_forward` and shows the CPO price with its own date, as it does today while MPOC is behind.
 
-## Closing #49 and #50
+## #49 and #50 stay open for now
 
-Both issues say to close them once the next run succeeds, and both conditions were met days ago. While #50 stayed open, the 10 Nov failure raised nothing. Closing them, with what was found, lets the next failure raise an alert. Making a repeat failure notify by itself is D25, for Alton.
+Both issues say to close them once the next run succeeds, and both conditions were met days ago. While #50 stayed open, the 10 Nov failure raised nothing, so closing them lets the next failure raise an alert. SS tried to close them with a comment on what was found; the session's permissions didn't allow it, and SS didn't look for another way. Alton can close them, or say yes for SS to. Making a repeat failure notify by itself is D25, also for Alton.
 
 ## Not done, and why
 

@@ -22,10 +22,11 @@
 - **K28 fixed in this PR.** A run that read MPOB's prices now publishes them, keeps the last CPO price with its date (`cpo.carried_forward`), and still raises the alert. A run that read neither source publishes nothing, as before.
   - 6 new tests; 193 backend tests pass; flake8 clean.
   - A dry run with MPOC forced unreadable and MPOB read for real gave MPOB's 11 Nov prices, the 5 Nov CPO price carried forward, one warning naming MPOC, and exit 0. Nothing was written.
-- **#49 and #50 closed** with what was found, so new alerts can be raised again.
+- **#49 and #50 are still open.** Both are explained above and can be closed. SS wasn't permitted to close issues in this session, so that is for Alton, or for SS once Alton says yes. Until #50 is closed, another scraper failure raises no new alert.
 - `PROJECT_STATUS.md` has the health check, the new performance table, K28, D25 and D26.
 
 ## For Alton
+- **Close #49 and #50**, or tell SS to.
 - **D25:** a repeat failure should comment on the open alert issue, so it notifies again. SS recommends yes.
 - **D26:** a 30-day history of MPOB's price per region, from MPOB's own PDF. The History tab is CPO-only and ends on 5 Nov. SS recommends yes, as the next app change.
 - **Feedback sheet:** SS did not read it this session. Say yes and SS will summarise any new responses.
