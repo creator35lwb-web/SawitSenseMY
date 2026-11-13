@@ -7,6 +7,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.8.0] - 2026-11-13
+
+### Added
+- **An offer measured against your own usual** (D30). When My Sales holds at least three sales that can be compared with MPOB's price, the calculator's result adds two lines: what OER your last sales paid for on average (the newest ten, by weight), and how many RM a tonne the offer sits above or below that at the price per 1% OER in use. With a region chosen, only sales in that region count.
+  - It is read from the journal on the phone, in the phone. Nothing is sent.
+  - No dealer margin is published (D23), so the yardstick is what dealers have in fact paid this reader.
+
+### Security
+- `soupsieve` 4.1 in the scraper's lock file, for GHSA-mmhr-3c5m-f64f (#57). The scraper never used the affected feature.
+
 ## [0.7.0] - 2026-11-13
 
 ### Added

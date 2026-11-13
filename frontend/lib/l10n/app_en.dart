@@ -118,6 +118,15 @@ const Map<String, String> enStrings = {
   'calc_pays_for_note':
       'Compare offers by this number: higher is better. It does not depend '
       'on the OER a dealer names.',
+  'calc_usual':
+      'From My Sales: your last {n} sales paid for {oer}% OER on average.',
+  'calc_usual_above':
+      'This offer is RM {rm} a tonne above your usual, at this price per 1% '
+      'OER.',
+  'calc_usual_below':
+      'This offer is RM {rm} a tonne below your usual, at this price per 1% '
+      'OER.',
+  'calc_usual_same': 'This offer is in line with your usual.',
   'guide_link': 'Before you accept a price: 4 checks',
   'guide_title': 'Before you accept a price',
   'guide_intro':

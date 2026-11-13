@@ -122,6 +122,16 @@ const Map<String, String> msStrings = {
   'calc_pays_for_note':
       'Bandingkan tawaran dengan angka ini: lebih tinggi lebih baik. Ia '
       'tidak bergantung pada OER yang disebut peniaga.',
+  'calc_usual':
+      'Daripada Jualan Saya: {n} jualan terakhir anda secara purata '
+      'bersamaan {oer}% OER.',
+  'calc_usual_above':
+      'Tawaran ini RM {rm} setan lebih tinggi daripada kebiasaan anda, pada '
+      'harga per 1% OER ini.',
+  'calc_usual_below':
+      'Tawaran ini RM {rm} setan lebih rendah daripada kebiasaan anda, pada '
+      'harga per 1% OER ini.',
+  'calc_usual_same': 'Tawaran ini hampir sama dengan kebiasaan anda.',
   'guide_link': 'Sebelum terima harga: 4 semakan',
   'guide_title': 'Sebelum anda terima harga',
   'guide_intro':

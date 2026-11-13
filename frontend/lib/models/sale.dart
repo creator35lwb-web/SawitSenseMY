@@ -289,6 +289,38 @@ class JournalSummary {
   }
 }
 
+/// What the reader's own recent sales paid for (D30): the yardstick for a new
+/// offer, in place of a dealer margin nobody publishes (D23).
+class UsualPrice {
+  /// How many sales it is drawn from.
+  final int count;
+
+  /// The OER their prices paid for at MPOB's price of each day, averaged by
+  /// weight.
+  final double paysForOer;
+
+  const UsualPrice({required this.count, required this.paysForOer});
+
+  /// The reader's usual from the newest [latest] of [sales] that can be
+  /// compared with MPOB's price, in [region] when one is given. Null when
+  /// there are fewer than [atLeast]: two sales are not yet a habit.
+  static UsualPrice? of(Iterable<Sale> sales,
+      {String? region, int latest = 10, int atLeast = 3}) {
+    final compared = newestFirst(sales.where((s) =>
+            s.paysForOer != null && (region == null || s.region == region)))
+        .take(latest)
+        .toList();
+    final average = JournalSummary.of(compared).averagePaysFor;
+    if (compared.length < atLeast || average == null) return null;
+    return UsualPrice(count: compared.length, paysForOer: average);
+  }
+
+  /// How far an offer that pays for [offerPaysForOer] sits above (or, when
+  /// negative, below) the usual, in whole RM per tonne at [price1PctOer].
+  int differenceRm(double offerPaysForOer, double price1PctOer) =>
+      ((offerPaysForOer - paysForOer) * price1PctOer).round();
+}
+
 /// Newest first; sales on the same day keep the order they were entered in.
 List<Sale> newestFirst(Iterable<Sale> sales) {
   final indexed = sales.toList().asMap().entries.toList();

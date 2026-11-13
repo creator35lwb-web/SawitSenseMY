@@ -15,10 +15,14 @@
 // Patch: SS (Claude Code), Nov 2026 — transport a dealer takes off the price,
 // and the OER a price pays for, so offers can be compared whatever OER each
 // dealer names (D27); a link to four checks before accepting a price (D31).
+// Patch: SS (Claude Code), Nov 2026 — the offer set against the reader's own
+// usual, from the sales in their journal on this phone (D30).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/price_data.dart';
+import '../models/sale.dart';
+import '../providers/journal_provider.dart';
 import '../providers/price_provider.dart';
 import '../l10n/l10n_provider.dart';
 import '../widgets/verdict_badge.dart';
@@ -367,6 +371,14 @@ class _ResultCard extends ConsumerWidget {
     final oerYear = snapshot?.oer?.year;
     final oerMonth = snapshot?.oer?.month;
     final paysFor = result.paysForOer;
+    // The reader's own usual, from their journal on this phone (D30): sales
+    // in the chosen region, or all of them when the price was typed in.
+    final usual = paysFor == null
+        ? null
+        : UsualPrice.of(ref.watch(journalProvider).sales, region: region);
+    final aboveUsual = usual == null || paysFor == null
+        ? 0
+        : usual.differenceRm(paysFor, result.price1PctOer);
 
     return Card(
       elevation: 4,
@@ -535,6 +547,43 @@ class _ResultCard extends ConsumerWidget {
                     ),
                 textAlign: TextAlign.center,
               ),
+              if (usual != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        tr('calc_usual')
+                            .replaceAll('{n}', '${usual.count}')
+                            .replaceAll(
+                                '{oer}', usual.paysForOer.toStringAsFixed(1)),
+                        style: Theme.of(context).textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        tr(aboveUsual > 0
+                                ? 'calc_usual_above'
+                                : aboveUsual < 0
+                                    ? 'calc_usual_below'
+                                    : 'calc_usual_same')
+                            .replaceAll('{rm}', '${aboveUsual.abs()}'),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green.shade900,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ],
         ),
