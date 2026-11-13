@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.6.0] - 2026-11-13
+
+### Added
+- **Compare dealers' offers on equal terms** (D27). The calculator gains two things:
+  - an optional field, "Transport taken off (RM/tonne)". Some dealers quote a price and then take transport off; others quote it with transport inside. When the field is filled, the verdict, the gap and the target use what the reader keeps, and the result shows the sum ("RM 790 less RM 25 transport = RM 765 a tonne");
+  - a line that turns any price into one number: the OER it pays for at the price per 1% OER ("This price pays for 16.0% OER", with the sum beneath it). It doesn't depend on the OER a dealer names, so two offers can be compared by it. When a region is chosen, MPOB's average OER for mills there is shown beside it, with its month.
+- **"Before you accept a price: 4 checks"** (D31), a short guide opened from the calculator, in EN, BM and 中文: whether transport is inside the price; that the OER a dealer names is an offer; asking a second dealer the same day; and watching whether MPOB's price has moved. It comes from one grower's receipts over a month and says so. It names no dealer and gives no figure for what a dealer should pay (D23).
+
 ## [0.5.0] - 2026-11-12
 
 ### Added

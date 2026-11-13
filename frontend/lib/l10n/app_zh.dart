@@ -100,6 +100,35 @@ const Map<String, String> zhStrings = {
   'calc_target_note': '与上方价格相差 {pct}% 以内，为收购商留出运输费和利润的空间。'
       '这是 SawitSense 的参考，并非 MPOB 的数字。',
   'calc_short_of_target': '每公吨再多 RM {rm} 即可达到目标。',
+  'calc_transport': '另扣运输费（RM/公吨）— 选填',
+  'calc_transport_tip': '只有收购商从上面的价格再扣运输费时才填。价格已包含运输费就留空。',
+  'calc_net_price': 'RM {paid} 扣除 RM {transport} 运输费 = 每公吨 RM {net}',
+  'calc_pays_for': '这个价格相当于 {oer}% 出油率',
+  'calc_pays_for_avg': 'MPOB 油厂平均出油率（{region}，{month}）：{avg}%',
+  'calc_pays_for_note': '用这个数字比较不同的报价：越高越好。它不受收购商所报出油率的影响。',
+  'guide_link': '接受价格之前：4 项检查',
+  'guide_title': '接受价格之前',
+  'guide_intro': '以下四项检查，来自一位小园主一个月的收据：共 23 次交易，卖给五家收购商。',
+  'guide_1_title': '价格里包含运输费吗？',
+  'guide_1_body':
+      '有些收购商报价后再扣运输费，有些报价已包含运输费。例如：每公吨 RM 790 扣除 RM 25 '
+      '运输费后是 RM 765，比已包含运输费的 RM 770 还低。先问清楚，再把运输费填入计算器，'
+      '这样比较的就是您实际拿到的价格。',
+  'guide_2_title': '收购商说的出油率只是报价',
+  'guide_2_body':
+      '在那些收据里，每家收购商每一车都写同一个出油率，例如 18%。那是收购商的报价，'
+      '不是对果串的测定。出油率写得低，同样的价格看起来就更接近 MPOB 的价格。'
+      '所以要比较每公吨的价格，或者计算器显示的“相当于多少出油率”。',
+  'guide_3_title': '同一天多问一家收购商',
+  'guide_3_body': '同一天，两家收购商的价格相差可达每公吨 RM 40。一车 5 公吨就是 RM 200。',
+  'guide_4_title': '留意 MPOB 的价格有没有变动',
+  'guide_4_body':
+      '收购商的价格每次调整 RM 10，而且比 MPOB 的价格慢：那个月 MPOB 的价格上涨了，'
+      '收购商的价格却几乎没变。“历史价格”页显示 MPOB 过去 30 天的价格。'
+      '如果 MPOB 的价格已经上涨，而您的收购商还没调，可以要求更高的价格。',
+  'guide_limits':
+      '这只是一位小园主一个月的情况。各地、各家收购商都不同；SawitSense '
+      '没有找到任何关于收购商应付多少的官方数字。',
   'calc_oer_tip': '出油率每差 1%，每公吨差 RM 42 以上',
   'calc_prices_unavailable':
       '无法加载今日价格。请根据您的收据或 MPOB 通告，输入每 1% 出油率的价格。',

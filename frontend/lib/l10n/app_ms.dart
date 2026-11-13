@@ -109,6 +109,52 @@ const Map<String, String> msStrings = {
       'peniaga untuk kos pengangkutan dan margin. Ini panduan SawitSense, '
       'bukan angka MPOB.',
   'calc_short_of_target': 'Tambahan RM {rm} setan akan mencapai sasaran.',
+  'calc_transport': 'Pengangkutan ditolak (RM/tan) — pilihan',
+  'calc_transport_tip':
+      'Hanya jika peniaga menolaknya daripada harga di atas. Biarkan kosong '
+      'jika harga sudah termasuk pengangkutan.',
+  'calc_net_price':
+      'RM {paid} tolak RM {transport} pengangkutan = RM {net} setan',
+  'calc_pays_for': 'Harga ini bersamaan dengan {oer}% OER',
+  'calc_pays_for_avg': 'Purata kilang MPOB, {region}, {month}: {avg}% OER',
+  'calc_pays_for_note':
+      'Bandingkan tawaran dengan angka ini: lebih tinggi lebih baik. Ia '
+      'tidak bergantung pada OER yang disebut peniaga.',
+  'guide_link': 'Sebelum terima harga: 4 semakan',
+  'guide_title': 'Sebelum anda terima harga',
+  'guide_intro':
+      'Empat semakan, daripada resit seorang pekebun selama sebulan: 23 '
+      'jualan kepada lima peniaga.',
+  'guide_1_title': 'Adakah pengangkutan sudah termasuk dalam harga?',
+  'guide_1_body':
+      'Ada peniaga yang memberi harga dan kemudian menolak kos pengangkutan. '
+      'Ada juga yang memberi harga yang sudah termasuk pengangkutan. Contoh: '
+      'RM 790 setan tolak RM 25 pengangkutan ialah RM 765, iaitu kurang '
+      'daripada RM 770 yang sudah termasuk pengangkutan. Tanya dahulu, '
+      'kemudian masukkan kos pengangkutan dalam kalkulator supaya ia '
+      'membandingkan jumlah yang anda terima.',
+  'guide_2_title': 'OER yang disebut peniaga ialah tawaran',
+  'guide_2_body':
+      'Dalam resit itu, setiap peniaga menulis OER yang sama bagi setiap '
+      'muatan, contohnya 18%. Itu tawaran peniaga, bukan ukuran buah anda. '
+      'OER yang lebih rendah membuat harga yang sama nampak lebih hampir '
+      'dengan harga MPOB. Jadi bandingkan harga setan, atau OER yang '
+      'bersamaan dengan harga itu, seperti yang ditunjukkan kalkulator.',
+  'guide_3_title': 'Tanya peniaga kedua pada hari yang sama',
+  'guide_3_body':
+      'Pada hari yang sama, harga dua peniaga berbeza sehingga RM 40 setan. '
+      'Bagi muatan 5 tan, itu RM 200.',
+  'guide_4_title': 'Lihat sama ada harga MPOB sudah berubah',
+  'guide_4_body':
+      'Harga peniaga berubah RM 10 setiap kali, dan lebih perlahan daripada '
+      'harga MPOB: sepanjang bulan itu harga MPOB naik tetapi harga peniaga '
+      'hampir tidak berubah. Tab Sejarah Harga menunjukkan harga MPOB bagi '
+      '30 hari lepas. Jika harga MPOB sudah naik tetapi harga peniaga anda '
+      'belum, minta harga yang lebih tinggi.',
+  'guide_limits':
+      'Ini yang ditunjukkan oleh sebulan jualan seorang pekebun. Peniaga dan '
+      'daerah berbeza-beza, dan SawitSense tidak menemui sebarang angka '
+      'rasmi tentang berapa yang patut dibayar oleh peniaga.',
   'calc_oer_tip': 'Setiap 1% OER = ~RM 42+/tan perbezaan',
   'calc_prices_unavailable':
       'Harga hari ini tidak dapat dimuatkan. Masukkan harga per 1% OER daripada '

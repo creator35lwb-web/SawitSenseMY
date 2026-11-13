@@ -211,6 +211,10 @@ class PriceSnapshot {
 ///
 /// D23: no dealer margin is published, so the negotiation target is the
 /// verdict's own green band, in ringgit, rather than a made-up margin.
+///
+/// D27: a dealer may quote a price and then take transport off it, so the
+/// verdict uses what the reader keeps; and any price can be turned into the
+/// OER it pays for, which needs no OER figure from the dealer.
 class FairPriceResult {
   /// An offer within this % of the benchmark is GREEN; the target is its edge.
   static const greenBandPct = 5.0;
@@ -219,7 +223,16 @@ class FairPriceResult {
   final double price1PctOer;
   final double gradedOer;
   final double fairPrice;
+
+  /// What the reader keeps per tonne: the quoted price less any transport.
   final double? paidPrice;
+
+  /// The price the dealer named, before transport came off.
+  final double? quotedPrice;
+
+  /// Transport the dealer takes off, RM per tonne; 0 when it is inside the
+  /// quoted price.
+  final double transport;
   final String? verdict;
   final double? gapRm;
   final double? gapPct;
@@ -229,6 +242,8 @@ class FairPriceResult {
     required this.gradedOer,
     required this.fairPrice,
     this.paidPrice,
+    this.quotedPrice,
+    this.transport = 0,
     this.verdict,
     this.gapRm,
     this.gapPct,
@@ -238,7 +253,14 @@ class FairPriceResult {
     required double price1PctOer,
     required double gradedOer,
     double? paidPrice,
+    double transport = 0,
   }) {
+    // Transport only counts when there is a price for it to come off.
+    final fee = paidPrice != null && transport > 0 ? transport : 0.0;
+    final kept = paidPrice == null
+        ? null
+        : ((paidPrice - fee) * 100).round() / 100;
+
     // In whole cents and hundredths of a percent, so 47.82 × 17.25 = 824.895
     // rounds to 824.90 as it would by hand, not to binary's 824.89.
     final fairPrice = ((price1PctOer * 100).round() *
@@ -251,8 +273,8 @@ class FairPriceResult {
     double? gapRm;
     double? gapPct;
 
-    if (paidPrice != null && fairPrice > 0) {
-      gapRm = double.parse((paidPrice - fairPrice).toStringAsFixed(2));
+    if (kept != null && fairPrice > 0) {
+      gapRm = double.parse((kept - fairPrice).toStringAsFixed(2));
       gapPct = double.parse(((gapRm / fairPrice) * 100).toStringAsFixed(2));
 
       if (gapPct >= -greenBandPct) {
@@ -268,7 +290,9 @@ class FairPriceResult {
       price1PctOer: price1PctOer,
       gradedOer: gradedOer,
       fairPrice: fairPrice,
-      paidPrice: paidPrice,
+      paidPrice: kept,
+      quotedPrice: paidPrice,
+      transport: fee,
       verdict: verdict,
       gapRm: gapRm,
       gapPct: gapPct,
@@ -282,6 +306,13 @@ class FairPriceResult {
 
   /// What a quarter of a percentage point of OER is worth per tonne.
   double get valuePerQuarterOer => (price1PctOer * 25).round() / 100;
+
+  /// The OER the price pays for at this price per 1% OER: RM 770 a tonne at
+  /// RM 47.82 pays for 16.1%. Two offers can be compared by it whatever OER
+  /// each dealer names.
+  double? get paysForOer => paidPrice != null && price1PctOer > 0
+      ? paidPrice! / price1PctOer
+      : null;
 
   /// How far a paid price falls short of the target; null when it doesn't,
   /// or when it is GREEN only because the target was rounded up.
