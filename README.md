@@ -58,7 +58,7 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | Module | Description | Status |
 |--------|-------------|--------|
 | **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region (MPOB's own daily figure, at the mill gate) + CPO spot price | Done |
-| **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote, less any transport the dealer takes off. GREEN/AMBER/RED verdict, a target to negotiate towards, and the OER a price pays for, so two offers can be compared whatever OER each dealer names. A short guide, "Before you accept a price: 4 checks" | Done |
+| **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote, less any transport the dealer takes off. GREEN/AMBER/RED verdict, a target to negotiate towards, and the OER a price pays for, so two offers can be compared whatever OER each dealer names. With three or more sales in My Sales, the offer is also measured against what the reader's own sales usually paid for. A short guide, "Before you accept a price: 4 checks" | Done |
 | **M4: Price History** | MPOB's daily price per 1% OER for each region over the last 30 days, as a chart and a table with each day's change. The CPO price history is one tap away | Done |
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
 | **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
