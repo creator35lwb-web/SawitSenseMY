@@ -106,14 +106,14 @@ const Map<String, String> enStrings = {
       'Within {pct}% of the price above, which leaves the dealer room for '
       "transport and margin. This is SawitSense's guide, not an MPOB figure.",
   'calc_short_of_target': 'RM {rm} more a tonne would reach the target.',
-  'calc_transport': 'Transport taken off (RM/tonne) — optional',
+  'calc_transport': 'Transport taken off (RM/tonne)',
   'calc_transport_tip':
-      'Only if the dealer takes it off the price above. Leave empty if the '
-      'price already includes it.',
+      'Optional. Only if the dealer takes it off the price above. Leave '
+      'empty if the price already includes it.',
   'calc_net_price':
       'RM {paid} less RM {transport} transport = RM {net} a tonne',
   'calc_pays_for': 'This price pays for {oer}% OER',
-  'calc_pays_for_avg': 'MPOB mill average, {region}, {month}: {avg}% OER',
+  'calc_pays_for_avg': '{region} mills averaged {avg}% OER (MPOB, {month})',
   'calc_pays_for_note':
       'Compare offers by this number: higher is better. It does not depend '
       'on the OER a dealer names.',

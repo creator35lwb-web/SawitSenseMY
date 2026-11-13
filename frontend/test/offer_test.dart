@@ -170,7 +170,7 @@ void main() {
       expect(find.text('AMBER'), findsOneWidget);
       expect(find.text('This price pays for 16.0% OER'), findsOneWidget);
       expect(find.text('RM 765 ÷ 47.82'), findsOneWidget);
-      expect(find.text('MPOB mill average, North, Sep 2026: 19.89% OER'),
+      expect(find.text('North mills averaged 19.89% OER (MPOB, Sep 2026)'),
           findsOneWidget);
       expect(find.textContaining('higher is better'), findsOneWidget);
     });
@@ -185,7 +185,7 @@ void main() {
       expect(find.text('RM 770 ÷ 47.82'), findsOneWidget);
       // Nothing came off, and no region's average is known.
       expect(find.textContaining('less RM'), findsNothing);
-      expect(find.textContaining('MPOB mill average'), findsNothing);
+      expect(find.textContaining('mills averaged'), findsNothing);
     });
 
     testWidgets('with no price entered there is no offer to measure',
@@ -216,7 +216,7 @@ void main() {
 
       expect(find.text('RM 790 tolak RM 25 pengangkutan = RM 765 setan'),
           findsOneWidget);
-      expect(find.text('Harga ini bersamaan dengan 16.0% OER'), findsOneWidget);
+      expect(find.text('Harga ini bersamaan 16.0% OER'), findsOneWidget);
     });
 
     testWidgets('in 中文, with the region\'s average', (tester) async {
@@ -226,9 +226,9 @@ void main() {
       await _enter(tester, paid: '790', transport: '25');
       await _tap(tester, find.text('计算'));
 
-      expect(find.text('RM 790 扣除 RM 25 运输费 = 每公吨 RM 765'), findsOneWidget);
+      expect(find.text('RM 790 扣 RM 25 运输费 = RM 765/公吨'), findsOneWidget);
       expect(find.text('这个价格相当于 16.0% 出油率'), findsOneWidget);
-      expect(find.text('MPOB 油厂平均出油率（北马，2026年9月）：19.89%'), findsOneWidget);
+      expect(find.text('北马油厂平均出油率 19.89%（MPOB，2026年9月）'), findsOneWidget);
     });
   });
 

@@ -109,14 +109,14 @@ const Map<String, String> msStrings = {
       'peniaga untuk kos pengangkutan dan margin. Ini panduan SawitSense, '
       'bukan angka MPOB.',
   'calc_short_of_target': 'Tambahan RM {rm} setan akan mencapai sasaran.',
-  'calc_transport': 'Pengangkutan ditolak (RM/tan) — pilihan',
+  'calc_transport': 'Pengangkutan ditolak (RM/tan)',
   'calc_transport_tip':
-      'Hanya jika peniaga menolaknya daripada harga di atas. Biarkan kosong '
-      'jika harga sudah termasuk pengangkutan.',
+      'Pilihan. Hanya jika peniaga menolaknya daripada harga di atas. '
+      'Biarkan kosong jika harga sudah termasuk pengangkutan.',
   'calc_net_price':
       'RM {paid} tolak RM {transport} pengangkutan = RM {net} setan',
-  'calc_pays_for': 'Harga ini bersamaan dengan {oer}% OER',
-  'calc_pays_for_avg': 'Purata kilang MPOB, {region}, {month}: {avg}% OER',
+  'calc_pays_for': 'Harga ini bersamaan {oer}% OER',
+  'calc_pays_for_avg': 'Purata kilang {region}: {avg}% OER (MPOB, {month})',
   'calc_pays_for_note':
       'Bandingkan tawaran dengan angka ini: lebih tinggi lebih baik. Ia '
       'tidak bergantung pada OER yang disebut peniaga.',
