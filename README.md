@@ -58,8 +58,8 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | Module | Description | Status |
 |--------|-------------|--------|
 | **M1: Daily Price Dashboard** | Today's MPOB FFB Reference Price by region (MPOB's own daily figure, at the mill gate) + CPO spot price | Done |
-| **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote. GREEN/AMBER/RED verdict. | Done |
-| **M4: Price History** | 30-day CPO price line chart with fl_chart | Done |
+| **M2: Fair Price Calculator** | Input OER% + Region = benchmark price. Compare vs dealer quote, less any transport the dealer takes off. GREEN/AMBER/RED verdict, a target to negotiate towards, and the OER a price pays for, so two offers can be compared whatever OER each dealer names. A short guide, "Before you accept a price: 4 checks" | Done |
+| **M4: Price History** | MPOB's daily price per 1% OER for each region over the last 30 days, as a chart and a table with each day's change. The CPO price history is one tap away | Done |
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
 | **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
 | **Share** | Phones: the phone's own share sheet. Elsewhere: copy link, WhatsApp, Facebook, X, LinkedIn or email. The plain site link, no tracking | Done |
@@ -116,7 +116,7 @@ Every figure SawitSense shows can be checked against a public page, or recalcula
 | CPO settlement price | [MPOC Daily Palm Oil Prices](https://mpoc.org.my/daily-palm-oil-prices/) lists the same price for the same date |
 | Regional OER | [MPOB Prestasi Sawit, OER Performance](https://prestasisawit.mpob.gov.my/en/oer). Choose the month shown in the app |
 | Price per 1% OER, by region | [MPOB's daily FFB reference price summary](https://price.mpob.gov.my/pdf/daily/ffb/2026-10-23) lists the same price for the same day; the app links to the current month's |
-| Every price we've published | [backend/data/](backend/data/): open data, one JSON file per day, plus `history.json`, a 60-day index |
+| Every price we've published | [backend/data/](backend/data/): open data, one JSON file per day, plus `history.json`: a 60-day index of the CPO price, and MPOB's price for each region on each trading day (`ffb_days`) |
 
 In the app, tap **Where do these prices come from?** for MPOB's PDF and each region's average OER. MPOB's price is at the mill gate; dealers usually pay less, for transport and their margin.
 
