@@ -1,6 +1,6 @@
 // SawitSense MY — App Router & Theme Configuration
 //
-// Navigation: Dashboard / Calculator / History (bottom nav bar)
+// Navigation: Dashboard / Calculator / History / My Sales (bottom nav bar)
 // Theme: Palm green + white, Material 3, mobile-first responsive
 
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ import 'l10n/l10n_provider.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/calculator_screen.dart';
 import 'screens/history_screen.dart';
+import 'screens/journal_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/',
@@ -35,6 +36,12 @@ final _router = GoRouter(
           path: '/history',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: HistoryScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/journal',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: JournalScreen(),
           ),
         ),
       ],
@@ -113,6 +120,8 @@ class _BottomNav extends ConsumerWidget {
       currentIndex = 1;
     } else if (location.startsWith('/history')) {
       currentIndex = 2;
+    } else if (location.startsWith('/journal')) {
+      currentIndex = 3;
     }
 
     return NavigationBar(
@@ -127,6 +136,9 @@ class _BottomNav extends ConsumerWidget {
             break;
           case 2:
             context.go('/history');
+            break;
+          case 3:
+            context.go('/journal');
             break;
         }
       },
@@ -145,6 +157,11 @@ class _BottomNav extends ConsumerWidget {
           icon: const Icon(Icons.show_chart),
           selectedIcon: const Icon(Icons.show_chart),
           label: tr('nav_history'),
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.menu_book_outlined),
+          selectedIcon: const Icon(Icons.menu_book),
+          label: tr('nav_journal'),
         ),
       ],
     );

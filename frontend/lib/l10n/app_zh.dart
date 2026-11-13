@@ -13,6 +13,7 @@ const Map<String, String> zhStrings = {
   'nav_dashboard': '价格总览',
   'nav_calculator': '公平价格',
   'nav_history': '历史价格',
+  'nav_journal': '我的销售',
 
   // Dashboard
   'dashboard_title': '每日价格总览',
@@ -129,6 +130,48 @@ const Map<String, String> zhStrings = {
   'guide_limits':
       '这只是一位小园主一个月的情况。各地、各家收购商都不同；SawitSense '
       '没有找到任何关于收购商应付多少的官方数字。',
+  'journal_title': '我的销售记录',
+  'journal_privacy':
+      '您的销售记录只保存在这部手机的这个浏览器里。SawitSense 看不到，'
+      '也不会发送到任何地方。请不时导出一份备份：清除浏览器数据会把记录删掉。',
+  'journal_not_kept': '这个浏览器没有保存记录（无痕窗口，或存储被禁用）。关闭页面前请先导出一份。',
+  'journal_empty': '还没有销售记录。添加一笔，就能看到它的价格与当天 MPOB 价格的比较。',
+  'journal_add': '添加一笔销售',
+  'journal_date': '销售日期',
+  'journal_tonnes': '重量（公吨）',
+  'journal_price': '价格（RM/公吨）',
+  'journal_oer': '收据上的出油率（%）',
+  'journal_oer_tip': '选填。收购商写的出油率（如有）。',
+  'journal_label': '收购商',
+  'journal_label_tip': '选填。为每家收购商选一个字母。不保存任何名字。',
+  'journal_dealer': '收购商 {label}',
+  'journal_save': '保存',
+  'journal_cancel': '取消',
+  'journal_summary_title': '全部销售',
+  'journal_summary_received': '实收：RM {rm}',
+  'journal_summary_count': '销售 {n} 笔 · {t} 公吨',
+  'journal_summary_average': '平均实收：每公吨 RM {rm}',
+  'journal_summary_pays_for': '您的价格平均相当于 {oer}% 出油率',
+  'journal_month_total': '销售 {n} 笔 · {t} 公吨 · RM {rm}',
+  'journal_sale_sum': '{t} 公吨 × RM {kept} = RM {total}',
+  'journal_sale_pays_for': '相当于 {oer}% 出油率（MPOB {date} 价格 {price}）',
+  'journal_sale_below': '按 {oer}% 出油率，比厂门价值低 RM {rm}（{pct}%）',
+  'journal_sale_above': '按 {oer}% 出油率，比厂门价值高 RM {rm}（{pct}%）',
+  'journal_sale_no_mpob': '应用里没有那一天的 MPOB 价格，所以这笔销售无法比较。',
+  'journal_delete': '删除',
+  'journal_delete_confirm': '删除这笔销售？',
+  'journal_delete_all': '全部删除',
+  'journal_delete_all_confirm':
+      '从这部手机删除全部 {n} 笔销售？此操作无法撤销。想保留的话，请先导出一份。',
+  'journal_export': '导出',
+  'journal_import': '导入',
+  'journal_exported': '已保存为 {file}（销售 {n} 笔）。',
+  'journal_export_failed': '无法在这部设备上保存文件。',
+  'journal_imported': '已添加 {n} 笔销售。略过 {s} 笔（已存在，或无法读取）。',
+  'journal_import_failed': '无法把这个文件读成 SawitSense 的销售记录。',
+  'journal_file_note':
+      '导出会保存一个 CSV 文件，可用 Excel 或 Google Sheets 打开。文件留在您保存的地方，'
+      'SawitSense 不会收到。导入则是在这部手机上把这样的文件读回来。',
   'calc_oer_tip': '出油率每差 1%，每公吨差 RM 42 以上',
   'calc_prices_unavailable':
       '无法加载今日价格。请根据您的收据或 MPOB 通告，输入每 1% 出油率的价格。',

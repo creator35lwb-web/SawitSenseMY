@@ -9,6 +9,7 @@ const Map<String, String> enStrings = {
   'nav_dashboard': 'Dashboard',
   'nav_calculator': 'Fair Price',
   'nav_history': 'Price History',
+  'nav_journal': 'My Sales',
 
   // Dashboard
   'dashboard_title': 'Daily Price Dashboard',
@@ -150,6 +151,62 @@ const Map<String, String> enStrings = {
       "This is what one grower's month showed. Dealers and districts differ, "
       'and SawitSense has found no official figure for what a dealer should '
       'pay.',
+  'journal_title': 'My Sales Journal',
+  'journal_privacy':
+      'Your sales are kept on this phone only, in this browser. SawitSense '
+      'cannot see them, and nothing is sent anywhere. Export a copy now and '
+      "then: clearing the browser's data removes them.",
+  'journal_not_kept':
+      'This browser is not keeping the journal (a private window, or storage '
+      'is blocked). Export a copy before you close the page.',
+  'journal_empty':
+      "No sales yet. Add one to see how its price compares with MPOB's price "
+      'for that day.',
+  'journal_add': 'Add a sale',
+  'journal_date': 'Date of sale',
+  'journal_tonnes': 'Weight (tonnes)',
+  'journal_price': 'Price (RM/tonne)',
+  'journal_oer': 'OER on the receipt (%)',
+  'journal_oer_tip': 'Optional. The OER the dealer wrote, if any.',
+  'journal_label': 'Dealer',
+  'journal_label_tip':
+      'Optional. A letter you choose for each dealer. No name is kept.',
+  'journal_dealer': 'Dealer {label}',
+  'journal_save': 'Save',
+  'journal_cancel': 'Cancel',
+  'journal_summary_title': 'All sales',
+  'journal_summary_received': 'Received: RM {rm}',
+  'journal_summary_count': 'Sales: {n} · {t} tonnes',
+  'journal_summary_average': 'Average kept: RM {rm} a tonne',
+  'journal_summary_pays_for': 'Your prices paid for {oer}% OER on average',
+  'journal_month_total': 'Sales: {n} · {t} t · RM {rm}',
+  'journal_sale_sum': '{t} t × RM {kept} = RM {total}',
+  'journal_sale_pays_for': 'Pays for {oer}% OER (MPOB {price} on {date})',
+  'journal_sale_below':
+      'RM {rm} ({pct}%) below the mill-gate value at {oer}% OER',
+  'journal_sale_above':
+      'RM {rm} ({pct}%) above the mill-gate value at {oer}% OER',
+  'journal_sale_no_mpob':
+      "MPOB's price for that day is not in the app, so this sale cannot be "
+      'compared.',
+  'journal_delete': 'Delete',
+  'journal_delete_confirm': 'Delete this sale?',
+  'journal_delete_all': 'Delete all',
+  'journal_delete_all_confirm':
+      'Delete every sale ({n}) from this phone? This cannot be undone. '
+      'Export a copy first if you want to keep them.',
+  'journal_export': 'Export',
+  'journal_import': 'Import',
+  'journal_exported': 'Saved as {file} (sales: {n}).',
+  'journal_export_failed': 'The file could not be saved on this device.',
+  'journal_imported':
+      'Sales added: {n}. Left out: {s} (already here, or not readable).',
+  'journal_import_failed':
+      'That file could not be read as a SawitSense journal.',
+  'journal_file_note':
+      'Export saves a CSV file that opens in Excel or Google Sheets. It '
+      'stays wherever you save it; SawitSense never receives it. Import '
+      'reads such a file back, on this phone.',
   'calc_oer_tip': 'Each 1% OER = ~RM 42+/tonne difference',
   'calc_prices_unavailable':
       "Today's prices can't be loaded. Enter the price per 1% OER from your "
