@@ -6,7 +6,8 @@ const Map<String, String> msStrings = {
   'app_subtitle': 'Penjejak Harga CPO & Isyarat OER',
 
   // Navigation
-  'nav_dashboard': 'Papan Pemuka',
+  // Short, because four tabs share the width of a phone (360 px).
+  'nav_dashboard': 'Utama',
   'nav_calculator': 'Harga Adil',
   'nav_history': 'Sejarah Harga',
   'nav_journal': 'Jualan Saya',

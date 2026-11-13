@@ -681,7 +681,7 @@ void main() {
       expect(find.text('我的销售记录'), findsOneWidget);
       expect(find.text('2026年10月22日 · 沙巴'), findsOneWidget);
       expect(find.text('2.5 公吨 × RM 700 = RM 1,750.00'), findsOneWidget);
-      expect(find.text('相当于 16.3% 出油率（MPOB 10月22日 价格 43.06）'), findsOneWidget);
+      expect(find.text('相当于 16.3% 出油率（MPOB 10月22日：43.06）'), findsOneWidget);
       expect(find.text('按 20% 出油率，比厂门价值低 RM 161.2（18.7%）'), findsOneWidget);
 
       await _tap(tester, find.text('添加一笔销售'));

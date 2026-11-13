@@ -154,7 +154,7 @@ const Map<String, String> zhStrings = {
   'journal_summary_pays_for': '您的价格平均相当于 {oer}% 出油率',
   'journal_month_total': '销售 {n} 笔 · {t} 公吨 · RM {rm}',
   'journal_sale_sum': '{t} 公吨 × RM {kept} = RM {total}',
-  'journal_sale_pays_for': '相当于 {oer}% 出油率（MPOB {date} 价格 {price}）',
+  'journal_sale_pays_for': '相当于 {oer}% 出油率（MPOB {date}：{price}）',
   'journal_sale_below': '按 {oer}% 出油率，比厂门价值低 RM {rm}（{pct}%）',
   'journal_sale_above': '按 {oer}% 出油率，比厂门价值高 RM {rm}（{pct}%）',
   'journal_sale_no_mpob': '应用里没有那一天的 MPOB 价格，所以这笔销售无法比较。',
