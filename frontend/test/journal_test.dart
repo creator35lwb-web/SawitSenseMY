@@ -267,7 +267,7 @@ void main() {
 
     test('a dealer\'s name never gets in: only a letter A to F is kept', () {
       expect(Sale.tryParse(row({'label': 'b'}))!.label, 'B');
-      expect(Sale.tryParse(row({'label': 'Kedai Sawit Ali'}))!.label, '');
+      expect(Sale.tryParse(row({'label': 'Some Dealer Name'}))!.label, '');
       expect(Sale.tryParse(row({'label': 'G'}))!.label, '');
     });
   });
