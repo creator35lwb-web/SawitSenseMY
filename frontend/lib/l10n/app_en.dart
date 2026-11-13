@@ -106,6 +106,50 @@ const Map<String, String> enStrings = {
       'Within {pct}% of the price above, which leaves the dealer room for '
       "transport and margin. This is SawitSense's guide, not an MPOB figure.",
   'calc_short_of_target': 'RM {rm} more a tonne would reach the target.',
+  'calc_transport': 'Transport taken off (RM/tonne)',
+  'calc_transport_tip':
+      'Optional. Only if the dealer takes it off the price above. Leave '
+      'empty if the price already includes it.',
+  'calc_net_price':
+      'RM {paid} less RM {transport} transport = RM {net} a tonne',
+  'calc_pays_for': 'This price pays for {oer}% OER',
+  'calc_pays_for_avg': '{region} mills averaged {avg}% OER (MPOB, {month})',
+  'calc_pays_for_note':
+      'Compare offers by this number: higher is better. It does not depend '
+      'on the OER a dealer names.',
+  'guide_link': 'Before you accept a price: 4 checks',
+  'guide_title': 'Before you accept a price',
+  'guide_intro':
+      "Four checks, drawn from one grower's receipts over a month: 23 sales "
+      'to five dealers.',
+  'guide_1_title': 'Is transport inside the price?',
+  'guide_1_body':
+      'Some dealers quote a price and then take transport off. Others quote '
+      'it with transport inside. Example: RM 790 a tonne less RM 25 for '
+      'transport is RM 765, which is less than RM 770 with transport inside. '
+      'Ask first, then enter the transport in the calculator so that it '
+      'compares what you keep.',
+  'guide_2_title': 'The OER a dealer names is an offer',
+  'guide_2_body':
+      'In those receipts each dealer wrote the same OER on every load, such '
+      "as 18%. That is the dealer's offer, not a measure of the fruit. A "
+      "lower OER makes the same price look closer to MPOB's. So compare the "
+      'price per tonne, or the OER the price pays for, which the calculator '
+      'shows.',
+  'guide_3_title': 'Ask a second dealer the same day',
+  'guide_3_body':
+      "On the same day, two dealers' prices were up to RM 40 a tonne apart. "
+      'On a 5-tonne load that is RM 200.',
+  'guide_4_title': "Watch whether MPOB's price has moved",
+  'guide_4_body':
+      "The dealers' prices moved in RM 10 steps, and more slowly than "
+      "MPOB's: over the month MPOB's price rose while theirs stayed about "
+      "the same. The Price History tab shows MPOB's price for the last 30 "
+      "days. If it has risen and your dealer's price has not, ask for more.",
+  'guide_limits':
+      "This is what one grower's month showed. Dealers and districts differ, "
+      'and SawitSense has found no official figure for what a dealer should '
+      'pay.',
   'calc_oer_tip': 'Each 1% OER = ~RM 42+/tonne difference',
   'calc_prices_unavailable':
       "Today's prices can't be loaded. Enter the price per 1% OER from your "

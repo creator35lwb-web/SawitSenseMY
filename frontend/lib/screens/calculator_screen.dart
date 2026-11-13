@@ -1,7 +1,8 @@
 // M2: Fair Price Calculator
 //
-// 3-input model: Region (auto-fills Price_1%), OER%, optional Paid Price.
-// Shows: Fair Price + Verdict (GREEN/AMBER/RED).
+// Inputs: Region (auto-fills Price_1%), OER%, optional Paid Price, optional
+// transport taken off it.
+// Shows: Fair Price + Verdict (GREEN/AMBER/RED) + the OER the price pays for.
 //
 // Patch: SS (Claude Code), Sep 2026 — when prices can't be loaded, say so and
 // ask for Price_1% instead of auto-filling demo values; "How is this
@@ -11,6 +12,9 @@
 // Patch: SS (Claude Code), Oct 2026 — a target to negotiate towards, from the
 // verdict's green band rather than a made-up dealer margin, and what each
 // 0.25% of OER is worth (D23).
+// Patch: SS (Claude Code), Nov 2026 — transport a dealer takes off the price,
+// and the OER a price pays for, so offers can be compared whatever OER each
+// dealer names (D27); a link to four checks before accepting a price (D31).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +26,7 @@ import '../widgets/language_menu.dart';
 import '../widgets/app_footer.dart';
 import '../widgets/freshness_badge.dart';
 import '../widgets/indicative_banner.dart';
+import '../widgets/offer_guide_sheet.dart';
 import '../widgets/price_method_sheet.dart';
 
 class CalculatorScreen extends ConsumerStatefulWidget {
@@ -36,14 +41,19 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
   final _price1PctController = TextEditingController();
   final _oerController = TextEditingController(text: '18');
   final _paidController = TextEditingController();
+  final _transportController = TextEditingController();
   String? _selectedRegion;
   FairPriceResult? _result;
+
+  /// The region the result was worked out for, for its average OER.
+  String? _resultRegion;
 
   @override
   void dispose() {
     _price1PctController.dispose();
     _oerController.dispose();
     _paidController.dispose();
+    _transportController.dispose();
     super.dispose();
   }
 
@@ -63,6 +73,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
     final price1Pct = double.tryParse(_price1PctController.text);
     final oer = double.tryParse(_oerController.text);
     final paid = double.tryParse(_paidController.text);
+    final transport = double.tryParse(_transportController.text);
 
     if (price1Pct == null || oer == null) return;
 
@@ -71,7 +82,9 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
         price1PctOer: price1Pct,
         gradedOer: oer,
         paidPrice: paid,
+        transport: transport ?? 0,
       );
+      _resultRegion = _selectedRegion;
     });
 
     ref.read(calculatorResultProvider.notifier).state = _result;
@@ -231,7 +244,35 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                   prefixIcon: const Icon(Icons.receipt_long_outlined),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+
+              // Transport the dealer takes off that price (optional). A price
+              // quoted with transport inside needs nothing here.
+              TextFormField(
+                controller: _transportController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: tr('calc_transport'),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.local_shipping_outlined),
+                  helperText: tr('calc_transport_tip'),
+                  helperMaxLines: 3,
+                ),
+                validator: (v) {
+                  if (v == null || v.isEmpty) return null;
+                  final val = double.tryParse(v);
+                  final paid = double.tryParse(_paidController.text);
+                  // It can't be negative, or take the whole price.
+                  if (val == null || val < 0 || (paid != null && val >= paid)) {
+                    return tr('validation_number');
+                  }
+                  return null;
+                },
+              ),
+              // Four things to check in a dealer's offer (D31).
+              const OfferGuideLink(),
+              const SizedBox(height: 8),
 
               // Calculate button
               FilledButton.icon(
@@ -249,7 +290,8 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
               const SizedBox(height: 24),
 
               // Result
-              if (_result != null) _ResultCard(result: _result!),
+              if (_result != null)
+                _ResultCard(result: _result!, region: _resultRegion),
 
               const SizedBox(height: 16),
               const AppFooter(),
@@ -304,17 +346,27 @@ String _plain(double value) {
 
 class _ResultCard extends ConsumerWidget {
   final FairPriceResult result;
-  const _ResultCard({required this.result});
+
+  /// The region chosen in the form, if any, as the data names it.
+  final String? region;
+  const _ResultCard({required this.result, this.region});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tr = ref.watch(trProvider);
     final locale = ref.watch(localeProvider);
     // MPOB's own price is the mill-gate price, which a dealer's sits below.
-    final millGate = ref.watch(latestPriceProvider).maybeWhen(
-          data: (s) => s != null && !s.isIndicative && s.ffb != null,
-          orElse: () => false,
-        );
+    final snapshot = ref.watch(latestPriceProvider).asData?.value;
+    final millGate =
+        snapshot != null && !snapshot.isIndicative && snapshot.ffb != null;
+    // MPOB's average OER for mills in the chosen region, and its month.
+    final avgOer = snapshot?.ffb?.regions
+        .where((r) => r.region == region)
+        .firstOrNull
+        ?.avgOerPct;
+    final oerYear = snapshot?.oer?.year;
+    final oerMonth = snapshot?.oer?.month;
+    final paysFor = result.paysForOer;
 
     return Card(
       elevation: 4,
@@ -390,6 +442,18 @@ class _ResultCard extends ConsumerWidget {
               const SizedBox(height: 12),
               VerdictBadge(verdict: result.verdict!),
               const SizedBox(height: 8),
+              // What is left of the quoted price once transport comes off.
+              if (result.transport > 0) ...[
+                Text(
+                  tr('calc_net_price')
+                      .replaceAll('{paid}', _plain(result.quotedPrice!))
+                      .replaceAll('{transport}', _plain(result.transport))
+                      .replaceAll('{net}', _plain(result.paidPrice!)),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+              ],
               Text(
                 '${tr('calc_gap')}: RM ${result.gapRm?.toStringAsFixed(2)} (${result.gapPct?.toStringAsFixed(1)}%)',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -428,6 +492,49 @@ class _ResultCard extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ],
+            ],
+
+            // The OER the price pays for: one number to compare offers by,
+            // whatever OER each dealer names (D27).
+            if (paysFor != null) ...[
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 12),
+              Text(
+                tr('calc_pays_for')
+                    .replaceAll('{oer}', paysFor.toStringAsFixed(1)),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'RM ${_plain(result.paidPrice!)} ÷ '
+                '${result.price1PctOer.toStringAsFixed(2)}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade500,
+                    ),
+              ),
+              if (avgOer != null && oerYear != null && oerMonth != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  tr('calc_pays_for_avg')
+                      .replaceAll('{region}', localizedRegion(region!, locale))
+                      .replaceAll('{month}',
+                          localizedMonthYear(oerYear, oerMonth, locale))
+                      .replaceAll('{avg}', avgOer.toStringAsFixed(2)),
+                  style: Theme.of(context).textTheme.bodySmall,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              const SizedBox(height: 8),
+              Text(
+                tr('calc_pays_for_note'),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ],
         ),
