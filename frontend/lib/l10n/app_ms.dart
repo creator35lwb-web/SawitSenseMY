@@ -6,9 +6,11 @@ const Map<String, String> msStrings = {
   'app_subtitle': 'Penjejak Harga CPO & Isyarat OER',
 
   // Navigation
-  'nav_dashboard': 'Papan Pemuka',
+  // Short, because four tabs share the width of a phone (360 px).
+  'nav_dashboard': 'Utama',
   'nav_calculator': 'Harga Adil',
   'nav_history': 'Sejarah Harga',
+  'nav_journal': 'Jualan Saya',
 
   // Dashboard
   'dashboard_title': 'Papan Pemuka Harga Harian',
@@ -155,6 +157,66 @@ const Map<String, String> msStrings = {
       'Ini yang ditunjukkan oleh sebulan jualan seorang pekebun. Peniaga dan '
       'daerah berbeza-beza, dan SawitSense tidak menemui sebarang angka '
       'rasmi tentang berapa yang patut dibayar oleh peniaga.',
+  'journal_title': 'Jurnal Jualan Saya',
+  'journal_privacy':
+      'Jualan anda disimpan pada telefon ini sahaja, dalam pelayar ini. '
+      'SawitSense tidak dapat melihatnya, dan tiada apa-apa dihantar ke '
+      'mana-mana. Eksport salinan dari semasa ke semasa: memadam data '
+      'pelayar akan membuangnya.',
+  'journal_not_kept':
+      'Pelayar ini tidak menyimpan jurnal (tetingkap peribadi, atau storan '
+      'disekat). Eksport salinan sebelum anda menutup halaman.',
+  'journal_empty':
+      'Belum ada jualan. Tambah satu untuk melihat perbandingan harganya '
+      'dengan harga MPOB pada hari itu.',
+  'journal_add': 'Tambah jualan',
+  'journal_date': 'Tarikh jualan',
+  'journal_tonnes': 'Berat (tan)',
+  'journal_price': 'Harga (RM/tan)',
+  'journal_oer': 'OER pada resit (%)',
+  'journal_oer_tip': 'Pilihan. OER yang ditulis peniaga, jika ada.',
+  'journal_label': 'Peniaga',
+  'journal_label_tip':
+      'Pilihan. Huruf yang anda pilih bagi setiap peniaga. Tiada nama '
+      'disimpan.',
+  'journal_dealer': 'Peniaga {label}',
+  'journal_save': 'Simpan',
+  'journal_cancel': 'Batal',
+  'journal_summary_title': 'Semua jualan',
+  'journal_summary_received': 'Diterima: RM {rm}',
+  'journal_summary_count': 'Jualan: {n} · {t} tan',
+  'journal_summary_average': 'Purata diterima: RM {rm} setan',
+  'journal_summary_pays_for':
+      'Secara purata, harga anda bersamaan {oer}% OER',
+  'journal_month_total': 'Jualan: {n} · {t} tan · RM {rm}',
+  'journal_sale_sum': '{t} tan × RM {kept} = RM {total}',
+  'journal_sale_pays_for': 'Bersamaan {oer}% OER (MPOB {price} pada {date})',
+  'journal_sale_below':
+      'RM {rm} ({pct}%) di bawah nilai pintu kilang pada {oer}% OER',
+  'journal_sale_above':
+      'RM {rm} ({pct}%) di atas nilai pintu kilang pada {oer}% OER',
+  'journal_sale_no_mpob':
+      'Harga MPOB bagi hari itu tiada dalam aplikasi, jadi jualan ini tidak '
+      'dapat dibandingkan.',
+  'journal_delete': 'Padam',
+  'journal_delete_confirm': 'Padam jualan ini?',
+  'journal_delete_all': 'Padam semua',
+  'journal_delete_all_confirm':
+      'Padam semua jualan ({n}) daripada telefon ini? Ini tidak boleh '
+      'dibatalkan. Eksport salinan dahulu jika anda mahu menyimpannya.',
+  'journal_export': 'Eksport',
+  'journal_import': 'Import',
+  'journal_exported': 'Disimpan sebagai {file} (jualan: {n}).',
+  'journal_export_failed': 'Fail tidak dapat disimpan pada peranti ini.',
+  'journal_imported':
+      'Jualan ditambah: {n}. Ditinggalkan: {s} (sudah ada, atau tidak dapat '
+      'dibaca).',
+  'journal_import_failed':
+      'Fail itu tidak dapat dibaca sebagai jurnal SawitSense.',
+  'journal_file_note':
+      'Eksport menyimpan fail CSV yang boleh dibuka dalam Excel atau Google '
+      'Sheets. Fail itu kekal di tempat anda menyimpannya; SawitSense tidak '
+      'pernah menerimanya. Import membaca semula fail itu, pada telefon ini.',
   'calc_oer_tip': 'Setiap 1% OER = ~RM 42+/tan perbezaan',
   'calc_prices_unavailable':
       'Harga hari ini tidak dapat dimuatkan. Masukkan harga per 1% OER daripada '

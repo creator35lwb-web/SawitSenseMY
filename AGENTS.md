@@ -39,6 +39,7 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 - `backend/scrapers/mpob_ffb.py`: MPOB's daily FFB reference price by region (D22), read from MPOB's public PDF
 - `backend/scrapers/mpob_bepi.py`: core formula plus the legacy MPOB BEPI scraper. This is the math layer; don't refactor it.
 - `backend/writer/json_writer.py`: writes the JSON snapshots the app reads
+- `frontend/lib/models/sale.dart`, `frontend/lib/services/journal_codec.dart`, `frontend/lib/services/journal_device_web.dart`: the sales journal's sums, its stored and exported forms, and the only code that touches the browser's storage and files for it
 - `backend/monitor/`: scraper health check, live-site freshness watchdog, feedback form watchdog, and vulnerability check
 - `.github/workflows/scraper_cron.yml`: scrapes every 2 hours, every day (D13), then dispatches the deploy
 - `.github/workflows/deploy_web.yml`: builds and deploys the Flutter web app
@@ -50,7 +51,21 @@ On every pull request, CI (`.github/workflows/ci.yml`) runs all of the above plu
 
 Every string a user sees goes in all three tables in `frontend/lib/l10n/`: `app_en.dart`, `app_ms.dart` and `app_zh.dart` (Simplified Chinese). `frontend/test/l10n_test.dart` fails if a key is missing from any of them. A native reader should check new Malay or Chinese wording before it ships.
 
-The app opens in the reader's last choice on that phone, or else the phone's language, or else English (`initialLocale` in `l10n_provider.dart`). The choice is kept in the browser's localStorage as `en`, `ms` or `zh` under `sawitsense.language`. Keep it that small: no personal data goes in browser storage.
+The app opens in the reader's last choice on that phone, or else the phone's language, or else English (`initialLocale` in `l10n_provider.dart`). The choice is kept in the browser's localStorage as `en`, `ms` or `zh` under `sawitsense.language`. Keep it that small.
+
+## Browser storage
+
+The app keeps two things in the browser's localStorage, and nothing else:
+
+- `sawitsense.language`: the reader's language, `en`, `ms` or `zh`.
+- `sawitsense.journal`: the reader's own sales journal (D29), as one JSON text. Alton approved it on 13 Nov 2026.
+
+Rules for the journal:
+
+- It stays on the reader's phone. No code may send it anywhere; the app has no server to receive it.
+- It leaves the phone only as a CSV file the reader exports, and comes back only from a file the reader picks.
+- No dealer's name is kept. A sale may carry a letter, A to F; anything else is dropped when a sale is read (`Sale.tryParse`).
+- A new key in browser storage, or a new kind of data in the journal, is Alton's decision.
 
 ## Core Formula
 

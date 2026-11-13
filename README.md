@@ -63,13 +63,14 @@ Example: If the rate is RM 42.77/1% OER and your OER is 18%:
 | **Languages** | Bahasa Malaysia / English / 简体中文. Opens in the phone's language and remembers the reader's choice on that phone | Done |
 | **Feedback** | 3 quick options open a short Google Form with a 1–5 star rating; no sign-in, no personal data | Done |
 | **Share** | Phones: the phone's own share sheet. Elsewhere: copy link, WhatsApp, Facebook, X, LinkedIn or email. The plain site link, no tracking | Done |
+| **M3: My Sales Journal** | Log each sale: date, region, weight, price, transport taken off, the OER on the receipt, and a letter for the dealer. Each sale is set against MPOB's price for its day. Kept on the phone only; export and import as a CSV file. See [Your sales journal](#your-sales-journal) | Done |
 | **Latest from MPOB** | Links to MPOB's daily FFB reference prices (PDF), its news and its press releases | Done |
 
 ### Phase 2 (Production) — After Market Fit Confirmed
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| **M3: My Sales Journal** | Log each sale: date, weight, OER%, dealer, price. Local-first, cloud opt-in. | Planned |
+| **M3: Sales Journal sync** | Keeping the journal on more than one of the reader's own devices. Opt-in only; today it moves by export and import. | Planned |
 | **M5: Dealer Transparency Map** | Anonymous crowdsourced dealer pricing by area. Deferred to last with anti-manipulation safeguards. | Planned |
 
 ---
@@ -119,6 +120,39 @@ Every figure SawitSense shows can be checked against a public page, or recalcula
 | Every price we've published | [backend/data/](backend/data/): open data, one JSON file per day, plus `history.json`: a 60-day index of the CPO price, and MPOB's price for each region on each trading day (`ffb_days`) |
 
 In the app, tap **Where do these prices come from?** for MPOB's PDF and each region's average OER. MPOB's price is at the mill gate; dealers usually pay less, for transport and their margin.
+
+## Your sales journal
+
+**My Sales** is the reader's own record of each sale, set against MPOB's price for the day it was made.
+
+- **Where it is kept:** in the browser's storage on that phone, under the key `sawitsense.journal`. SawitSense has no server and never receives it. Clearing the browser's data removes it, and it doesn't follow the reader to another phone, so the app offers Export.
+- **Dealers:** no name is kept. A sale may carry a letter, A to F, that the reader chooses.
+- **On the phone** it is one JSON text:
+
+  ```json
+  {"v":1,"sales":[{"date":"2026-10-23","region":"North","tonnes":5,"price":790,
+    "transport":25,"oer":18.25,"label":"A","mpob_price":47.87,"mpob_date":"2026-10-23"}]}
+  ```
+
+- **Export** saves a CSV file with the same names as its columns. It opens in Excel or Google Sheets and stays wherever the reader saves it:
+
+  ```
+  date,region,tonnes,price,transport,oer,label,mpob_price,mpob_date
+  2026-10-23,North,5,790,25,18.25,A,47.87,2026-10-23
+  ```
+
+- **Import** reads such a file back, on the phone, and adds the sales that aren't there already. Only `date`, `region`, `tonnes` and `price` are needed. A row that doesn't make a sale is left out and counted.
+
+| Column | Meaning |
+|---|---|
+| `date` | Day of the sale, `2026-10-23` (a spreadsheet's `23/10/2026` is read too) |
+| `region` | North, South, Central, East Coast, Sabah or Sarawak |
+| `tonnes` | Weight sold |
+| `price` | The price the dealer named, RM per tonne |
+| `transport` | RM per tonne the dealer took off; empty when it was inside the price |
+| `oer` | The OER on the receipt, in %, if any |
+| `label` | A letter for the dealer, A to F, if any |
+| `mpob_price`, `mpob_date` | MPOB's price per 1% OER for the region, and the day it is for. The app fills these in |
 
 ---
 

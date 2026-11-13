@@ -7,6 +7,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.7.0] - 2026-11-13
+
+### Added
+- **My Sales, a journal of the reader's own sales** (D29), as a fourth tab, in EN, BM and 中文.
+  - Each sale holds its date, region, weight, price, any transport the dealer took off, the OER on the receipt if there is one, and a letter for the dealer.
+  - Each sale is set against MPOB's price for its region and day (the last trading day's, for a weekend): what was kept per tonne, the OER that price paid for, and the gap to the mill-gate value when the receipt names an OER. MPOB's price is kept with the sale, so it can still be compared after that day has left the app's history.
+  - Totals for the whole journal and for each month.
+- **Export and Import.** Export saves the journal as a CSV file that opens in Excel or Google Sheets; Import reads such a file back and adds the sales that aren't there already. The format is in the README.
+
+### Privacy
+- The journal is kept in the browser's storage on the reader's phone (`sawitsense.journal`) and nowhere else. SawitSense has no server and never receives it; it leaves the phone only as a file the reader exports.
+- No dealer's name is kept: a sale may carry a letter, A to F, and anything else is dropped when a sale is read.
+- `AGENTS.md` now lists the two things the app may keep in browser storage, the language and the journal, and the rules for the journal.
+
 ## [0.6.0] - 2026-11-13
 
 ### Added
