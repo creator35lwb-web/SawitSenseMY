@@ -1,10 +1,6 @@
 {
-  "generated_at": "2026-11-16T09:57:40.639852+08:00",
+  "generated_at": "2026-11-16T17:32:07.416859+08:00",
   "days": [
-    {
-      "date": "2026-08-05",
-      "cpo_price": 4702.0
-    },
     {
       "date": "2026-08-06",
       "cpo_price": 4686.0
@@ -240,6 +236,10 @@
     {
       "date": "2026-11-11",
       "cpo_price": 4410.0
+    },
+    {
+      "date": "2026-11-13",
+      "cpo_price": 4462.0
     }
   ],
   "ffb_unit": "RM per tonne of FFB per 1% OER, at the mill gate",
@@ -584,6 +584,17 @@
         "East Coast": 44.14,
         "Sabah": 39.84,
         "Sarawak": 39.94
+      }
+    },
+    {
+      "date": "2026-11-16",
+      "prices": {
+        "North": 44.36,
+        "South": 44.67,
+        "Central": 44.42,
+        "East Coast": 44.4,
+        "Sabah": 40.07,
+        "Sarawak": 40.17
       }
     }
   ]
