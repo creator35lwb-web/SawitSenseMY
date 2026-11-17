@@ -1,10 +1,6 @@
 {
-  "generated_at": "2026-11-17T12:28:12.268706+08:00",
+  "generated_at": "2026-11-17T23:54:31.883029+08:00",
   "days": [
-    {
-      "date": "2026-08-06",
-      "cpo_price": 4686.0
-    },
     {
       "date": "2026-08-07",
       "cpo_price": 4677.0
@@ -240,6 +236,10 @@
     {
       "date": "2026-11-13",
       "cpo_price": 4462.0
+    },
+    {
+      "date": "2026-11-16",
+      "cpo_price": 4547.0
     }
   ],
   "ffb_unit": "RM per tonne of FFB per 1% OER, at the mill gate",
