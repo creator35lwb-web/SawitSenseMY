@@ -1,6 +1,6 @@
 {
-  "scraped_at": "2026-11-25T10:20:47.360227+08:00",
-  "updated_at": "2026-11-25T10:20:47.360478+08:00",
+  "scraped_at": "2026-11-25T22:13:51.004376+08:00",
+  "updated_at": "2026-11-25T22:13:51.004650+08:00",
   "success": true,
   "data_source_version": "0.4-mpob-daily",
   "formula_status": "OFFICIAL",
@@ -12,55 +12,55 @@
     "price_myr_per_tonne": 4240.0,
     "source": "MPOC Daily Palm Oil Prices",
     "source_url": "https://mpoc.org.my/daily-palm-oil-prices/",
-    "scraped_at": "2026-11-25T10:20:43.823691+08:00"
+    "scraped_at": "2026-11-25T22:13:46.000842+08:00"
   },
   "ffb": {
-    "date": "2026-11-24",
+    "date": "2026-11-25",
     "regions": [
       {
         "region": "North",
-        "date": "2026-11-24",
-        "price_1pct_oer": 41.54,
+        "date": "2026-11-25",
+        "price_1pct_oer": 41.25,
         "avg_oer_pct": 19.7,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false
       },
       {
         "region": "South",
-        "date": "2026-11-24",
-        "price_1pct_oer": 41.8,
+        "date": "2026-11-25",
+        "price_1pct_oer": 41.5,
         "avg_oer_pct": 20.15,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false
       },
       {
         "region": "Central",
-        "date": "2026-11-24",
-        "price_1pct_oer": 41.7,
+        "date": "2026-11-25",
+        "price_1pct_oer": 41.37,
         "avg_oer_pct": 19.47,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false
       },
       {
         "region": "East Coast",
-        "date": "2026-11-24",
-        "price_1pct_oer": 41.68,
+        "date": "2026-11-25",
+        "price_1pct_oer": 41.34,
         "avg_oer_pct": 20.24,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false
       },
       {
         "region": "Sabah",
-        "date": "2026-11-24",
-        "price_1pct_oer": 37.51,
+        "date": "2026-11-25",
+        "price_1pct_oer": 37.21,
         "avg_oer_pct": 21.41,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false
       },
       {
         "region": "Sarawak",
-        "date": "2026-11-24",
-        "price_1pct_oer": 37.57,
+        "date": "2026-11-25",
+        "price_1pct_oer": 37.26,
         "avg_oer_pct": 19.99,
         "source": "MPOB Daily FFB Reference Price (mill gate)",
         "is_indicative": false,
@@ -69,10 +69,10 @@
     ],
     "unit": "RM per tonne of FFB per 1% OER, at the mill gate",
     "source": "MPOB Daily FFB Reference Price (mill gate)",
-    "source_url": "https://price.mpob.gov.my/pdf/daily/ffb/2026-11-24",
-    "mpob_last_update": "2026-11-24T12:00:00+08:00",
+    "source_url": "https://price.mpob.gov.my/pdf/daily/ffb/2026-11-25",
+    "mpob_last_update": "2026-11-25T12:00:00+08:00",
     "is_indicative": false,
-    "scraped_at": "2026-11-25T10:20:47.359261+08:00"
+    "scraped_at": "2026-11-25T22:13:51.003155+08:00"
   },
   "oer": {
     "year": 2026,
@@ -227,7 +227,7 @@
     "source": "MPOB Prestasi Sawit (api/oer)",
     "source_url": "https://prestasisawit.mpob.gov.my/api/oer",
     "source_page_url": "https://prestasisawit.mpob.gov.my/en/oer",
-    "scraped_at": "2026-11-25T10:20:45.667952+08:00",
+    "scraped_at": "2026-11-25T22:13:47.577583+08:00",
     "in_app_since": "2026-11-10"
   },
   "fallback_used": false,
